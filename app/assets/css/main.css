@@ -7,5 +7,11 @@ body {
 }
 
 .gradient-bg {
-  background: linear-gradient(135deg, #ec4899 0%, #f472b6 25%, #86efac 75%, #6ee7b7 100%);
+  background:
+    radial-gradient(circle at 18% 18%, rgba(236, 72, 153, 0.9) 0%, rgba(236, 72, 153, 0.55) 16%, rgba(236, 72, 153, 0) 42%),
+    radial-gradient(circle at 78% 26%, rgba(110, 231, 183, 0.88) 0%, rgba(110, 231, 183, 0.5) 18%, rgba(110, 231, 183, 0) 46%),
+    radial-gradient(circle at 42% 72%, rgba(251, 191, 36, 0.45) 0%, rgba(251, 191, 36, 0.22) 14%, rgba(251, 191, 36, 0) 36%),
+    radial-gradient(circle at 0% 50%, rgba(124, 58, 237, 0.92) 0%, rgba(124, 58, 237, 0.5) 14%, rgba(124, 58, 237, 0) 34%),
+    radial-gradient(circle at 100% 50%, rgba(124, 58, 237, 0.92) 0%, rgba(124, 58, 237, 0.5) 14%, rgba(124, 58, 237, 0) 34%),
+    linear-gradient(135deg, #2c0f4b 0%, #f472b6 28%, #86efac 66%, #2c0f4b 100%);
 }
