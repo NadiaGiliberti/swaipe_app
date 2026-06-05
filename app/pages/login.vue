@@ -27,9 +27,9 @@
             >
           </label>
 
-          <button
-            type="submit"
-            class="w-full rounded-full bg-yellow-300 px-5 py-3.5 font-black text-gray-900 transition hover:bg-yellow-200 active:scale-[0.99]"
+            <button
+              type="submit"
+              class="button_gelb w-full px-5 py-3.5"
           >
             EINLOGGEN
           </button>

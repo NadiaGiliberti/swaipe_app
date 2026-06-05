@@ -15,7 +15,7 @@
           </div>
           <NuxtLink
             to="/spiele"
-            class="mt-6 inline-flex w-full items-center justify-center rounded-full bg-yellow-300 px-5 py-3.5 font-black text-gray-900 transition hover:bg-yellow-200"
+            class="button_gelb mt-6 w-full px-5 py-3.5"
           >
             ZURÜCK ZUM SPIEL
           </NuxtLink>

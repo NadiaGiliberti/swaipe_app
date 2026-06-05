@@ -3,5 +3,17 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   css: ['~/assets/css/main.css'],
-  modules: ['@nuxtjs/tailwindcss']
+  modules: ['@nuxtjs/tailwindcss'],
+   app: {
+    head: {
+      title: 'SWAIPE',
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/svg+xml',
+          href: '/icon_swaipe.svg'
+        }
+      ]
+    }
+  }
 })
