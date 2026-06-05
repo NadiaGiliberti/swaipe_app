@@ -1,9 +1,11 @@
 @import './fonts.css';
 
+
+/*** falls ich mal noch Tailwind integrieren will 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+***/
 
 /** ALLES zum Hintergrund **/
 
