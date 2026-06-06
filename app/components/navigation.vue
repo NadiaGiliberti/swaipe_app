@@ -1,18 +1,22 @@
 <template>
-    
-    <div class="container_icon">
-        <img src="/icon_swaipe.svg" alt="SWAIPE Icon" class="icon_swaipe">
-    </div>
+    <nav class="container_navigation">
+        <div class="container_icon">
+            <img src="/icon_swaipe.svg" alt="SWAIPE Icon" class="icon_swaipe">
+        </div>
+    </nav>
 </template>
 
 <style>
+
+.container_navigation {
+    width: 100%;
+    height: 5%;
+    display: flex;
+}
+
 .container_icon {
     width: 100%;
-    display: flex;
-    justify-content: center;
-    padding-top: 1.5rem;
-    position: relative;
-    z-index: 10;
+    padding: 1.5rem;
 }
 
 .icon_swaipe {

@@ -1,6 +1,10 @@
 <template>
   <div class="container_main">
-    <navigation />
+    <header>
+      <navigation />
+    </header>
+
     <slot />
+    
   </div>
 </template>

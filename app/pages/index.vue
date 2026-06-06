@@ -1,19 +1,14 @@
 <template>
+  <div class="container_startseite">
 
-
-  <!-- Main content -->
-  <div class="landing-page">
     <div class="container_swaipe">
       <img src="/logo_swaipe.svg" class="logo">
-
-      <!-- Subtitel -->
-      <p id="subtitel">
-        Real oder KI generiert? Zeige dein Können
-      </p>
+      <p class="subtitel">
+        Real oder KI?</p>
     </div>
 
     <!-- Buttons -->
-    <div class="container_buttons">
+    <div class="container_buttons_startseite">
       <ButtonSpielen />
       <ButtonHighscores />
     </div>
@@ -22,47 +17,34 @@
 </template>
 
 <style>
-.landing-page {
-  min-height: 100vh;
-
+.container_startseite {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-
-  padding: 1.5rem;
-
-  position: relative;
-  overflow: hidden;
+  margin-top: 2rem;
 }
 
 .container_swaipe {
-  flex: 1;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-
-  gap: 1.5rem;
+  gap: 2rem;
   width: 100%;
-
-  position: relative;
-  z-index: 10;
 }
 
 .logo {
-  width: min(85vw, 26rem);
+  width: 85vw;
 }
 
-#subtitel {
+.subtitel {
   font-family: 'DotGothic16', sans-serif;
   text-align: center;
-  max-width: 30rem;
+  font-size: 1rem;
+  color: var(--braun);
 }
 
 @media (min-width: 768px) {
-  .landing-logo {
+  .logo {
     width: min(70vw, 34rem);
   }
 }
