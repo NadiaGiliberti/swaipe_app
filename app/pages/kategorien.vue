@@ -1,5 +1,5 @@
 <template>
-    <div class="container_main">
+    <main class="container_main">
 
         <div class="container_kategorien">
 
@@ -24,12 +24,10 @@
             </div>
 
         </div>
-        <div class="container_buttons">
-            <buttonZurueck />
-        </div>
 
+        <buttonZurueck />
 
-    </div>
+    </main>
 </template>
 
 <style>
@@ -38,7 +36,6 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 2rem;
     width: 100%;
 }
 
@@ -52,7 +49,7 @@
 }
 
 .container_ueben {
-    margin-top: 10%;
+    margin-top: 15%;
 }
 
 .container_buttons_ueben {
@@ -61,7 +58,7 @@
     align-items: center;
     width: 90%;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 5%;
 }
 
 </style>

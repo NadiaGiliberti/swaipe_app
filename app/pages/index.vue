@@ -1,5 +1,5 @@
 <template>
-  <div class="container_main">
+  <main class="container_main">
 
     <div class="container_swaipe">
       <img src="/logo_swaipe.svg" class="logo">
@@ -13,7 +13,7 @@
       <buttonHighscores />
     </div>
 
-  </div>
+  </main>
 </template>
 
 <style>

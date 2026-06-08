@@ -115,12 +115,28 @@ h4 {
 p {
   font-family: 'BarlowCondensed', sans-serif;
   font-size: 7vw;
+  color: var(--braun);
 }
 
 ul {
   font-family: 'BarlowCondensed', sans-serif;
   font-size: 7vw;
+  color: var(--braun);
 }
+
+a {
+  font-family: 'DotGothic16', sans-serif;
+  font-size: 4vw;
+  margin-top: 1rem;
+}
+
+label {
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 7vw;
+  color: var(--braun);
+
+
+} 
 
 /** Allgemeines BUTTONS **/
 
@@ -154,14 +170,13 @@ ul {
   text-align: center;
   text-decoration: none;
   transition: all 200ms;
-  width: 50%;
+  width: 40%;
   flex: 0 0 calc(50% - 1rem);
 }
 
 .button:hover,
 .button_klein:hover {
   background: var(--button-hover);
-  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
 }
 
 .button:active,
@@ -173,18 +188,54 @@ ul {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 70%;
+  width: 65%;
   margin-top: 6rem;
-
 }
-
-
-/** container mit weniger margin **/
+/** container mit weniger margin (im Text) **/
 .container_buttons_wm {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  width: 70%;
-  margin-top: 2rem;
+  width: 65%;
+  margin-top: 0.5rem;
+}
 
+.container_back_button {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);  
+  display: flex;
+  width: 65%;
+  z-index: 1000;
+}
+
+
+/** Formular css **/
+
+
+.container_form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.container_formularfeld {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 80%;
+  margin-top: 1rem;
+}
+
+.formularfeld {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 10px;
+  background: var(--gelb);
+  font-family: 'DotGothic16', sans-serif;
+  font-size: 0.8rem;
+  outline: none;
 }

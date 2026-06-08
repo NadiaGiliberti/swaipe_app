@@ -1,5 +1,5 @@
 <template>
-  <div class="container_main">
+  <main class="container_main">
 
     <h1>BESTENLISTE</h1>
     <div class="container_highscores_liste">
@@ -17,11 +17,9 @@
 
     </div>
 
-    <div class="container_buttons">
-      <buttonZurueck />
-    </div>
+    <buttonZurueck />
 
-  </div>
+  </main>
 </template>
 
 
