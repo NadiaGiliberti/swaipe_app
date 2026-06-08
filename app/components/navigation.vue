@@ -1,29 +1,27 @@
 <template>
-    <nav class="container_navigation">
-        <div class="container_icon">
-            <img src="/icon_swaipe.svg" alt="SWAIPE Icon" class="icon_swaipe">
-        </div>
-    </nav>
+  <nav class="container_navigation">
+    <NuxtLink to="/">
+      <img
+        src="/icon_swaipe.svg"
+        alt="SWAIPE Icon"
+        class="icon_swaipe"
+      >
+    </NuxtLink>
+  </nav>
 </template>
 
 <style>
 
 .container_navigation {
-    width: 100%;
-    height: 5%;
+    width: 100vw;
     display: flex;
-}
-
-.container_icon {
-    width: 100%;
-    padding: 1.5rem;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem;
 }
 
 .icon_swaipe {
     width: 10vw;
-    object-fit: contain;
-    filter: drop-shadow(0 25px 25px rgb(0 0 0 / 0.15));
 }
 
-@media (min-width: 768px) {}
 </style>

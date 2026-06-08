@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink to="/login" class="button button_spielen">
+  <NuxtLink to="/kategorien" class="button button_spielen">
     SPIELEN
   </NuxtLink>
 </template>

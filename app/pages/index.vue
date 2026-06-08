@@ -1,28 +1,22 @@
 <template>
-  <div class="container_startseite">
+  <div class="container_main">
 
     <div class="container_swaipe">
       <img src="/logo_swaipe.svg" class="logo">
-      <p class="subtitel">
-        Real oder KI?</p>
+      <h4>
+        Real oder KI?</h4>
     </div>
 
     <!-- Buttons -->
-    <div class="container_buttons_startseite">
-      <ButtonSpielen />
-      <ButtonHighscores />
+    <div class="container_buttons">
+      <buttonSpielen />
+      <buttonHighscores />
     </div>
 
   </div>
 </template>
 
 <style>
-.container_startseite {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 2rem;
-}
 
 .container_swaipe {
   display: flex;
@@ -33,15 +27,11 @@
 }
 
 .logo {
-  width: 85vw;
+  width: 80vw;
 }
 
-.subtitel {
-  font-family: 'DotGothic16', sans-serif;
-  text-align: center;
-  font-size: 1rem;
-  color: var(--braun);
-}
+
+
 
 @media (min-width: 768px) {
   .logo {
