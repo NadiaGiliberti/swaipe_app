@@ -78,7 +78,6 @@
     background: var(--braun);
 }
 
-
 .button_bilder {
     background: var(--braun);
 }

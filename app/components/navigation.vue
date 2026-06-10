@@ -17,11 +17,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 .icon_swaipe {
-    width: 10vw;
+    width: 13vw;
 }
 
 </style>
