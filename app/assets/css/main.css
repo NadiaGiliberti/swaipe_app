@@ -1,246 +1,246 @@
-@import './fonts.css';
+  @import './fonts.css';
 
 
-/*** falls ich mal noch Tailwind integrieren will 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-***/
+  /*** falls ich mal noch Tailwind integrieren will 
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  ***/
 
-/** ALLES zum Hintergrund **/
+  /** ALLES zum Hintergrund **/
 
-body {
-  background:
-    radial-gradient(circle at 22% 18%, var(--background-1) 0%, transparent 70%),
-    radial-gradient(circle at 80% 65%, var(--background-2) 0%, transparent 80%),
-    radial-gradient(circle at 86% 12%, var(--background-3) 0%, transparent 70%),
-    radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
-    var(--background-base);
+  body {
+    background:
+      radial-gradient(circle at 22% 18%, var(--background-1) 0%, transparent 70%),
+      radial-gradient(circle at 80% 65%, var(--background-2) 0%, transparent 80%),
+      radial-gradient(circle at 86% 12%, var(--background-3) 0%, transparent 70%),
+      radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
+      var(--background-base);
 
-  background-attachment: fixed;
-  background-color: var(--background-base);
-  width: 100%;
-}
+    background-attachment: fixed;
+    background-color: var(--background-base);
+    width: 100%;
+  }
 
-.container_body {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
+  .container_body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
 
-}
+  }
 
-.container_body::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="4" seed="10" result="noise"/></filter><filter id="noise2"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="3" seed="5" result="noise2"/></filter></defs><rect width="400" height="400" fill="%23000000" filter="url(%23noise)" opacity="0.72"/><rect width="400" height="400" fill="%23ffffff" filter="url(%23noise2)" opacity="0.55"/></svg>');
-  mix-blend-mode: multiply;
-}
+  .container_body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="4" seed="10" result="noise"/></filter><filter id="noise2"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="3" seed="5" result="noise2"/></filter></defs><rect width="400" height="400" fill="%23000000" filter="url(%23noise)" opacity="0.72"/><rect width="400" height="400" fill="%23ffffff" filter="url(%23noise2)" opacity="0.55"/></svg>');
+    mix-blend-mode: multiply;
+  }
 
-.container_body::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><filter id="noise3"><feTurbulence type="fractalNoise" baseFrequency="3.2" numOctaves="2" seed="8"/></filter></defs><rect width="300" height="300" fill="%23000000" filter="url(%23noise3)" opacity="0.75"/></svg>');
-  mix-blend-mode: overlay;
-}
-
-
-/** ALLGEMEINES Farben und schriften**/
-
-:root {
-  --background-base: #ffffff;
-  --background-1: #f898c1;
-  --background-2: #5aeaa2;
-  --background-3: #920e36;
-  --braun: #560000;
-  --gelb: #ffda00;
-  --button-hover: #000d6b;
-}
-
-.container_main {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin-top: 2rem;
-}
+  .container_body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><filter id="noise3"><feTurbulence type="fractalNoise" baseFrequency="3.2" numOctaves="2" seed="8"/></filter></defs><rect width="300" height="300" fill="%23000000" filter="url(%23noise3)" opacity="0.75"/></svg>');
+    mix-blend-mode: overlay;
+  }
 
 
-h1 {
-  color: var(--braun);
-  font-family: 'BarlowCondensed', sans-serif;
-  font-size: 18vw;
-  font-weight: 400;
-  text-align: center;
-}
+  /** ALLGEMEINES Farben und schriften**/
 
-h2 {
-  color: var(--braun);
-  font-family: 'BarlowCondensed', sans-serif;
-  font-size: 12vw;
-  font-weight: 600;
-  text-align: center;
-}
+  :root {
+    --background-base: #ffffff;
+    --background-1: #f898c1;
+    --background-2: #5aeaa2;
+    --background-3: #920e36;
+    --braun: #560000;
+    --gelb: #ffda00;
+    --button-hover: #000d6b;
+  }
 
-h3 {
-  color: var(--braun);
-  font-family: 'BarlowCondensed', sans-serif;
-  text-align: center;
-  font-size: 10vw;
-  font-weight: 600;
-}
-
-h4 {
-  color: var(--braun);
-  font-family: 'DotGothic16', sans-serif;
-  letter-spacing: 0.05rem;
-  text-align: center;
-  font-size: 4vw;
-  font-weight: 400;
-}
+  .container_main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 2rem;
+  }
 
 
-p {
-  font-family: 'BarlowCondensed', sans-serif;
-  font-size: 7vw;
-  color: var(--braun);
-}
+  h1 {
+    color: var(--braun);
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 18vw;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  h2 {
+    color: var(--braun);
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 12vw;
+    font-weight: 600;
+    text-align: center;
+  }
+
+  h3 {
+    color: var(--braun);
+    font-family: 'BarlowCondensed', sans-serif;
+    text-align: center;
+    font-size: 10vw;
+    font-weight: 600;
+  }
+
+  h4 {
+    color: var(--braun);
+    font-family: 'DotGothic16', sans-serif;
+    letter-spacing: 0.05rem;
+    text-align: center;
+    font-size: 4vw;
+    font-weight: 400;
+  }
 
 
-ul {
-  font-family: 'BarlowCondensed', sans-serif;
-  font-size: 7vw;
-  color: var(--braun);
-}
-
-a {
-  font-family: 'DotGothic16', sans-serif;
-  letter-spacing: 0.05rem;
-  font-size: 4vw;
-  margin-top: 1rem;
-}
-
-label {
-  font-family: 'BarlowCondensed', sans-serif;
-  font-size: 7vw;
-  color: var(--braun);
+  p {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 7vw;
+    color: var(--braun);
+  }
 
 
-}
+  ul {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 7vw;
+    color: var(--braun);
+  }
 
-/** Allgemeines BUTTONS **/
+  a {
+    font-family: 'DotGothic16', sans-serif;
+    letter-spacing: 0.05rem;
+    font-size: 4vw;
+    margin-top: 1rem;
+  }
 
-
-.button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 30px;
-  font-family: 'DotGothic16', sans-serif;
-  letter-spacing: 0.1rem;
-  font-size: 1.7rem;
-  color: white;
-  font-weight: 400;
-  text-align: center;
-  text-decoration: none;
-  transition: all 200ms;
-  width: 100%;
-}
-
-.button_klein {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.5rem;
-  border-radius: 30px;
-  font-family: 'DotGothic16', sans-serif;
-  letter-spacing: 0.1rem;
-  font-size: 1.3rem;
-  color: white;
-  font-weight: 400;
-  text-align: center;
-  text-decoration: none;
-  transition: all 200ms;
-  flex: 0 0 calc(45% - 1rem);
-}
-
-.button:hover,
-.button_klein:hover {
-  background: var(--button-hover);
-}
-
-.button:active,
-.button_klein:active {
-  transform: scale(0.95);
-}
-
-.container_buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 55%;
-  margin-top: 6rem;
-}
-
-/** container mit weniger margin (im Text) **/
-.container_buttons_wm {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 55%;
-  margin-top: 0.5rem;
-}
-
-.container_back_button {
-  position: fixed;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  width: 55%;
-  z-index: 1000;
-}
+  label {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 7vw;
+    color: var(--braun);
 
 
-/** Formular css **/
+  }
+
+  /** Allgemeines BUTTONS **/
 
 
-.container_form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 30px;
+    font-family: 'DotGothic16', sans-serif;
+    letter-spacing: 0.1rem;
+    font-size: 1.7rem;
+    color: white;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    transition: all 200ms;
+    width: 100%;
+  }
 
-.container_formularfeld {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 80%;
-  margin-top: 1rem;
-}
+  .button_klein {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    border-radius: 30px;
+    font-family: 'DotGothic16', sans-serif;
+    letter-spacing: 0.1rem;
+    font-size: 1.3rem;
+    color: white;
+    font-weight: 400;
+    text-align: center;
+    text-decoration: none;
+    transition: all 200ms;
+    flex: 0 0 calc(45% - 1rem);
+  }
 
-.formularfeld {
-  width: 100%;
-  padding: 0.6rem;
-  border-radius: 10px;
-  background: var(--gelb);
-  font-family: 'DotGothic16', sans-serif;
-  letter-spacing: 0.05rem;
-  font-size: 0.8rem;
-  outline: none;
-}
+  .button:hover,
+  .button_klein:hover {
+    background: var(--button-hover);
+  }
+
+  .button:active,
+  .button_klein:active {
+    transform: scale(0.95);
+  }
+
+  .container_buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 55%;
+    margin-top: 6rem;
+  }
+
+  /** container mit weniger margin (im Text) **/
+  .container_buttons_wm {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 55%;
+    margin-top: 0.5rem;
+  }
+
+  .container_back_button {
+    position: fixed;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    width: 55%;
+    z-index: 1000;
+  }
+
+
+  /** Formular css **/
+
+
+  .container_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .container_formularfeld {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 80%;
+    margin-top: 1rem;
+  }
+
+  .formularfeld {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 10px;
+    background: var(--gelb);
+    font-family: 'DotGothic16', sans-serif;
+    letter-spacing: 0.05rem;
+    font-size: 0.8rem;
+    outline: none;
+  }

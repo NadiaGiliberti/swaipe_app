@@ -12,16 +12,16 @@
 
 <style>
 
-.container_navigation {
-    width: 100vw;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0.5rem;
+.container_navigation{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:0.5rem;
 }
 
-.icon_swaipe {
-    width: 13vw;
+.icon_swaipe{
+    width:13vw;
 }
 
 </style>
