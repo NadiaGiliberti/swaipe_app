@@ -15,10 +15,21 @@
                 <h3> ÜBEN</h3>
                 <h4> Wähle eine Kategorie</h4>
                 <div class="container_buttons_ueben">
-                    <buttonKatBilder />
-                    <buttonKatVideos />
-                    <buttonKatAudio />
-                    <buttonKatMusik />
+                     <NuxtLink to="/" class="button_klein button_bilder">
+                        BILDER
+                    </NuxtLink>
+                    
+                    <NuxtLink to="/" class="button_klein button_videos">
+                        VIDEOS
+                    </NuxtLink>
+
+                    <NuxtLink to="/" class="button_klein button_audio">
+                        AUDIO
+                    </NuxtLink>
+
+                    <NuxtLink to="/" class="button_klein button_musik">
+                        MUSIK
+                    </NuxtLink>
                 </div>
 
             </div>
@@ -59,6 +70,25 @@
     width: 90%;
     flex-wrap: wrap;
     gap: 5%;
+}
+
+/** BUTTONS KATEGORIEN */
+
+.button_videos {
+    background: var(--braun);
+}
+
+
+.button_bilder {
+    background: var(--braun);
+}
+
+.button_audio {
+    background: var(--braun);
+}
+
+.button_musik {
+    background: var(--braun);
 }
 
 </style>

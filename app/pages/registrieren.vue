@@ -26,7 +26,7 @@
       <a href="/login">Account vorhanden? Hier einloggen.</a>
 
 
-      <div class="container_buttons">
+      <div class="container_buttons_wm">
         <button type="submit" class="button button_registrieren">
           REGISTRIEREN
         </button>
@@ -60,7 +60,8 @@ function registrieren() {
 <style>
 .button_registrieren {
   background: var(--braun);
-  margin-top: 10%;
   font-size: 1.5rem;
+  margin-top: 10%;
 }
+
 </style>
