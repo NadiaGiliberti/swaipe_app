@@ -106,10 +106,9 @@ h4 {
   color: var(--braun);
   font-family: 'DotGothic16', sans-serif;
   text-align: center;
-  font-size: 5vw;
+  font-size: 4vw;
   font-weight: 400;
 }
-
 
 
 p {
@@ -117,6 +116,9 @@ p {
   font-size: 7vw;
   color: var(--braun);
 }
+
+
+
 
 ul {
   font-family: 'BarlowCondensed', sans-serif;
