@@ -1,5 +1,5 @@
 <template>
-  <NuxtLink to="/" class="button button_start">
+  <NuxtLink to="/spiel" class="button button_start">
     START
   </NuxtLink>
 </template>

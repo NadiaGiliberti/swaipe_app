@@ -15,19 +15,19 @@
                 <h3> ÜBEN</h3>
                 <h4> Wähle eine Kategorie</h4>
                 <div class="container_buttons_ueben">
-                     <NuxtLink to="/" class="button_klein button_bilder">
+                     <NuxtLink to="/spiel" class="button_klein button_bilder">
                         BILDER
                     </NuxtLink>
                     
-                    <NuxtLink to="/" class="button_klein button_videos">
+                    <NuxtLink to="/spiel" class="button_klein button_videos">
                         VIDEOS
                     </NuxtLink>
 
-                    <NuxtLink to="/" class="button_klein button_audio">
+                    <NuxtLink to="/spiel" class="button_klein button_audio">
                         AUDIO
                     </NuxtLink>
 
-                    <NuxtLink to="/" class="button_klein button_musik">
+                    <NuxtLink to="/spiel" class="button_klein button_musik">
                         MUSIK
                     </NuxtLink>
                 </div>
