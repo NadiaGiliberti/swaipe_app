@@ -1,5 +1,6 @@
 export default defineNuxtRouteMiddleware((to) => {
     const user = useSupabaseUser()
+    const supabase = useSupabaseClient()
 
     const oeffentlicheSeiten = ['/login', '/registrieren']
 
@@ -12,4 +13,5 @@ export default defineNuxtRouteMiddleware((to) => {
     if (user.value && oeffentlicheSeiten.includes(to.path)) {
         return navigateTo('/')
     }
+    
 })
