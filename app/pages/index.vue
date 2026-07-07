@@ -47,8 +47,6 @@ const menuOpen = ref(false)
   position: fixed;
   top: 1rem;
   right: 1rem;
-  width: 10%;
-  height: 10%;
   background: none;
   border: none;
   padding: 0;
@@ -57,7 +55,7 @@ const menuOpen = ref(false)
 }
 
 .button_profile img {
-  width: 100%;
+  width: 28px;
   display: block;
 }
 @media (min-width:768px) {
