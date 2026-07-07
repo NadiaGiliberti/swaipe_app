@@ -1,5 +1,14 @@
 <script setup>
 const menuOpen = ref(false)
+
+const supabase = useSupabaseClient()
+
+const { data: spiele, error } = await supabase
+  .from('spieldaten_live')
+  .select('*')
+
+console.log('Spieldaten:', spiele)
+console.log('Fehler:', error)
 </script>
 
 <template>

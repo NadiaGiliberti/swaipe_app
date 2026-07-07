@@ -14,7 +14,8 @@ async function goTo(path) {
 }
 
 async function handleLogout() {
-    // hier später: Token/Session löschen, z.B. await useAuth().logout()
+    const supabase = useSupabaseClient()
+    await supabase.auth.signOut()
     await navigateTo('/login')
     emit('close')
 }

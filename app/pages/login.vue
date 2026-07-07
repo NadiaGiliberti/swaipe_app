@@ -1,3 +1,37 @@
+<script setup>
+import { ref } from 'vue'
+
+const supabase = useSupabaseClient()
+
+const user = ref('')
+const password = ref('')
+const loading = ref(false)
+
+async function login() {
+  if (!user.value || !password.value) {
+    alert('Bitte Benutzername/E-Mail und Passwort ausfüllen.')
+    return
+  }
+
+  loading.value = true
+
+  const { error } = await supabase.auth.signInWithPassword({
+    email: user.value,
+    password: password.value
+  })
+
+  loading.value = false
+
+  if (error) {
+    alert(error.message)
+    return
+  }
+
+  await navigateTo('/')
+}
+</script>
+
+
 <template>
   <main class="container_main">
 
@@ -6,8 +40,8 @@
 
       <div class="container_formularfeld">
         <label for="user">USER</label>
-        <input v-model="user" class="formularfeld" id="user" type="text"
-          placeholder="Benutzername oder E-Mail eingeben" required>
+        <input v-model="user" class="formularfeld" id="user" type="text" placeholder="Benutzername oder E-Mail eingeben"
+          required>
       </div>
 
       <div class="container_formularfeld">
@@ -20,8 +54,8 @@
 
 
       <div class="container_buttons">
-        <button type="submit" class="button button_login">
-          LOGIN
+        <button type="submit" class="button button_login" :disabled="loading">
+          {{ loading ? 'LÄDT...' : 'LOGIN' }}
         </button>
       </div>
 
@@ -31,23 +65,6 @@
   </main>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-
-const user = ref('')
-const password = ref('')
-
-function login() {
-  if (!user.value || !password.value) {
-    alert('Bitte Benutzername/E-Mail und Passwort ausfüllen.')
-    return
-  }
-
-  console.log('Login wird durchgeführt')
-
-  // Hier später Firebase Login oder API-Login
-}
-</script>
 
 <style>
 .button_login {

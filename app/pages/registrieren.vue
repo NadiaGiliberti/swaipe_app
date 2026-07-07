@@ -1,3 +1,44 @@
+<script setup>
+import { ref } from 'vue'
+
+const supabase = useSupabaseClient()
+
+const user = ref('')
+const email = ref('')
+const password = ref('')
+const loading = ref(false)
+
+async function registrieren() {
+  if (!user.value || !email.value || !password.value) {
+    alert('Bitte alle Felder ausfüllen.')
+    return
+  }
+
+  loading.value = true
+
+  const { error } = await supabase.auth.signUp({
+    email: email.value,
+    password: password.value,
+    options: {
+      data: {
+        username: user.value
+      }
+    }
+  })
+
+  loading.value = false
+
+  if (error) {
+    alert(error.message)
+    return
+  }
+
+  await navigateTo('/')
+}
+</script>
+
+
+
 <template>
   <main class="container_main">
 
@@ -27,8 +68,8 @@
 
 
       <div class="container_buttons_wm">
-        <button type="submit" class="button button_registrieren">
-          REGISTRIEREN
+        <button type="submit" class="button button_registrieren" :disabled="loading">
+          {{ loading ? 'LÄDT...' : 'REGISTRIEREN' }}
         </button>
       </div>
 
@@ -38,24 +79,6 @@
   </main>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-
-const user = ref('')
-const email = ref('')
-const password = ref('')
-
-function registrieren() {
-  if (!user.value || !email.value || !password.value) {
-    alert('Bitte alle Felder ausfüllen.')
-    return
-  }
-
-  console.log('Registrierung wird durchgeführt')
-
-  // Hier später Firebase Registrierung oder API-Registrierung
-}
-</script>
 
 <style>
 .button_registrieren {
@@ -63,5 +86,4 @@ function registrieren() {
   font-size: 1.5rem;
   margin-top: 10%;
 }
-
 </style>
