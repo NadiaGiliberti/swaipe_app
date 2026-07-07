@@ -81,7 +81,7 @@
   h1 {
     color: var(--braun);
     font-family: 'BarlowCondensed', sans-serif;
-    font-size: 18vw;
+    font-size: 15vw;
     font-weight: 400;
     text-align: center;
   }
@@ -111,6 +111,14 @@
     font-weight: 400;
   }
 
+  
+  .h1_black {
+    color: black;
+  }
+
+  .h3_black {
+    color: black;
+  }
 
   p {
     font-family: 'BarlowCondensed', sans-serif;
@@ -136,9 +144,14 @@
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 7vw;
     color: var(--braun);
-
-
   }
+
+
+  span {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 6vw;
+  }
+
 
   /** Allgemeines BUTTONS **/
 

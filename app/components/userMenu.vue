@@ -7,6 +7,17 @@ defineProps({
 })
 
 const emit = defineEmits(["close"])
+
+async function goTo(path) {
+    await navigateTo(path)
+    emit('close')
+}
+
+async function handleLogout() {
+    // hier später: Token/Session löschen, z.B. await useAuth().logout()
+    await navigateTo('/login')
+    emit('close')
+}
 </script>
 
 <template>
@@ -22,27 +33,27 @@ const emit = defineEmits(["close"])
 
                     <nav class="container_menu">
 
-                        <button class="menu_item">
+                        <button class="menu_item" @click="goTo('/userProfil')">
                             <img src="/icons/profil_icon.svg">
                             <span>DEIN PROFIL</span>
                         </button>
 
-                        <button class="menu_item">
+                        <button class="menu_item" @click="goTo('/freunde')">
                             <img src="/icons/freunde_icon.svg">
                             <span>FREUNDE</span>
                         </button>
 
-                        <button class="menu_item">
+                        <button class="menu_item" @click="goTo('/einstellungen')">
                             <img src="/icons/einstellungen_icon.svg">
                             <span>EINSTELLUNGEN</span>
                         </button>
 
-                        <button class="menu_item">
+                        <button class="menu_item" @click="goTo('/hilfe')">
                             <img src="/icons/hilfe_icon.svg">
                             <span>HILFE</span>
                         </button>
 
-                        <button class="menu_item">
+                        <button class="menu_item" @click="handleLogout">
                             <img src="/icons/logout_icon.svg">
                             <span>LOGOUT</span>
                         </button>
@@ -64,7 +75,6 @@ const emit = defineEmits(["close"])
     inset: 0;
     z-index: 9999;
 
-    /* DAS ist der Key */
     background: transparent;
 
     display: flex;
@@ -77,19 +87,18 @@ const emit = defineEmits(["close"])
     position: fixed;
     inset: 0;
     z-index: 99;
-    overflow:hidden;
+    overflow: hidden;
     isolation: isolate;
     display: flex;
     flex-direction: column;
     padding: 1rem 2.5rem;
 
-    /* DAS ist der Fix */
     background:
-      radial-gradient(circle at 22% 18%, var(--background-1) 0%, transparent 70%),
-      radial-gradient(circle at 80% 65%, var(--background-2) 0%, transparent 80%),
-      radial-gradient(circle at 86% 12%, var(--background-3) 0%, transparent 70%),
-      radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
-      var(--background-base);
+        radial-gradient(circle at 22% 18%, var(--background-1) 0%, transparent 70%),
+        radial-gradient(circle at 80% 65%, var(--background-2) 0%, transparent 80%),
+        radial-gradient(circle at 86% 12%, var(--background-3) 0%, transparent 70%),
+        radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
+        var(--background-base);
 
     background-attachment: fixed;
 }
@@ -138,9 +147,8 @@ const emit = defineEmits(["close"])
 .container_menu {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
-
-    margin-top: 3rem;
+    gap: 1.2rem;
+    margin-top: 25vh;
 }
 
 .menu_item {
@@ -160,15 +168,8 @@ const emit = defineEmits(["close"])
     display: block;
 }
 
-.menu_item span {
-    font-family: 'DotGothic16', sans-serif;
-    letter-spacing: .05rem;
-    font-size: 1.2rem;
-}
-
 /* ===== TRANSITION SYSTEM (Vue) ===== */
 
-/* Enter */
 .drawer-enter-from {
     transform: translateX(100%);
 }
@@ -193,7 +194,6 @@ const emit = defineEmits(["close"])
     transform: translateX(100%);
 }
 
-/* Overlay Fade */
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;
