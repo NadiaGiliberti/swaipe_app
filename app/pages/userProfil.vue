@@ -15,6 +15,14 @@ const actionError = ref('')
 const actionSuccess = ref('')
 const actionLoading = ref(false)
 
+// Refs für den Avatar-Upload
+const fileInput = ref(null)
+const avatarLoading = ref(false)
+
+// NEU: Refs für das Bearbeiten des Usernamens
+const isEditingUsername = ref(false)
+const editUsernameInput = ref('')
+
 async function ladeProfil() {
     loading.value = true
     errorMsg.value = ''
@@ -37,6 +45,8 @@ async function ladeProfil() {
         errorMsg.value = error.message
     } else {
         profil.value = data
+        // NEU: Den aktuellen Usernamen in das Edit-Feld vorladen
+        editUsernameInput.value = data.username
     }
 
     loading.value = false
@@ -46,8 +56,128 @@ onMounted(() => {
     ladeProfil()
 })
 
+// Triggert den Klick auf das versteckte Datei-Auswahl-Feld
 function handleEditAvatar() {
-    // später: Datei-Upload / Avatar-Auswahl öffnen
+    if (fileInput.value) {
+        fileInput.value.click()
+    }
+}
+
+// Hilfsfunktion: Komprimiert das Bild mit Hilfe eines HTML Canvas Elementes
+function compressImage(file, maxWidth = 400, quality = 0.7) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = (event) => {
+            const img = new Image()
+            img.src = event.target.result
+            img.onload = () => {
+                const canvas = document.createElement('canvas')
+                let width = img.width
+                let height = img.height
+
+                if (width > maxWidth) {
+                    height = Math.round((height * maxWidth) / width)
+                    width = maxWidth
+                }
+
+                canvas.width = width
+                canvas.height = height
+
+                const ctx = canvas.getContext('2d')
+                ctx.drawImage(img, 0, 0, width, height)
+
+                canvas.toBlob((blob) => {
+                    if (blob) {
+                        resolve(blob)
+                    } else {
+                        reject(new Error('Kompression fehlgeschlagen.'))
+                    }
+                }, 'image/jpeg', quality)
+            }
+            img.onerror = (err) => reject(err)
+        }
+        reader.onerror = (err) => reject(err)
+    })
+}
+
+// Verarbeitet das ausgewählte Bild, komprimiert es und lädt es hoch
+async function handleAvatarUpload(event) {
+    const file = event.target.files[0]
+    if (!file) return
+
+    avatarLoading.value = true
+    errorMsg.value = ''
+
+    try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        if (!currentUser) throw new Error('Nicht eingeloggt.')
+
+        const compressedBlob = await compressImage(file, 400, 0.7)
+        const fileName = `avatar_${Date.now()}.jpg`
+        const filePath = `${currentUser.id}/${fileName}`
+
+        const { error: uploadError } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, compressedBlob, {
+                contentType: 'image/jpeg',
+                upsert: true
+            })
+
+        if (uploadError) throw uploadError
+
+        const { data: { publicUrl } } = supabase.storage
+            .from('avatars')
+            .getPublicUrl(filePath)
+
+        const { error: dbError } = await supabase
+            .from('profiles')
+            .update({ profilbild_url: publicUrl })
+            .eq('id', currentUser.id)
+
+        if (dbError) throw dbError
+
+        profil.value.profilbild_url = publicUrl
+
+    } catch (error) {
+        errorMsg.value = `Avatar-Fehler: ${error.message || error}`
+    } finally {
+        avatarLoading.value = false
+    }
+}
+
+// NEU: Aktiviert den Bearbeitungsmodus für den Usernamen
+function startEditingUsername() {
+    editUsernameInput.value = profil.value.username
+    isEditingUsername.value = true
+}
+
+// NEU: Speichert den geänderten Usernamen in Supabase
+async function saveUsername() {
+    // Falls leer oder keine Änderung, einfach Modus beenden
+    if (!editUsernameInput.value.trim() || editUsernameInput.value === profil.value.username) {
+        isEditingUsername.value = false
+        return
+    }
+
+    try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        if (!currentUser) throw new Error('Nicht eingeloggt.')
+
+        const { error } = await supabase
+            .from('profiles')
+            .update({ username: editUsernameInput.value.trim() })
+            .eq('id', currentUser.id)
+
+        if (error) throw error
+
+        // Lokales Profil-Objekt updaten, damit es im UI umschaltet
+        profil.value.username = editUsernameInput.value.trim()
+        isEditingUsername.value = false
+    } catch (error) {
+        errorMsg.value = `Fehler beim Speichern des Usernamens: ${error.message}`
+        isEditingUsername.value = false
+    }
 }
 
 function resetActionState() {
@@ -97,7 +227,7 @@ async function handlePasswordChange() {
     actionLoading.value = false
 
     if (error) {
-        actionError.value = error.message
+        errorMsg.value = error.message
         return
     }
 
@@ -125,6 +255,9 @@ async function handleDeactivateAccount() {
     await supabase.auth.signOut()
     await navigateTo('/login')
 }
+const vFocus = {
+    mounted: (el) => el.focus()
+}
 </script>
 
 <template>
@@ -138,17 +271,24 @@ async function handleDeactivateAccount() {
         <template v-else-if="profil">
             <div class="container_user">
                 <div class="container_userbild">
-                    <img
-                        :src="profil.profilbild_url || '/icons/profil_icon.svg'"
-                        id="profilbildUser"
-                        alt="Profilbild"
-                    >
-                    <button class="button_edit" @click="handleEditAvatar">
+                    <img :src="profil.profilbild_url || '/icons/profil_icon.svg'" id="profilbildUser"
+                        :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
+
+                    <input type="file" ref="fileInput" style="display: none" accept="image/png, image/jpeg, image/webp"
+                        @change="handleAvatarUpload">
+
+                    <button class="button_edit" :disabled="avatarLoading" @click="handleEditAvatar">
                         <img src="/icons/edit_icon.svg" id="profilbildUserEdit" alt="Profilbild bearbeiten">
                     </button>
                 </div>
 
-                <h3 class="h3_black">{{ profil.username }}</h3>
+                <div class="container_username_edit">
+                    <input v-if="isEditingUsername" v-model="editUsernameInput" type="text" class="input_username"
+                        @keydown.enter="saveUsername" @blur="saveUsername">
+                    <h3 v-else class="h3_black username_clickable" @click="startEditingUsername">
+                        {{ profil.username }}
+                    </h3>
+                </div>
             </div>
 
             <div class="container_aktionen">
@@ -166,17 +306,10 @@ async function handleDeactivateAccount() {
 
         <buttonZurueck />
 
-        <!-- E-Mail ändern -->
         <ModalBase :open="showEmailModal" title="E-MAIL ÄNDERN" @close="closeEmailModal">
             <div class="container_formularfeld">
                 <label for="new-email">NEUE E-MAIL</label>
-                <input
-                    id="new-email"
-                    v-model="newEmail"
-                    type="email"
-                    class="formularfeld"
-                    required
-                >
+                <input id="new-email" v-model="newEmail" type="email" class="formularfeld" required>
             </div>
 
             <p v-if="actionError" class="error_text">{{ actionError }}</p>
@@ -189,18 +322,11 @@ async function handleDeactivateAccount() {
             </div>
         </ModalBase>
 
-        <!-- Passwort ändern -->
         <ModalBase :open="showPasswordModal" title="PASSWORT ÄNDERN" @close="closePasswordModal">
             <div class="container_formularfeld">
                 <label for="new-password">NEUES PASSWORT</label>
-                <input
-                    id="new-password"
-                    v-model="newPassword"
-                    type="password"
-                    class="formularfeld"
-                    minlength="6"
-                    required
-                >
+                <input id="new-password" v-model="newPassword" type="password" class="formularfeld" minlength="6"
+                    required>
             </div>
 
             <p v-if="actionError" class="error_text">{{ actionError }}</p>
@@ -213,9 +339,8 @@ async function handleDeactivateAccount() {
             </div>
         </ModalBase>
 
-        <!-- Account deaktivieren -->
         <ModalBase :open="showDeleteModal" title="ACCOUNT DEAKTIVIEREN" @close="closeDeleteModal">
-            <p>Dein Account wird deaktiviert und du wirst ausgeloggt. Melde dich beim Support, falls du reaktivieren möchtest.</p>
+            <p>Wichtiger Hinweis: Dein Account wird deaktiviert und du wirst automatisch abgemeldet. Danach hast du keinen Zugriff mehr auf dein Profil. Falls du es dir später anders überlegst, kann dir unser Support beim Reaktivieren helfen.</p>
 
             <p v-if="actionError" class="error_text">{{ actionError }}</p>
 
@@ -230,6 +355,8 @@ async function handleDeactivateAccount() {
 </template>
 
 <style>
+/* Trick für CSS-Validierung im Kombi-Block */
+
 .container_user {
     display: flex;
     flex-direction: column;
@@ -244,6 +371,9 @@ async function handleDeactivateAccount() {
 
 #profilbildUser {
     width: 25vw;
+    height: 25vw;
+    border-radius: 50%;
+    object-fit: cover;
     display: block;
 }
 
@@ -261,6 +391,42 @@ async function handleDeactivateAccount() {
 #profilbildUserEdit {
     width: 4.5vw;
     display: block;
+}
+
+/* NEUE STYLES FÜR DEN USERNAME-EDIT */
+.container_username_edit {
+    margin-top: 2vh;
+    min-height: 40px;
+    /* Verhindert Springen des Layouts */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.username_clickable {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.username_clickable:hover {
+    opacity: 0.7;
+    /* Gibt dem User visuelles Feedback, dass es klickbar ist */
+}
+
+.input_username {
+    font-family: 'BarlowCondensed', sans-serif;
+    /* Gleiche Schriftart wie deine h3_black */
+    font-size: 1.17em;
+    /* Ungefähre h3-Größe */
+    font-weight: bold;
+    text-align: center;
+    border: none;
+    border-bottom: 2px solid var(--braun, #000);
+    /* Kleiner Unterstrich beim Editieren */
+    outline: none;
+    background: transparent;
+    padding: 2px;
+    width: 60vw;
 }
 
 .container_aktionen {
