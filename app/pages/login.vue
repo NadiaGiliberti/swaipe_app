@@ -16,7 +16,7 @@ async function login() {
 
   loading.value = true
 
-  const { error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await supabase.auth.signInWithPassword({
     email: userInput.value,
     password: password.value
   })
@@ -27,15 +27,29 @@ async function login() {
     return
   }
 
-  // Warten, bis der reaktive User-State wirklich aktualisiert ist
-  await new Promise((resolve) => {
-    const stopWatching = watch(user, (val) => {
-      if (val) {
-        stopWatching()
-        resolve()
-      }
-    }, { immediate: true })
-  })
+  const { data: profilData, error: profilError } = await supabase
+    .from('profiles')
+    .select('aktiv')
+    .eq('id', data.user.id)
+    .single()
+
+  if (profilError || (profilData && profilData.aktiv === false)) {
+    await supabase.auth.signOut()
+    loading.value = false
+    alert('Dieser Account wurde deaktiviert. Bitte kontaktiere den Support.')
+    return
+  }
+
+  if (!user.value) {
+    await new Promise((resolve) => {
+      const stopWatching = watch(user, (val) => {
+        if (val) {
+          stopWatching()
+          resolve()
+        }
+      })
+    })
+  }
 
   loading.value = false
   await navigateTo('/')
