@@ -1,14 +1,15 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
-const user = ref('')
+const userInput = ref('')
 const password = ref('')
 const loading = ref(false)
 
 async function login() {
-  if (!user.value || !password.value) {
+  if (!userInput.value || !password.value) {
     alert('Bitte Benutzername/E-Mail und Passwort ausfüllen.')
     return
   }
@@ -16,17 +17,27 @@ async function login() {
   loading.value = true
 
   const { error } = await supabase.auth.signInWithPassword({
-    email: user.value,
+    email: userInput.value,
     password: password.value
   })
 
-  loading.value = false
-
   if (error) {
+    loading.value = false
     alert(error.message)
     return
   }
 
+  // Warten, bis der reaktive User-State wirklich aktualisiert ist
+  await new Promise((resolve) => {
+    const stopWatching = watch(user, (val) => {
+      if (val) {
+        stopWatching()
+        resolve()
+      }
+    }, { immediate: true })
+  })
+
+  loading.value = false
   await navigateTo('/')
 }
 </script>
@@ -40,8 +51,8 @@ async function login() {
 
       <div class="container_formularfeld">
         <label for="user">USER</label>
-        <input v-model="user" class="formularfeld" id="user" type="text" placeholder="Benutzername oder E-Mail eingeben"
-          required>
+        <input v-model="userInput" class="formularfeld" id="user" type="text"
+          placeholder="Benutzername oder E-Mail eingeben" required>
       </div>
 
       <div class="container_formularfeld">
