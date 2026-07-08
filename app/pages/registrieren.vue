@@ -14,8 +14,13 @@ async function registrieren() {
     return
   }
 
-  loading.value = true
+  // NEU: Sicherheits-Check vor dem Abschicken
+  if (user.value.length > 15) {
+    alert('Der Username darf maximal 15 Zeichen lang sein.')
+    return
+  }
 
+  loading.value = true
   const { error } = await supabase.auth.signUp({
     email: email.value,
     password: password.value,
@@ -47,14 +52,13 @@ async function registrieren() {
 
       <div class="container_formularfeld">
         <label for="user">USERNAME</label>
-        <input v-model="user" class="formularfeld" id="user" type="text"
-          placeholder="Benutzername eingeben" required>
+        <input v-model="user" class="formularfeld" id="user" type="text" placeholder="Benutzername eingeben"
+          maxlength="15" required>
       </div>
 
-            <div class="container_formularfeld">
+      <div class="container_formularfeld">
         <label for="email">E-MAIL</label>
-        <input v-model="email" class="formularfeld" id="email" type="email"
-          placeholder="E-Mail eingeben" required>
+        <input v-model="email" class="formularfeld" id="email" type="email" placeholder="E-Mail eingeben" required>
       </div>
 
 

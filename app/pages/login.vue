@@ -10,7 +10,7 @@ const loading = ref(false)
 
 async function login() {
   if (!userInput.value || !password.value) {
-    alert('Bitte Benutzername/E-Mail und Passwort ausfüllen.')
+    alert('Bitte E-Mail und Passwort ausfüllen.')
     return
   }
 
@@ -64,9 +64,9 @@ async function login() {
       <h1>LOGIN</h1>
 
       <div class="container_formularfeld">
-        <label for="user">USER</label>
-        <input v-model="userInput" class="formularfeld" id="user" type="text"
-          placeholder="Benutzername oder E-Mail eingeben" required>
+        <label for="email">E-MAIL</label>
+        <input v-model="userInput" class="formularfeld" id="email" type="email"
+          placeholder="E-Mail eingeben" required>
       </div>
 
       <div class="container_formularfeld">

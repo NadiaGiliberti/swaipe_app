@@ -154,8 +154,17 @@ function startEditingUsername() {
 
 // NEU: Speichert den geänderten Usernamen in Supabase
 async function saveUsername() {
+    const cleanedName = editUsernameInput.value.trim()
+
     // Falls leer oder keine Änderung, einfach Modus beenden
-    if (!editUsernameInput.value.trim() || editUsernameInput.value === profil.value.username) {
+    if (!cleanedName || cleanedName === profil.value.username) {
+        isEditingUsername.value = false
+        return
+    }
+
+    // NEU: Sicherheits-Check beim Ändern
+    if (cleanedName.length > 15) {
+        errorMsg.value = 'Der Username darf maximal 15 Zeichen lang sein.'
         isEditingUsername.value = false
         return
     }
@@ -166,13 +175,12 @@ async function saveUsername() {
 
         const { error } = await supabase
             .from('profiles')
-            .update({ username: editUsernameInput.value.trim() })
+            .update({ username: cleanedName })
             .eq('id', currentUser.id)
 
         if (error) throw error
 
-        // Lokales Profil-Objekt updaten, damit es im UI umschaltet
-        profil.value.username = editUsernameInput.value.trim()
+        profil.value.username = cleanedName
         isEditingUsername.value = false
     } catch (error) {
         errorMsg.value = `Fehler beim Speichern des Usernamens: ${error.message}`
@@ -284,7 +292,7 @@ const vFocus = {
 
                 <div class="container_username_edit">
                     <input v-if="isEditingUsername" v-model="editUsernameInput" type="text" class="input_username"
-                        @keydown.enter="saveUsername" @blur="saveUsername">
+                        maxlength="15" @keydown.enter="saveUsername" @blur="saveUsername" v-focus>
                     <h3 v-else class="h3_black username_clickable" @click="startEditingUsername">
                         {{ profil.username }}
                     </h3>
@@ -340,7 +348,11 @@ const vFocus = {
         </ModalBase>
 
         <ModalBase :open="showDeleteModal" title="ACCOUNT DEAKTIVIEREN" @close="closeDeleteModal">
-            <p>Wichtiger Hinweis: Dein Account wird deaktiviert und du wirst automatisch abgemeldet. Danach hast du keinen Zugriff mehr auf dein Profil. Falls du es dir später anders überlegst, kann dir unser Support beim Reaktivieren helfen.</p>
+            <p>Wichtiger Hinweis: Dein Account wird deaktiviert und du wirst automatisch abgemeldet. Danach hast du
+                keinen
+                Zugriff mehr auf dein Profil. Falls du es dir später anders überlegst, kann dir unser Support beim
+                Reaktivieren
+                helfen.</p>
 
             <p v-if="actionError" class="error_text">{{ actionError }}</p>
 
