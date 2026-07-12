@@ -1,16 +1,31 @@
-
+// app/composables/useTheme.ts
 export const presetThemes = [
-    { name: 'Default', colors: ['#f898c1', '#5aeaa2', '#920e36'] },
-    { name: 'Darkmode', colors: ['#2b2d6e', '#e88bb3', '#0d0d1a'] },
+    { name: 'Default', colors: ['#f898c1', '#5aeaa2', '#920e36'], textDunkel: '#560000', textSchwarz: '#000000', textHell: '#ffffff' },
+    { name: 'Darkmode', colors: ['#2b2d6e', '#e88bb3', '#0d0d1a'], textDunkel: '#ffffff', textSchwarz: '#ffffff', textHell: '#000000' },
 ]
 
-export function applyTheme(colors: (string | null | undefined)[]) {
+export function applyTheme(
+    colors: (string | null | undefined)[],
+    textDunkel?: string,
+    textHell?: string,
+    textSchwarz?: string
+) {
     if (!colors || colors.length < 3) return
     if (!colors[0] || !colors[1] || !colors[2]) return
 
     document.documentElement.style.setProperty('--background-1', colors[0] ?? '')
     document.documentElement.style.setProperty('--background-2', colors[1] ?? '')
     document.documentElement.style.setProperty('--background-3', colors[2] ?? '')
+
+    if (textDunkel) {
+        document.documentElement.style.setProperty('--text-dunkel', textDunkel)
+    }
+    if (textHell) {
+        document.documentElement.style.setProperty('--text-hell', textHell)
+    }
+    if (textSchwarz) {
+        document.documentElement.style.setProperty('--text-schwarz', textSchwarz)
+    }
 }
 
 export async function loadAndApplyUserTheme(supabase: any, userId: string | undefined | null) {
@@ -18,11 +33,16 @@ export async function loadAndApplyUserTheme(supabase: any, userId: string | unde
 
     const { data, error } = await supabase
         .from('profiles')
-        .select('theme_background_1, theme_background_2, theme_background_3')
+        .select('theme_background_1, theme_background_2, theme_background_3, theme_text_dunkel, theme_text_hell, theme_text_schwarz')
         .eq('id', userId)
         .single()
 
     if (error || !data) return
 
-    applyTheme([data.theme_background_1, data.theme_background_2, data.theme_background_3])
+    applyTheme(
+        [data.theme_background_1, data.theme_background_2, data.theme_background_3],
+        data.theme_text_dunkel,
+        data.theme_text_hell,
+        data.theme_text_schwarz
+    )
 }

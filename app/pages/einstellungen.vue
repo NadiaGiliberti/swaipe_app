@@ -13,6 +13,22 @@ const themeError = ref('')
 const customColor1 = ref('#f898c1')
 const customColor2 = ref('#5aeaa2')
 const customColor3 = ref('#920e36')
+const customTextMode = ref('dunkel') // 'dunkel' oder 'hell'
+
+const volumeVorMute = ref(40)
+
+const soundIcon = computed(() => {
+    return volume.value === 0 ? '/icons/sound_off_icon.svg' : '/icons/sound_on_icon.svg'
+})
+
+function toggleMute() {
+    if (volume.value === 0) {
+        setVolume(volumeVorMute.value > 0 ? volumeVorMute.value : 40)
+    } else {
+        volumeVorMute.value = volume.value
+        setVolume(0)
+    }
+}
 
 async function ladeProfil() {
     loading.value = true
@@ -39,6 +55,7 @@ async function ladeProfil() {
         customColor1.value = data.theme_background_1 || '#f898c1'
         customColor2.value = data.theme_background_2 || '#5aeaa2'
         customColor3.value = data.theme_background_3 || '#920e36'
+        customTextMode.value = data.theme_text_schwarz === '#ffffff' ? 'hell' : 'dunkel'
     }
 
     loading.value = false
@@ -46,6 +63,9 @@ async function ladeProfil() {
 
 onMounted(() => {
     loadVolume()
+    if (volume.value > 0) {
+        volumeVorMute.value = volume.value
+    }
     ladeProfil()
 })
 
@@ -54,7 +74,7 @@ function closeThemeModal() {
     themeError.value = ''
 }
 
-async function saveThemeColors(colors) {
+async function saveTheme(colors, textDunkel, textHell, textSchwarz) {
     themeSaving.value = true
     themeError.value = ''
 
@@ -65,7 +85,10 @@ async function saveThemeColors(colors) {
         .update({
             theme_background_1: colors[0],
             theme_background_2: colors[1],
-            theme_background_3: colors[2]
+            theme_background_3: colors[2],
+            theme_text_dunkel: textDunkel,
+            theme_text_hell: textHell,
+            theme_text_schwarz: textSchwarz
         })
         .eq('id', currentUser.id)
 
@@ -76,20 +99,34 @@ async function saveThemeColors(colors) {
         return
     }
 
-    applyTheme(colors)
+    applyTheme(colors, textDunkel, textHell, textSchwarz)
 
     profil.value.theme_background_1 = colors[0]
     profil.value.theme_background_2 = colors[1]
     profil.value.theme_background_3 = colors[2]
+    profil.value.theme_text_dunkel = textDunkel
+    profil.value.theme_text_hell = textHell
+    profil.value.theme_text_schwarz = textSchwarz
 }
 
 async function choosePreset(theme) {
-    await saveThemeColors(theme.colors)
+    await saveTheme(theme.colors, theme.textDunkel, theme.textHell, theme.textSchwarz)
     showThemeModal.value = false
 }
 
 async function saveCustomTheme() {
-    await saveThemeColors([customColor1.value, customColor2.value, customColor3.value])
+    const istHell = customTextMode.value === 'hell'
+
+    const textDunkel = istHell ? '#ffffff' : '#560000'
+    const textHell = istHell ? '#000000' : '#ffffff'
+    const textSchwarz = istHell ? '#ffffff' : '#000000'
+
+    await saveTheme(
+        [customColor1.value, customColor2.value, customColor3.value],
+        textDunkel,
+        textHell,
+        textSchwarz
+    )
     showThemeModal.value = false
 }
 </script>
@@ -100,7 +137,9 @@ async function saveCustomTheme() {
         <h1>EINSTELLUNGEN</h1>
 
         <div class="container_lautstaerke">
-            <img src="/icons/sound_on_icon.svg" alt="Lautstärke an">
+            <button class="button_sound_toggle" @click="toggleMute">
+                <img :src="soundIcon" alt="Lautstärke">
+            </button>
             <input
                 type="range"
                 min="0"
@@ -109,16 +148,11 @@ async function saveCustomTheme() {
                 :value="volume"
                 @input="setVolume(Number($event.target.value))"
             >
-            <img src="/icons/sound_off_icon.svg" alt="Lautstärke aus">
         </div>
 
         <div class="container_aktionen">
             <button class="aktion" @click="showThemeModal = true">
                 THEME
-            </button>
-            <button class="aktion">
-                PUSH-NACHRICHTEN
-                <span class="aktion_hinweis">(zb. Highscore geschlagen, come back etc.)</span>
             </button>
             <button class="aktion">
                 DATENSCHUTZ
@@ -157,6 +191,28 @@ async function saveCustomTheme() {
                     <input type="color" v-model="customColor3">
                 </div>
 
+                <div class="container_text_toggle">
+                    <span class="toggle_label">SCHRIFTFARBE</span>
+                    <div class="toggle_buttons">
+                        <button
+                            type="button"
+                            class="toggle_btn"
+                            :class="{ toggle_btn_aktiv: customTextMode === 'dunkel' }"
+                            @click="customTextMode = 'dunkel'"
+                        >
+                            DUNKEL
+                        </button>
+                        <button
+                            type="button"
+                            class="toggle_btn"
+                            :class="{ toggle_btn_aktiv: customTextMode === 'hell' }"
+                            @click="customTextMode = 'hell'"
+                        >
+                            HELL
+                        </button>
+                    </div>
+                </div>
+
                 <button class="button" :disabled="themeSaving" @click="saveCustomTheme">
                     {{ themeSaving ? 'SPEICHERT...' : 'EIGENE FARBEN ÜBERNEHMEN' }}
                 </button>
@@ -177,8 +233,18 @@ async function saveCustomTheme() {
     margin-top: 5vh;
 }
 
+.button_sound_toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
 .container_lautstaerke img {
     width: 24px;
+    display: block;
 }
 
 .slider_lautstaerke {
@@ -199,12 +265,6 @@ async function saveCustomTheme() {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 6vw;
     text-align: left;
-}
-
-.aktion_hinweis {
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 2.8vw;
-    display: block;
 }
 
 .container_themes {
@@ -263,5 +323,37 @@ async function saveCustomTheme() {
     border-radius: 50%;
     cursor: pointer;
     padding: 0;
+}
+
+.container_text_toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.toggle_label {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 0.85rem;
+}
+
+.toggle_buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.toggle_btn {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 10px;
+    border: 1px solid var(--braun);
+    background: none;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+}
+
+.toggle_btn_aktiv {
+    background: var(--braun);
+    color: white;
 }
 </style>
