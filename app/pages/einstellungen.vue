@@ -100,6 +100,7 @@ async function saveTheme(colors, textDunkel, textHell, textSchwarz) {
     }
 
     applyTheme(colors, textDunkel, textHell, textSchwarz)
+    speichereThemeCookie(colors, textDunkel, textHell, textSchwarz)
 
     profil.value.theme_background_1 = colors[0]
     profil.value.theme_background_2 = colors[1]

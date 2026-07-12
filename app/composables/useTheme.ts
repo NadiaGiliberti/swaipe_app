@@ -45,4 +45,26 @@ export async function loadAndApplyUserTheme(supabase: any, userId: string | unde
         data.theme_text_hell,
         data.theme_text_schwarz
     )
+
+    speichereThemeCookie(
+        [data.theme_background_1, data.theme_background_2, data.theme_background_3],
+        data.theme_text_dunkel,
+        data.theme_text_hell,
+        data.theme_text_schwarz
+    )
+}
+
+export function speichereThemeCookie(colors: (string | null | undefined)[], textDunkel: string, textHell: string, textSchwarz: string) {
+    const cookie = useCookie('swaipe_theme', { maxAge: 60 * 60 * 24 * 365 })
+    cookie.value = JSON.stringify({ colors, textDunkel, textHell, textSchwarz })
+}
+
+export function ladeThemeAusCookie() {
+    const cookie = useCookie('swaipe_theme')
+    if (!cookie.value) return null
+    try {
+        return JSON.parse(cookie.value as string)
+    } catch {
+        return null
+    }
 }

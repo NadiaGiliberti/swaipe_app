@@ -7,7 +7,9 @@
                 <h2> PUNKTE MODUS</h2>
                 <h4> Schlage den Bestwert</h4>
                 <div class="container_buttons_wm">
-                    <buttonStart />
+                    <NuxtLink to="/spiel?modus=score" class="button button_gelb">
+                        START
+                    </NuxtLink>
                 </div>
             </div>
 
@@ -15,19 +17,19 @@
                 <h3> ÜBEN</h3>
                 <h4> Wähle eine Kategorie</h4>
                 <div class="container_buttons_ueben">
-                     <NuxtLink to="/spiel" class="button_klein button_bilder">
+                    <NuxtLink to="/spiel?modus=uebung&kategorie=BILD" class="button_klein button_bilder">
                         BILDER
                     </NuxtLink>
-                    
-                    <NuxtLink to="/spiel" class="button_klein button_videos">
+
+                    <NuxtLink to="/spiel?modus=uebung&kategorie=VIDEO" class="button_klein button_videos">
                         VIDEOS
                     </NuxtLink>
 
-                    <NuxtLink to="/spiel" class="button_klein button_audio">
+                    <NuxtLink to="/spiel?modus=uebung&kategorie=AUDIO" class="button_klein button_audio">
                         AUDIO
                     </NuxtLink>
 
-                    <NuxtLink to="/spiel" class="button_klein button_musik">
+                    <NuxtLink to="/spiel?modus=uebung&kategorie=MUSIK" class="button_klein button_musik">
                         MUSIK
                     </NuxtLink>
                 </div>
@@ -74,6 +76,10 @@
 
 /** BUTTONS KATEGORIEN */
 
+.button_gelb {
+    background: var(--gelb);
+}
+
 .button_videos {
     background: var(--braun);
 }
@@ -89,5 +95,4 @@
 .button_musik {
     background: var(--braun);
 }
-
 </style>
