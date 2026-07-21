@@ -1,11 +1,42 @@
-# Nuxt Minimal Starter
+# SWAIPE Applikation
+Ein Projekt von Nadia Giliberti
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Kurzbeschreibung
+SWAIPE ist ein app ...
 
-## Setup
+## Learnings
+- Nuxt / Vue
+- Supabase
+- PWA
+- Freunde adden funktion 
 
-Make sure to install dependencies:
+## Schwierigkeiten
+- herausfinden wie das alles geht
 
+### Known Bugs
+am Schluss ausfüllen
+
+## Datenstruktur
+- Daten werden in Supabase gepflegt ?  so irgendwas
+
+## Ressourcen
+### Schriftarten
+? nachschauen
+
+### Technologien
+- Nuxt
+- Supabase
+- Tailwind.css
+
+### Spieldaten
+- wurden von opensource Datenbanken wie unsplash, pixabay, pexels und mixkit geholt
+
+## Projekt-Setup
+- Node.js (v20.19.0 oder v22.12.0+)
+- npm (kommt mit Node.js)
+(stimmt das?)
+
+### Setup
 ```bash
 # npm
 npm install
@@ -20,7 +51,7 @@ yarn install
 bun install
 ```
 
-## Development Server
+### Development Server
 
 Start the development server on `http://localhost:3000`:
 
@@ -38,7 +69,7 @@ yarn dev
 bun run dev
 ```
 
-## Production
+### Production
 
 Build the application for production:
 
@@ -71,5 +102,3 @@ yarn preview
 # bun
 bun run preview
 ```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
