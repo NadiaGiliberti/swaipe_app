@@ -21,7 +21,7 @@
 }
 
 .icon_swaipe{
-    width:13vw;
+    width:10vw;
 }
 
 </style>
