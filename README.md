@@ -9,6 +9,7 @@ SWAIPE ist ein app ...
 - Supabase
 - PWA
 - Freunde adden funktion 
+- node.js projekt aufsetzen und mit server verbinden
 
 ## Schwierigkeiten
 - herausfinden wie das alles geht
@@ -18,6 +19,7 @@ am Schluss ausfüllen
 
 ## Datenstruktur
 - Daten werden in Supabase gepflegt ?  so irgendwas
+- Spieledaten direkt auf server der domain gelagert
 
 ## Ressourcen
 ### Schriftarten
@@ -29,7 +31,7 @@ am Schluss ausfüllen
 - Tailwind.css
 
 ### Spieldaten
-- wurden von opensource Datenbanken wie unsplash, pixabay, pexels und mixkit geholt
+- wurden von opensource Datenbanken wie unsplash, pixabay, pexels, suno, elevenlabs und mixkit geholt
 
 ## Projekt-Setup
 - Node.js (v20.19.0 oder v22.12.0+)

@@ -200,27 +200,15 @@ function buttonSwipe(antwortIstKI) {
                 <div class="label_swipe label_echt" :style="{ opacity: labelEchtOpacity }">ECHT</div>
                 <div class="label_swipe label_ki" :style="{ opacity: labelKiOpacity }">KI</div>
 
-                <div
-                    v-if="aktuelleKarte"
-                    class="karte"
-                    :style="{
-                        transform: `translate(${kartenPosition.x}px, ${kartenPosition.y}px) rotate(${kartenPosition.rotation}deg)`,
-                        transition: wirdGezogen ? 'none' : 'transform 0.3s ease'
-                    }"
-                    @mousedown="startDrag"
-                    @mousemove="onDrag"
-                    @mouseup="endDrag"
-                    @mouseleave="endDrag"
-                    @touchstart="startDrag"
-                    @touchmove="onDrag"
-                    @touchend="endDrag"
-                >
-                    <img
-                        v-if="aktuelleKarte.kategorie === 'BILD'"
-                        :src="aktuelleKarte.datei_url"
-                        class="karte_bild"
-                        draggable="false"
-                    >
+                <div v-if="aktuelleKarte" class="karte" :style="{
+                    transform: `translate(${kartenPosition.x}px, ${kartenPosition.y}px) rotate(${kartenPosition.rotation}deg)`,
+                    transition: wirdGezogen ? 'none' : 'transform 0.3s ease'
+                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag" @touchstart="startDrag"
+                    @touchmove="onDrag" @touchend="endDrag">
+                    <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
+                        draggable="false">
+                    <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
+                        class="karte_video" autoplay loop muted playsinline></video>
                     <p v-else>{{ aktuelleKarte.content_type }} / {{ aktuelleKarte.stil }}</p>
                 </div>
             </div>
