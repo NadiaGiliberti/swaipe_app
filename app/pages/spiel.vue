@@ -113,7 +113,10 @@ async function beendeSpiel() {
         if (profilData && punkte.value > profilData.highscore) {
             await supabase
                 .from('profiles')
-                .update({ highscore: punkte.value })
+                .update({
+                    highscore: punkte.value,
+                    highscore_datum: new Date().toISOString()
+                })
                 .eq('id', currentUser.id)
         }
     }
@@ -209,20 +212,14 @@ function buttonSwipe(antwortIstKI) {
                 <div v-if="aktuelleKarte" class="karte" :style="{
                     transform: `translate(${kartenPosition.x}px, ${kartenPosition.y}px) rotate(${kartenPosition.rotation}deg)`,
                     transition: wirdGezogen ? 'none' : 'transform 0.3s ease'
-                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag" @touchstart="startDrag"
-                    @touchmove="onDrag" @touchend="endDrag">
+                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag"
+                    @touchstart="startDrag" @touchmove="onDrag" @touchend="endDrag">
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
                         class="karte_video" autoplay loop muted playsinline></video>
-                    <audio
-                        v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
-                        :src="aktuelleKarte.datei_url"
-                        class="karte_audio"
-                        autoplay
-                        controls
-                        loop
-                    ></audio>
+                    <audio v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
+                        :src="aktuelleKarte.datei_url" class="karte_audio" autoplay controls loop></audio>
                     <p v-else>{{ aktuelleKarte.content_type }} / {{ aktuelleKarte.stil }}</p>
                 </div>
             </div>

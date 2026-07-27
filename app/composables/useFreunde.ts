@@ -56,8 +56,8 @@ export async function ladeFreundeUndAnfragen(supabase: any) {
             status,
             anfragender_id,
             empfaenger_id,
-            anfragender:profiles!freundschaften_anfragender_id_fkey(id, username, profilbild_url),
-            empfaenger:profiles!freundschaften_empfaenger_id_fkey(id, username, profilbild_url)
+            anfragender:profiles!freundschaften_anfragender_id_fkey(id, username, profilbild_url, highscore, highscore_datum),
+            empfaenger:profiles!freundschaften_empfaenger_id_fkey(id, username, profilbild_url, highscore, highscore_datum)
         `)
         .or(`anfragender_id.eq.${currentUser.id},empfaenger_id.eq.${currentUser.id}`)
 
