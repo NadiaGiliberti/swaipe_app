@@ -7,7 +7,6 @@ const { data: spiele, error } = await supabase
   .from('spieldaten_live')
   .select('*')
 
-console.log('Spieldaten:', spiele)
 console.log('Fehler:', error)
 </script>
 

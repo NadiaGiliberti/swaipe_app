@@ -17,11 +17,11 @@ export async function ladeSpielkarten(supabase: any, kategorie: string | null, a
         query = query.eq('kategorie', kategorie)
     }
 
-    const { data, error } = await query.limit(50)
+    const { data, error } = await query
 
     if (error || !data) return []
 
-    // Zufällig mischen und auf gewünschte Anzahl kürzen
+    // Zufällig mischen über ALLE gefundenen Einträge, erst danach kürzen
     const gemischt = [...data].sort(() => Math.random() - 0.5)
     return gemischt.slice(0, anzahl)
 }
