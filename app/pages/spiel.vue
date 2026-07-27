@@ -96,7 +96,13 @@ async function beendeSpiel() {
     }
 
     if (modus === 'score' && punkte.value > 0) {
-        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
+
+        if (userError || !currentUser) {
+            await supabase.auth.signOut()
+            await navigateTo('/login')
+            return
+        }
 
         const { data: profilData } = await supabase
             .from('profiles')
