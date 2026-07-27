@@ -209,6 +209,14 @@ function buttonSwipe(antwortIstKI) {
                         draggable="false">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
                         class="karte_video" autoplay loop muted playsinline></video>
+                    <audio
+                        v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
+                        :src="aktuelleKarte.datei_url"
+                        class="karte_audio"
+                        autoplay
+                        controls
+                        loop
+                    ></audio>
                     <p v-else>{{ aktuelleKarte.content_type }} / {{ aktuelleKarte.stil }}</p>
                 </div>
             </div>
@@ -305,6 +313,18 @@ function buttonSwipe(antwortIstKI) {
     object-fit: cover;
     border-radius: 30px;
     pointer-events: none;
+}
+
+.karte_video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 30px;
+    pointer-events: none;
+}
+
+.karte_audio {
+    width: 90%;
 }
 
 .container_swipe_buttons {
