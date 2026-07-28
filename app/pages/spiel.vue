@@ -11,6 +11,8 @@ const aktuellerIndex = ref(0)
 const punkte = ref(0)
 const korrekt = ref(0)
 const falsch = ref(0)
+const aktuelleSerie = ref(0)
+const besteSerie = ref(0)
 const ladeFehler = ref('')
 const bereit = ref(false)
 
@@ -81,9 +83,14 @@ async function beantworten(antwortIstKI) {
 
     if (warRichtig) {
         korrekt.value++
+        aktuelleSerie.value++
+        if (aktuelleSerie.value > besteSerie.value) {
+            besteSerie.value = aktuelleSerie.value
+        }
         if (modus === 'score') punkte.value += 100
     } else {
         falsch.value++
+        aktuelleSerie.value = 0
     }
 
     await speichereAntwort(supabase, aktuelleKarte.value.id, warRichtig)
@@ -104,7 +111,8 @@ async function beendeSpiel() {
         punkte: punkte.value,
         korrekt: korrekt.value,
         falsch: falsch.value,
-        gesamt: korrekt.value + falsch.value
+        gesamt: korrekt.value + falsch.value,
+        besteSerie: besteSerie.value
     }
 
     if (modus === 'score' && punkte.value > 0) {

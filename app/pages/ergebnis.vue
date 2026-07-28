@@ -43,6 +43,10 @@ const genauigkeit = computed(() => {
                 <h2>STATS</h2>
 
                 <div class="stat_zeile">
+                    <span>BESTSERIE</span>
+                    <span>{{ ergebnis.besteSerie }}</span>
+                </div>
+                <div class="stat_zeile">
                     <span>RICHTIG</span>
                     <span>{{ ergebnis.korrekt }}/{{ ergebnis.gesamt }}</span>
                 </div>
