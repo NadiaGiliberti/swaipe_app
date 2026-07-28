@@ -54,12 +54,24 @@ async function initSpiel() {
     }
 }
 
+function handleKeydown(event) {
+    if (!bereit.value || !aktuelleKarte.value) return
+
+    if (event.key === 'ArrowLeft') {
+        buttonSwipe(false)
+    } else if (event.key === 'ArrowRight') {
+        buttonSwipe(true)
+    }
+}
+
 onMounted(() => {
     initSpiel()
+    window.addEventListener('keydown', handleKeydown)
 })
 
 onUnmounted(() => {
     if (timerInterval) clearInterval(timerInterval)
+    window.removeEventListener('keydown', handleKeydown)
 })
 
 async function beantworten(antwortIstKI) {
@@ -234,7 +246,8 @@ function buttonSwipe(antwortIstKI) {
             </div>
 
             <div class="container_swipe_info">
-                <h4>Swipe nach links für Real erstellt und nach rechts für KI generiert</h4>
+                <h4 class="swipe_info_handy">Swipe nach links für Real erstellt und nach rechts für KI generiert</h4>
+                <h4 class="swipe_info_pc">Drücke die linke Pfeiltaste für Real erstellt und die rechte für KI generiert</h4>
             </div>
         </template>
 
@@ -356,11 +369,26 @@ function buttonSwipe(antwortIstKI) {
     background: var(--background-3);
 }
 
-.container_swipe_info {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 80%;
-    margin-top: 2rem;
+.container_swipe_buttons {
+    display: none;
+}
+
+.swipe_info_pc {
+    display: none;
+}
+
+/* Ab Tablet/Desktop-Breite: Buttons zeigen, Handy-Hinweistext ausblenden */
+@media (min-width: 768px) {
+    .container_swipe_buttons {
+        display: flex;
+    }
+
+    .swipe_info_handy {
+        display: none;
+    }
+
+    .swipe_info_pc {
+        display: block;
+    }
 }
 </style>

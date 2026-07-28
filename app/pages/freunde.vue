@@ -199,26 +199,33 @@ async function handleEntfernen(freundschaftId) {
 }
 
 .container_suche {
-    width: 85%;
+    width: 80%;
     margin-top: 3rem;
 }
-
 .suche_feld {
+    position: relative;
     display: flex;
-    gap: 0.5rem;
     align-items: center;
 }
 
 .suche_feld .formularfeld {
     flex: 1;
     margin-top: 0;
+    padding-right: 3.5rem;
+    border-radius: 100px;
+    height: 3rem; /* feste Höhe, damit du sie kennst */
 }
 
 .button_suche {
-    background: var(--gelb);
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--braun);
     border: none;
-    border-radius: 10px;
-    padding: 0.6rem 0.8rem;
+    border-radius: 50%;
+    width: 3.1rem;   /* etwas GRÖSSER als .formularfeld Höhe (3rem) */
+    height: 3.1rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -226,7 +233,7 @@ async function handleEntfernen(freundschaftId) {
 }
 
 .button_suche img {
-    width: 20px;
+    width: 2rem;   
     display: block;
 }
 
