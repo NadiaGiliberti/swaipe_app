@@ -1,11 +1,23 @@
 <script setup>
-const ergebnis = ref(null)
+const supabase = useSupabaseClient()
+const user = useSupabaseUser()
 
-onMounted(() => {
+const ergebnis = ref(null)
+const top3Freunde = ref([])
+const ladeFreundeLoading = ref(true)
+
+onMounted(async () => {
     const gespeichert = sessionStorage.getItem('swaipe_ergebnis')
     if (gespeichert) {
         ergebnis.value = JSON.parse(gespeichert)
     }
+
+    if (ergebnis.value?.modus === 'score' && user.value) {
+        const ranking = await ladeFreundeRanking(supabase, user.value.id)
+        top3Freunde.value = ranking.slice(0, 3)
+    }
+
+    ladeFreundeLoading.value = false
 })
 
 const genauigkeit = computed(() => {
@@ -19,7 +31,7 @@ const genauigkeit = computed(() => {
 
         <template v-if="ergebnis">
             <template v-if="ergebnis.modus === 'score'">
-                <h1>{{ ergebnis.punkte }}</h1>
+                <h1>{{ ergebnis.punkte.toLocaleString('de-CH') }}</h1>
                 <h3>PUNKTE</h3>
             </template>
             <template v-else>
@@ -41,6 +53,24 @@ const genauigkeit = computed(() => {
                 <div class="stat_zeile">
                     <span>GENAUIGKEIT</span>
                     <span>{{ genauigkeit }}%</span>
+                </div>
+            </div>
+
+            <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
+                <h2>FREUNDE</h2>
+
+                <div
+                    v-for="eintrag in top3Freunde"
+                    :key="eintrag.id"
+                    class="freund_vergleich_item"
+                    :class="{ freund_vergleich_item_ich: eintrag.istIch }"
+                >
+                    <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="freund_vergleich_avatar">
+                    <span class="freund_vergleich_name">
+                        {{ eintrag.istIch ? 'DU' : eintrag.username }}
+                        <span class="freund_vergleich_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
+                    </span>
+                    <span class="freund_vergleich_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
                 </div>
             </div>
 
@@ -74,10 +104,55 @@ const genauigkeit = computed(() => {
     margin-top: 0.5rem;
 }
 
+.container_freunde_vergleich {
+    width: 80%;
+    margin-top: 3rem;
+}
+
+.freund_vergleich_item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-top: 0.8rem;
+}
+
+.freund_vergleich_item_ich .freund_vergleich_name,
+.freund_vergleich_item_ich .freund_vergleich_score {
+    color: var(--gelb);
+}
+
+.freund_vergleich_avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.freund_vergleich_name {
+    flex: 1;
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 1.2rem;
+    color: var(--text-dunkel);
+}
+
+.freund_vergleich_datum {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 0.5rem;
+    color: var(--text-dunkel);
+    opacity: 0.7;
+    margin-left: 0.4rem;
+}
+
+.freund_vergleich_score {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 1.2rem;
+    color: var(--text-dunkel);
+}
+
 .button_nochmal {
     background: var(--gelb);
     color: white;
-}
+} 
 
 .button_kategorien_highscores {
     background: var(--braun);

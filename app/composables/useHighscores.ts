@@ -8,6 +8,8 @@ export function formatDatum(iso: string | null) {
 export async function ladeTopAlle(supabase: any, limit = 10) {
     const { data: { user: currentUser } } = await supabase.auth.getUser()
 
+    if (!currentUser) return { liste: [], eigenerRang: null, eigenerEintrag: null }
+
     const { data: topListe, error } = await supabase
         .from('profiles')
         .select('id, username, profilbild_url, highscore, highscore_datum')
@@ -16,10 +18,15 @@ export async function ladeTopAlle(supabase: any, limit = 10) {
 
     if (error || !topListe) return { liste: [], eigenerRang: null, eigenerEintrag: null }
 
-    const eigenerInListe = topListe.some((p: any) => p.id === currentUser.id)
+    const topListeMitFlag = topListe.map((eintrag: any) => ({
+        ...eintrag,
+        istIch: eintrag.id === currentUser.id
+    }))
+
+    const eigenerInListe = topListeMitFlag.some((p: any) => p.istIch)
 
     if (eigenerInListe) {
-        return { liste: topListe, eigenerRang: null, eigenerEintrag: null }
+        return { liste: topListeMitFlag, eigenerRang: null, eigenerEintrag: null }
     }
 
     const { data: eigenesProfil } = await supabase
@@ -34,25 +41,40 @@ export async function ladeTopAlle(supabase: any, limit = 10) {
         .gt('highscore', eigenesProfil.highscore)
 
     return {
-        liste: topListe,
+        liste: topListeMitFlag,
         eigenerRang: (count ?? 0) + 1,
-        eigenerEintrag: eigenesProfil
+        eigenerEintrag: { ...eigenesProfil, istIch: true }
     }
 }
 
-export async function ladeFreundeRanking(supabase: any) {
-    const { data: { user: currentUser } } = await supabase.auth.getUser()
+export async function ladeFreundeRanking(supabase: any, currentUserId?: string) {
+    // Absicherung: falls keine gültige ID übergeben wurde, selbst aktiv nachfragen
+    let userId = currentUserId
+
+    if (!userId) {
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        if (!currentUser) return []
+        userId = currentUser.id
+    }
 
     const { freunde } = await ladeFreundeUndAnfragen(supabase)
 
-    const { data: eigenesProfil } = await supabase
+    const { data: eigenesProfil, error } = await supabase
         .from('profiles')
         .select('id, username, profilbild_url, highscore, highscore_datum')
-        .eq('id', currentUser.id)
+        .eq('id', userId)
         .single()
+
+    if (error) {
+        console.error('Fehler beim Laden des eigenen Profils:', error)
+    }
 
     const alleEintraege = [...freunde, eigenesProfil]
         .filter(Boolean)
+        .map((eintrag: any) => ({
+            ...eintrag,
+            istIch: eintrag.id === userId
+        }))
         .sort((a: any, b: any) => (b.highscore ?? 0) - (a.highscore ?? 0))
 
     return alleEintraege

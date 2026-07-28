@@ -20,7 +20,8 @@ async function ladeAlle() {
 }
 
 async function ladeFreunde() {
-  freundeRanking.value = await ladeFreundeRanking(supabase)
+  if (!user.value) return
+  freundeRanking.value = await ladeFreundeRanking(supabase, user.value.id)
 }
 
 onMounted(async () => {
@@ -60,10 +61,10 @@ function istEigenerUser(id) {
       <!-- FREUNDE -->
       <div v-if="aktiverTab === 'freunde'" class="container_rangliste">
         <div v-for="(eintrag, index) in sichtbareFreunde" :key="eintrag.id" class="rang_item"
-          :class="{ rang_item_ich: istEigenerUser(eintrag.id) }">
+          :class="{ rang_item_ich: eintrag.istIch }">
           <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar">
           <span class="rang_name">
-            {{ istEigenerUser(eintrag.id) ? 'DU' : eintrag.username }}
+            {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
           </span>
           <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
@@ -80,10 +81,10 @@ function istEigenerUser(id) {
       <!-- ALLE -->
       <div v-if="aktiverTab === 'alle'" class="container_rangliste">
         <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
-          :class="{ rang_item_ich: istEigenerUser(eintrag.id) }">
+          :class="{ rang_item_ich: eintrag.istIch }">
           <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar">
           <span class="rang_name">
-            {{ istEigenerUser(eintrag.id) ? 'DU' : eintrag.username }}
+            {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
           </span>
           <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
