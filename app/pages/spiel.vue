@@ -36,11 +36,17 @@ const labelEchtOpacity = computed(() => {
 })
 
 async function initSpiel() {
-    karten.value = await ladeSpielkarten(supabase, kategorie, modus === 'score' ? 50 : anzahlFragen)
+    const geladen = await ladeSpielkarten(supabase, kategorie, modus === 'score' ? 100 : anzahlFragen)
 
-    if (karten.value.length === 0) {
+    if (geladen.length === 0) {
         ladeFehler.value = 'Keine Inhalte gefunden.'
         return
+    }
+
+    if (modus === 'score') {
+        karten.value = baueAusgeglicheneReihenfolge(geladen)
+    } else {
+        karten.value = [...geladen].sort(() => Math.random() - 0.5).slice(0, anzahlFragen)
     }
 
     bereit.value = true
@@ -87,13 +93,26 @@ async function beantworten(antwortIstKI) {
         if (aktuelleSerie.value > besteSerie.value) {
             besteSerie.value = aktuelleSerie.value
         }
-        if (modus === 'score') punkte.value += 100
+
+        if (modus === 'score') {
+            punkte.value += 100 + (aktuelleSerie.value * 10)
+        }
     } else {
         falsch.value++
         aktuelleSerie.value = 0
     }
 
     await speichereAntwort(supabase, aktuelleKarte.value.id, warRichtig)
+
+    if (modus === 'score' && warRichtig && korrekt.value % 5 === 0) {
+        const minSchwierigkeit = Math.min(2 + Math.floor(korrekt.value / 5), 5)
+        const restKarten = karten.value.slice(aktuellerIndex.value + 1)
+        const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
+        karten.value = [
+            ...karten.value.slice(0, aktuellerIndex.value + 1),
+            ...neueRestKarten
+        ]
+    }
 
     aktuellerIndex.value++
 
