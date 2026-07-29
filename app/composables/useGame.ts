@@ -27,11 +27,14 @@ export async function ladeSpielkarten(supabase: any, kategorie: string | null, a
 }
 
 // Baut eine Reihenfolge, die ECHT und KI abwechselnd ausspielt.
-// KI wird nach Schwierigkeit aufsteigend sortiert (leicht -> schwer),
-// ECHT wird nur gemischt, da dessen Schwierigkeit nicht aussagekräftig ist.
-export function baueAusgeglicheneReihenfolge(karten: Spielkarte[]): Spielkarte[] {
+// KI wird ab startMinSchwierigkeit gefiltert und aufsteigend sortiert.
+export function baueAusgeglicheneReihenfolge(karten: Spielkarte[], startMinSchwierigkeit = 1): Spielkarte[] {
     const echt = karten.filter((k: Spielkarte) => k.herkunft === 'ECHT')
-    const ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI')
+    let ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI' && (k.schwierigkeit_aktuell ?? 2) >= startMinSchwierigkeit)
+
+    if (ki.length === 0) {
+        ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI')
+    }
 
     const kiSortiert = [...ki].sort((a: Spielkarte, b: Spielkarte) => {
         const diff = (a.schwierigkeit_aktuell ?? 2) - (b.schwierigkeit_aktuell ?? 2)
@@ -58,8 +61,7 @@ export function baueAusgeglicheneReihenfolge(karten: Spielkarte[]): Spielkarte[]
 
     return ergebnis
 }
-// Wie oben, aber die KI-Auswahl wird zusätzlich auf eine Mindestschwierigkeit beschränkt.
-// ECHT bleibt unangetastet -> Balance bleibt erhalten, auch wenn KI schwerer wird.
+
 export function baueErschwerteReihenfolge(restKarten: Spielkarte[], minSchwierigkeit: number): Spielkarte[] {
     const echt = restKarten.filter((k: Spielkarte) => k.herkunft === 'ECHT')
     let ki = restKarten.filter((k: Spielkarte) => k.herkunft === 'KI' && (k.schwierigkeit_aktuell ?? 2) >= minSchwierigkeit)
@@ -69,6 +71,26 @@ export function baueErschwerteReihenfolge(restKarten: Spielkarte[], minSchwierig
     }
 
     return baueAusgeglicheneReihenfolge([...echt, ...ki])
+}
+
+// Userlevel (1-10) -> Startschwierigkeit für KI-Karten (1-5)
+export function levelZuStartSchwierigkeit(level: number): number {
+    return Math.min(1 + Math.floor((level - 1) / 2), 5)
+}
+
+// Level-Multiplikator: höheres Level = mehr Punkte pro richtiger Antwort (gilt für ECHT + KI)
+export function levelMultiplikator(level: number): number {
+    return 1 + (level - 1) * 0.05
+}
+
+// Schwierigkeits-Multiplikator: schwerere Karten geben mehr Punkte
+export function schwierigkeitMultiplikator(schwierigkeit: number): number {
+    return 0.7 + ((schwierigkeit ?? 2) - 1) * 0.15
+}
+
+export function berechneKartenPunkte(schwierigkeit: number, userLevel: number): number {
+    const basis = 100
+    return Math.round(basis * schwierigkeitMultiplikator(schwierigkeit) * levelMultiplikator(userLevel))
 }
 
 export async function speichereAntwort(supabase: any, spielId: number, warRichtig: boolean) {

@@ -4,7 +4,7 @@ const supabase = useSupabaseClient()
 
 const modus = route.query.modus === 'score' ? 'score' : 'uebung'
 const kategorie = route.query.kategorie || null
-const anzahlFragen = modus === 'score' ? 999 : 10 // score = zeitbasiert, uebung = feste Anzahl
+const anzahlFragen = modus === 'score' ? 999 : 10
 
 const karten = ref([])
 const aktuellerIndex = ref(0)
@@ -15,6 +15,8 @@ const aktuelleSerie = ref(0)
 const besteSerie = ref(0)
 const ladeFehler = ref('')
 const bereit = ref(false)
+const userLevel = ref(1)
+const ESKALATION_ALLE_X_RICHTIGE = 15 // anpassen falls die Spieldaten weniger schnell oder schneller schwieriger werden sollen
 
 const zeitVerbleibend = ref(60)
 let timerInterval = null
@@ -49,7 +51,26 @@ function zeigeComboFalls(serie) {
     }
 }
 
+async function ladeUserLevel() {
+    if (modus !== 'score') return
+
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (!currentUser) return
+
+    const { data } = await supabase
+        .from('profiles')
+        .select('user_level')
+        .eq('id', currentUser.id)
+        .single()
+
+    if (data) {
+        userLevel.value = data.user_level ?? 1
+    }
+}
+
 async function initSpiel() {
+    await ladeUserLevel()
+
     const geladen = await ladeSpielkarten(supabase, kategorie, modus === 'score' ? 100 : anzahlFragen)
 
     if (geladen.length === 0) {
@@ -58,7 +79,8 @@ async function initSpiel() {
     }
 
     if (modus === 'score') {
-        karten.value = baueAusgeglicheneReihenfolge(geladen)
+        const startMin = levelZuStartSchwierigkeit(userLevel.value)
+        karten.value = baueAusgeglicheneReihenfolge(geladen, startMin)
     } else {
         karten.value = [...geladen].sort(() => Math.random() - 0.5).slice(0, anzahlFragen)
     }
@@ -110,7 +132,8 @@ async function beantworten(antwortIstKI) {
         }
 
         if (modus === 'score') {
-            punkte.value += 100 + (aktuelleSerie.value * 10)
+            const kartenPunkte = berechneKartenPunkte(aktuelleKarte.value.schwierigkeit_aktuell, userLevel.value)
+            punkte.value += kartenPunkte + (aktuelleSerie.value * 10)
             zeigeComboFalls(aktuelleSerie.value)
         }
     } else {
@@ -120,15 +143,15 @@ async function beantworten(antwortIstKI) {
 
     await speichereAntwort(supabase, aktuelleKarte.value.id, warRichtig)
 
-    if (modus === 'score' && warRichtig && korrekt.value % 5 === 0) {
-        const minSchwierigkeit = Math.min(2 + Math.floor(korrekt.value / 5), 5)
-        const restKarten = karten.value.slice(aktuellerIndex.value + 1)
-        const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
-        karten.value = [
-            ...karten.value.slice(0, aktuellerIndex.value + 1),
-            ...neueRestKarten
-        ]
-    }
+    if (modus === 'score' && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
+    const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / ESKALATION_ALLE_X_RICHTIGE), 5)
+    const restKarten = karten.value.slice(aktuellerIndex.value + 1)
+    const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
+    karten.value = [
+        ...karten.value.slice(0, aktuellerIndex.value + 1),
+        ...neueRestKarten
+    ]
+}
 
     aktuellerIndex.value++
 
@@ -150,7 +173,7 @@ async function beendeSpiel() {
         besteSerie: besteSerie.value
     }
 
-    if (modus === 'score' && punkte.value > 0) {
+    if (modus === 'score') {
         const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
 
         if (userError || !currentUser) {
@@ -161,18 +184,34 @@ async function beendeSpiel() {
 
         const { data: profilData } = await supabase
             .from('profiles')
-            .select('highscore')
+            .select('highscore, user_level')
             .eq('id', currentUser.id)
             .single()
 
+        const updates = {}
+
         if (profilData && punkte.value > profilData.highscore) {
-            await supabase
-                .from('profiles')
-                .update({
-                    highscore: punkte.value,
-                    highscore_datum: new Date().toISOString()
-                })
-                .eq('id', currentUser.id)
+            updates.highscore = punkte.value
+            updates.highscore_datum = new Date().toISOString()
+        }
+
+        if (profilData && ergebnis.gesamt >= 5) {
+            const genauigkeit = ergebnis.korrekt / ergebnis.gesamt
+            let neuesLevel = profilData.user_level ?? 1
+
+            if (genauigkeit >= 0.75) {
+                neuesLevel = Math.min(neuesLevel + 1, 10)
+            } else if (genauigkeit <= 0.4) {
+                neuesLevel = Math.max(neuesLevel - 1, 1)
+            }
+
+            if (neuesLevel !== profilData.user_level) {
+                updates.user_level = neuesLevel
+            }
+        }
+
+        if (Object.keys(updates).length > 0) {
+            await supabase.from('profiles').update(updates).eq('id', currentUser.id)
         }
     }
 
@@ -209,9 +248,9 @@ function endDrag() {
     const schwelle = 100
 
     if (kartenPosition.value.x > schwelle) {
-        swipeAbschliessen(true) // rechts = KI
+        swipeAbschliessen(true)
     } else if (kartenPosition.value.x < -schwelle) {
-        swipeAbschliessen(false) // links = ECHT
+        swipeAbschliessen(false)
     } else {
         kartenPosition.value = { x: 0, y: 0, rotation: 0 }
     }
@@ -368,6 +407,7 @@ function buttonSwipe(antwortIstKI) {
     font-size: 2rem;
     font-weight: bold;
     color: var(--gelb);
+    text-shadow: 2px 2px 0 var(--braun);
     z-index: 3;
     pointer-events: none;
 }
@@ -464,7 +504,6 @@ function buttonSwipe(antwortIstKI) {
     display: none;
 }
 
-/* Ab Tablet/Desktop-Breite: Buttons zeigen, Handy-Hinweistext ausblenden */
 @media (min-width: 768px) {
     .container_swipe_buttons {
         display: flex;
