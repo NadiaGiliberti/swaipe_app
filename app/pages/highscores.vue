@@ -162,6 +162,8 @@ function istEigenerUser(id) {
   font-family: 'BarlowCondensed', sans-serif;
   font-size: 1.4rem;
   color: var(--text-dunkel);
+  text-transform: uppercase;
+
 }
 
 .rang_datum {

@@ -312,6 +312,9 @@ const vFocus = {
             </div>
         </template>
 
+
+        <BadgesListe />
+
         <buttonZurueck />
 
         <ModalBase :open="showEmailModal" title="E-MAIL ÄNDERN" @close="closeEmailModal">
@@ -418,6 +421,7 @@ const vFocus = {
 .username_clickable {
     cursor: pointer;
     transition: opacity 0.2s;
+    text-transform: uppercase;
 }
 
 .username_clickable:hover {
@@ -435,6 +439,7 @@ const vFocus = {
     border: none;
     border-bottom: 2px solid var(--braun, #000);
     /* Kleiner Unterstrich beim Editieren */
+    text-transform: uppercase;
     outline: none;
     background: transparent;
     padding: 2px;

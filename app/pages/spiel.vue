@@ -207,7 +207,8 @@ async function beendeSpiel() {
         falsch: falsch.value,
         gesamt: gesamtAntworten,
         besteSerie: besteSerie.value,
-        perfekteRunde
+        perfekteRunde,
+        neueBadges: []
     }
 
     if (modus === 'score') {
@@ -221,7 +222,7 @@ async function beendeSpiel() {
 
         const { data: profilData } = await supabase
             .from('profiles')
-            .select('highscore, level_bild, level_video, level_audio, level_musik')
+            .select('highscore, level_bild, level_video, level_audio, level_musik, gespielte_runden')
             .eq('id', currentUser.id)
             .single()
 
@@ -232,8 +233,6 @@ async function beendeSpiel() {
             updates.highscore_datum = new Date().toISOString()
         }
 
-
-        // Kategoriespezifische Level, jeweils nur wenn genug Antworten in dieser Kategorie
         if (profilData) {
             for (const [kat, stats] of Object.entries(kategorieStats.value)) {
                 if (stats.gesamt < 3) continue
@@ -260,6 +259,31 @@ async function beendeSpiel() {
         if (Object.keys(updates).length > 0) {
             await supabase.from('profiles').update(updates).eq('id', currentUser.id)
         }
+
+        const neueGespielteRunden = (profilData?.gespielte_runden ?? 0) + 1
+        await supabase
+            .from('profiles')
+            .update({ gespielte_runden: neueGespielteRunden })
+            .eq('id', currentUser.id)
+
+        const finalLevels = {
+            BILD: updates.level_bild ?? profilData?.level_bild ?? 1,
+            VIDEO: updates.level_video ?? profilData?.level_video ?? 1,
+            AUDIO: updates.level_audio ?? profilData?.level_audio ?? 1,
+            MUSIK: updates.level_musik ?? profilData?.level_musik ?? 1
+        }
+
+        const finalHighscore = updates.highscore ?? profilData?.highscore ?? 0
+
+        const neueBadges = await pruefeUndVergebeBadges(supabase, currentUser.id, {
+            perfekteRunde,
+            besteSerie: besteSerie.value,
+            levels: finalLevels,
+            highscore: finalHighscore,
+            gespielteRunden: neueGespielteRunden
+        })
+
+        ergebnis.neueBadges = neueBadges
     }
 
     sessionStorage.setItem('swaipe_ergebnis', JSON.stringify(ergebnis))

@@ -96,13 +96,8 @@ async function handleEntfernen(freundschaftId) {
             <div class="container_suche">
                 <h3>FREUNDE EINLADEN</h3>
                 <div class="suche_feld">
-                    <input
-                        v-model="sucheInput"
-                        type="text"
-                        class="formularfeld"
-                        placeholder="Username eingeben"
-                        @keyup.enter="handleSuche"
-                    >
+                    <input v-model="sucheInput" type="text" class="formularfeld" placeholder="Username eingeben"
+                        @keyup.enter="handleSuche">
                     <button class="button_suche" @click="handleSuche">
                         <img src="/icons/search_icon.svg" alt="Suchen">
                     </button>
@@ -179,6 +174,7 @@ async function handleEntfernen(freundschaftId) {
 }
 
 .freund_item span {
+    text-transform: uppercase;
     flex: 1;
 }
 
@@ -202,6 +198,7 @@ async function handleEntfernen(freundschaftId) {
     width: 80%;
     margin-top: 3rem;
 }
+
 .suche_feld {
     position: relative;
     display: flex;
@@ -213,7 +210,8 @@ async function handleEntfernen(freundschaftId) {
     margin-top: 0;
     padding-right: 3.5rem;
     border-radius: 100px;
-    height: 3rem; /* feste Höhe, damit du sie kennst */
+    height: 3rem;
+    /* feste Höhe, damit du sie kennst */
 }
 
 .button_suche {
@@ -224,7 +222,8 @@ async function handleEntfernen(freundschaftId) {
     background: var(--braun);
     border: none;
     border-radius: 50%;
-    width: 3.1rem;   /* etwas GRÖSSER als .formularfeld Höhe (3rem) */
+    width: 3.1rem;
+    /* etwas GRÖSSER als .formularfeld Höhe (3rem) */
     height: 3.1rem;
     cursor: pointer;
     display: flex;
@@ -233,7 +232,7 @@ async function handleEntfernen(freundschaftId) {
 }
 
 .button_suche img {
-    width: 2rem;   
+    width: 2rem;
     display: block;
 }
 

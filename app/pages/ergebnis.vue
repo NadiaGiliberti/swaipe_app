@@ -5,11 +5,19 @@ const user = useSupabaseUser()
 const ergebnis = ref(null)
 const top3Freunde = ref([])
 const ladeFreundeLoading = ref(true)
+const zeigePerfekteRunde = ref(false)
 
 onMounted(async () => {
     const gespeichert = sessionStorage.getItem('swaipe_ergebnis')
     if (gespeichert) {
         ergebnis.value = JSON.parse(gespeichert)
+    }
+
+    if (ergebnis.value?.perfekteRunde) {
+        zeigePerfekteRunde.value = true
+        setTimeout(() => {
+            zeigePerfekteRunde.value = false
+        }, 2500)
     }
 
     if (ergebnis.value?.modus === 'score' && user.value) {
@@ -33,7 +41,6 @@ const genauigkeit = computed(() => {
             <template v-if="ergebnis.modus === 'score'">
                 <h1>{{ ergebnis.punkte.toLocaleString('de-CH') }}</h1>
                 <h3>PUNKTE</h3>
-                <p v-if="ergebnis.perfekteRunde" class="perfekte_runde_hinweis">🎯 PERFEKTE RUNDE! +500 Bonus</p>
             </template>
             <template v-else>
                 <h1>{{ ergebnis.korrekt }}/{{ ergebnis.gesamt }}</h1>
@@ -88,6 +95,26 @@ const genauigkeit = computed(() => {
             <buttonZurueck />
         </template>
 
+        <Transition name="toast">
+            <div v-if="zeigePerfekteRunde" class="perfekte_runde_toast">
+                PERFEKTE RUNDE! +500
+            </div>
+        </Transition>
+
+        <Transition name="fade">
+            <div v-if="ergebnis?.neueBadges && ergebnis.neueBadges.length > 0" class="badge_popup">
+                <div class="badge_popup_inner">
+                    <h3>NEUE ABZEICHEN!</h3>
+                    <div v-for="badge in ergebnis.neueBadges" :key="badge.id" class="badge_popup_item">
+                        <img :src="badge.icon" class="badge_popup_icon" :alt="badge.name">
+                        <span class="badge_popup_name">{{ badge.name }}</span>
+                        <span class="badge_popup_beschreibung">{{ badge.beschreibung }}</span>
+                    </div>
+                    <button class="button_klein" @click="ergebnis.neueBadges = []">Weiter</button>
+                </div>
+            </div>
+        </Transition>
+
     </main>
 </template>
 
@@ -135,6 +162,7 @@ const genauigkeit = computed(() => {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 1.2rem;
     color: var(--text-dunkel);
+    text-transform: uppercase;
 }
 
 .freund_vergleich_datum {
@@ -160,11 +188,101 @@ const genauigkeit = computed(() => {
     background: var(--braun);
 }
 
-.perfekte_runde_hinweis {
+.perfekte_runde_toast {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9000;
+
+    background: var(--braun);
+    color: white;
     font-family: 'DotGothic16', sans-serif;
     font-size: 1rem;
-    color: var(--gelb);
+    letter-spacing: 0.05rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 30px;
+    white-space: nowrap;
+}
+
+.toast-enter-active {
+    animation: toast-pop 0.3s ease-out;
+}
+
+.toast-leave-active {
+    transition: opacity 0.4s ease;
+}
+
+.toast-leave-to {
+    opacity: 0;
+}
+
+@keyframes toast-pop {
+    0% {
+        transform: translateX(-50%) translateY(-10px) scale(0.8);
+        opacity: 0;
+    }
+    60% {
+        transform: translateX(-50%) translateY(0) scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: translateX(-50%) translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.badge_popup {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.badge_popup_inner {
+    background: var(--background-base);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    max-width: 320px;
     text-align: center;
-    margin-top: 0.5rem;
+}
+
+.badge_popup_item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.badge_popup_icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 0.4rem;
+}
+
+.badge_popup_name {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.1rem;
+    color: var(--gelb);
+}
+
+.badge_popup_beschreibung {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 1rem;
+    color: var(--text-dunkel);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
