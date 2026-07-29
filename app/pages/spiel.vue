@@ -24,6 +24,9 @@ const wirdGezogen = ref(false)
 let startX = 0
 let startY = 0
 
+const comboAnzeige = ref('')
+let comboTimeout = null
+
 const aktuelleKarte = computed(() => karten.value[aktuellerIndex.value])
 const fertig = computed(() => aktuellerIndex.value >= karten.value.length || (modus === 'score' && zeitVerbleibend.value <= 0))
 
@@ -34,6 +37,17 @@ const labelKiOpacity = computed(() => {
 const labelEchtOpacity = computed(() => {
     return Math.min(Math.max(-kartenPosition.value.x / 150, 0), 1)
 })
+
+function zeigeComboFalls(serie) {
+    if (serie >= 3 && [3, 5, 10, 15, 20].includes(serie)) {
+        comboAnzeige.value = `COMBO x${serie}`
+
+        if (comboTimeout) clearTimeout(comboTimeout)
+        comboTimeout = setTimeout(() => {
+            comboAnzeige.value = ''
+        }, 1000)
+    }
+}
 
 async function initSpiel() {
     const geladen = await ladeSpielkarten(supabase, kategorie, modus === 'score' ? 100 : anzahlFragen)
@@ -79,6 +93,7 @@ onMounted(() => {
 
 onUnmounted(() => {
     if (timerInterval) clearInterval(timerInterval)
+    if (comboTimeout) clearTimeout(comboTimeout)
     window.removeEventListener('keydown', handleKeydown)
 })
 
@@ -96,6 +111,7 @@ async function beantworten(antwortIstKI) {
 
         if (modus === 'score') {
             punkte.value += 100 + (aktuelleSerie.value * 10)
+            zeigeComboFalls(aktuelleSerie.value)
         }
     } else {
         falsch.value++
@@ -248,6 +264,10 @@ function buttonSwipe(antwortIstKI) {
                 <div class="label_swipe label_echt" :style="{ opacity: labelEchtOpacity }">ECHT</div>
                 <div class="label_swipe label_ki" :style="{ opacity: labelKiOpacity }">KI</div>
 
+                <Transition name="combo">
+                    <div v-if="comboAnzeige" class="combo_anzeige">{{ comboAnzeige }}</div>
+                </Transition>
+
                 <div v-if="aktuelleKarte" class="karte" :style="{
                     transform: `translate(${kartenPosition.x}px, ${kartenPosition.y}px) rotate(${kartenPosition.rotation}deg)`,
                     transition: wirdGezogen ? 'none' : 'transform 0.3s ease'
@@ -337,6 +357,46 @@ function buttonSwipe(antwortIstKI) {
 
 .label_ki {
     right: 1rem;
+}
+
+.combo_anzeige {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--gelb);
+    z-index: 3;
+    pointer-events: none;
+}
+
+.combo-enter-active {
+    animation: combo-pop 0.3s ease-out;
+}
+
+.combo-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.combo-leave-to {
+    opacity: 0;
+}
+
+@keyframes combo-pop {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 0;
+    }
+    60% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
 }
 
 .karte {
