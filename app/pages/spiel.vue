@@ -6,6 +6,9 @@ const modus = route.query.modus === 'score' ? 'score' : 'uebung'
 const kategorie = route.query.kategorie || null
 const anzahlFragen = modus === 'score' ? 999 : 10
 
+const ESKALATION_ALLE_X_RICHTIGE = 15
+const PERFEKTE_RUNDE_BONUS = 500
+
 const karten = ref([])
 const aktuellerIndex = ref(0)
 const punkte = ref(0)
@@ -15,8 +18,9 @@ const aktuelleSerie = ref(0)
 const besteSerie = ref(0)
 const ladeFehler = ref('')
 const bereit = ref(false)
-const userLevel = ref(1)
-const ESKALATION_ALLE_X_RICHTIGE = 15 // anpassen falls die Spieldaten weniger schnell oder schneller schwieriger werden sollen
+
+const userLevels = ref({ BILD: 1, VIDEO: 1, AUDIO: 1, MUSIK: 1 })
+const kategorieStats = ref({})
 
 const zeitVerbleibend = ref(60)
 let timerInterval = null
@@ -40,6 +44,10 @@ const labelEchtOpacity = computed(() => {
     return Math.min(Math.max(-kartenPosition.value.x / 150, 0), 1)
 })
 
+const zeitKnapp = computed(() => {
+    return modus === 'score' && zeitVerbleibend.value <= 10 && zeitVerbleibend.value > 0
+})
+
 function zeigeComboFalls(serie) {
     if (serie >= 3 && [3, 5, 10, 15, 20].includes(serie)) {
         comboAnzeige.value = `COMBO x${serie}`
@@ -59,12 +67,17 @@ async function ladeUserLevel() {
 
     const { data } = await supabase
         .from('profiles')
-        .select('user_level')
+        .select('level_bild, level_video, level_audio, level_musik')
         .eq('id', currentUser.id)
         .single()
 
     if (data) {
-        userLevel.value = data.user_level ?? 1
+        userLevels.value = {
+            BILD: data.level_bild ?? 1,
+            VIDEO: data.level_video ?? 1,
+            AUDIO: data.level_audio ?? 1,
+            MUSIK: data.level_musik ?? 1
+        }
     }
 }
 
@@ -79,8 +92,8 @@ async function initSpiel() {
     }
 
     if (modus === 'score') {
-        const startMin = levelZuStartSchwierigkeit(userLevel.value)
-        karten.value = baueAusgeglicheneReihenfolge(geladen, startMin)
+        const startResolver = (karte) => levelZuStartSchwierigkeit(userLevels.value[karte.kategorie] ?? 1)
+        karten.value = baueAusgeglicheneReihenfolge(geladen, startResolver)
     } else {
         karten.value = [...geladen].sort(() => Math.random() - 0.5).slice(0, anzahlFragen)
     }
@@ -119,10 +132,24 @@ onUnmounted(() => {
     window.removeEventListener('keydown', handleKeydown)
 })
 
+function trackeKategorieStat(kategorieWert, warRichtig) {
+    if (!kategorieStats.value[kategorieWert]) {
+        kategorieStats.value[kategorieWert] = { korrekt: 0, gesamt: 0 }
+    }
+    kategorieStats.value[kategorieWert].gesamt++
+    if (warRichtig) {
+        kategorieStats.value[kategorieWert].korrekt++
+    }
+}
+
 async function beantworten(antwortIstKI) {
     if (!aktuelleKarte.value) return
 
     const warRichtig = (aktuelleKarte.value.herkunft === 'KI') === antwortIstKI
+
+    if (modus === 'score') {
+        trackeKategorieStat(aktuelleKarte.value.kategorie, warRichtig)
+    }
 
     if (warRichtig) {
         korrekt.value++
@@ -132,7 +159,8 @@ async function beantworten(antwortIstKI) {
         }
 
         if (modus === 'score') {
-            const kartenPunkte = berechneKartenPunkte(aktuelleKarte.value.schwierigkeit_aktuell, userLevel.value)
+            const kartenLevel = userLevels.value[aktuelleKarte.value.kategorie] ?? 1
+            const kartenPunkte = berechneKartenPunkte(aktuelleKarte.value.schwierigkeit_aktuell, kartenLevel)
             punkte.value += kartenPunkte + (aktuelleSerie.value * 10)
             zeigeComboFalls(aktuelleSerie.value)
         }
@@ -144,14 +172,14 @@ async function beantworten(antwortIstKI) {
     await speichereAntwort(supabase, aktuelleKarte.value.id, warRichtig)
 
     if (modus === 'score' && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
-    const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / ESKALATION_ALLE_X_RICHTIGE), 5)
-    const restKarten = karten.value.slice(aktuellerIndex.value + 1)
-    const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
-    karten.value = [
-        ...karten.value.slice(0, aktuellerIndex.value + 1),
-        ...neueRestKarten
-    ]
-}
+        const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / ESKALATION_ALLE_X_RICHTIGE), 5)
+        const restKarten = karten.value.slice(aktuellerIndex.value + 1)
+        const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
+        karten.value = [
+            ...karten.value.slice(0, aktuellerIndex.value + 1),
+            ...neueRestKarten
+        ]
+    }
 
     aktuellerIndex.value++
 
@@ -163,14 +191,23 @@ async function beantworten(antwortIstKI) {
 async function beendeSpiel() {
     if (timerInterval) clearInterval(timerInterval)
 
+    const gesamtAntworten = korrekt.value + falsch.value
+    let perfekteRunde = false
+
+    if (modus === 'score' && gesamtAntworten > 0 && falsch.value === 0) {
+        perfekteRunde = true
+        punkte.value += PERFEKTE_RUNDE_BONUS
+    }
+
     const ergebnis = {
         modus,
         kategorie,
         punkte: punkte.value,
         korrekt: korrekt.value,
         falsch: falsch.value,
-        gesamt: korrekt.value + falsch.value,
-        besteSerie: besteSerie.value
+        gesamt: gesamtAntworten,
+        besteSerie: besteSerie.value,
+        perfekteRunde
     }
 
     if (modus === 'score') {
@@ -184,7 +221,7 @@ async function beendeSpiel() {
 
         const { data: profilData } = await supabase
             .from('profiles')
-            .select('highscore, user_level')
+            .select('highscore, level_bild, level_video, level_audio, level_musik')
             .eq('id', currentUser.id)
             .single()
 
@@ -195,18 +232,28 @@ async function beendeSpiel() {
             updates.highscore_datum = new Date().toISOString()
         }
 
-        if (profilData && ergebnis.gesamt >= 5) {
-            const genauigkeit = ergebnis.korrekt / ergebnis.gesamt
-            let neuesLevel = profilData.user_level ?? 1
 
-            if (genauigkeit >= 0.75) {
-                neuesLevel = Math.min(neuesLevel + 1, 10)
-            } else if (genauigkeit <= 0.4) {
-                neuesLevel = Math.max(neuesLevel - 1, 1)
-            }
+        // Kategoriespezifische Level, jeweils nur wenn genug Antworten in dieser Kategorie
+        if (profilData) {
+            for (const [kat, stats] of Object.entries(kategorieStats.value)) {
+                if (stats.gesamt < 3) continue
 
-            if (neuesLevel !== profilData.user_level) {
-                updates.user_level = neuesLevel
+                const spalte = KATEGORIE_LEVEL_SPALTE[kat]
+                if (!spalte) continue
+
+                const aktuellesLevel = profilData[spalte] ?? 1
+                const genauigkeit = stats.korrekt / stats.gesamt
+                let neuesLevel = aktuellesLevel
+
+                if (genauigkeit >= 0.75) {
+                    neuesLevel = Math.min(aktuellesLevel + 1, 10)
+                } else if (genauigkeit <= 0.4) {
+                    neuesLevel = Math.max(aktuellesLevel - 1, 1)
+                }
+
+                if (neuesLevel !== aktuellesLevel) {
+                    updates[spalte] = neuesLevel
+                }
             }
         }
 
@@ -292,7 +339,7 @@ function buttonSwipe(antwortIstKI) {
             </div>
 
             <div class="container_zeit" v-if="modus === 'score'">
-                <h1>{{ zeitVerbleibend }}</h1>
+                <h1 :class="{ zeit_knapp: zeitKnapp }">{{ zeitVerbleibend }}</h1>
                 <h4> SEKUNDEN </h4>
             </div>
             <div class="container_zeit" v-else>
@@ -364,6 +411,20 @@ function buttonSwipe(antwortIstKI) {
     flex-direction: row;
     align-items: baseline;
     margin-top: 2rem;
+}
+
+.zeit_knapp {
+    color: var(--background-3);
+    animation: zeit-pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes zeit-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
 }
 
 .container_content {

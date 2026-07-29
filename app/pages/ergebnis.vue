@@ -33,6 +33,7 @@ const genauigkeit = computed(() => {
             <template v-if="ergebnis.modus === 'score'">
                 <h1>{{ ergebnis.punkte.toLocaleString('de-CH') }}</h1>
                 <h3>PUNKTE</h3>
+                <p v-if="ergebnis.perfekteRunde" class="perfekte_runde_hinweis">🎯 PERFEKTE RUNDE! +500 Bonus</p>
             </template>
             <template v-else>
                 <h1>{{ ergebnis.korrekt }}/{{ ergebnis.gesamt }}</h1>
@@ -60,15 +61,12 @@ const genauigkeit = computed(() => {
                 </div>
             </div>
 
-            <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
+            <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0"
+                class="container_freunde_vergleich">
                 <h2>FREUNDE</h2>
 
-                <div
-                    v-for="eintrag in top3Freunde"
-                    :key="eintrag.id"
-                    class="freund_vergleich_item"
-                    :class="{ freund_vergleich_item_ich: eintrag.istIch }"
-                >
+                <div v-for="eintrag in top3Freunde" :key="eintrag.id" class="freund_vergleich_item"
+                    :class="{ freund_vergleich_item_ich: eintrag.istIch }">
                     <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="freund_vergleich_avatar">
                     <span class="freund_vergleich_name">
                         {{ eintrag.istIch ? 'DU' : eintrag.username }}
@@ -156,9 +154,17 @@ const genauigkeit = computed(() => {
 .button_nochmal {
     background: var(--gelb);
     color: white;
-} 
+}
 
 .button_kategorien_highscores {
     background: var(--braun);
+}
+
+.perfekte_runde_hinweis {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1rem;
+    color: var(--gelb);
+    text-align: center;
+    margin-top: 0.5rem;
 }
 </style>

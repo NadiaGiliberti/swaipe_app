@@ -9,6 +9,12 @@ export interface Spielkarte {
     schwierigkeit_aktuell: number
 }
 
+export type MinSchwierigkeitResolver = number | ((karte: Spielkarte) => number)
+
+function resolveMin(resolver: MinSchwierigkeitResolver, karte: Spielkarte): number {
+    return typeof resolver === 'function' ? resolver(karte) : resolver
+}
+
 export async function ladeSpielkarten(supabase: any, kategorie: string | null, anzahl: number): Promise<Spielkarte[]> {
     let query = supabase
         .from('spieldaten_live')
@@ -27,10 +33,11 @@ export async function ladeSpielkarten(supabase: any, kategorie: string | null, a
 }
 
 // Baut eine Reihenfolge, die ECHT und KI abwechselnd ausspielt.
-// KI wird ab startMinSchwierigkeit gefiltert und aufsteigend sortiert.
-export function baueAusgeglicheneReihenfolge(karten: Spielkarte[], startMinSchwierigkeit = 1): Spielkarte[] {
+// minSchwierigkeit kann eine feste Zahl sein, oder eine Funktion pro Karte
+// (für kategoriespezifische Startschwierigkeit).
+export function baueAusgeglicheneReihenfolge(karten: Spielkarte[], minSchwierigkeit: MinSchwierigkeitResolver = 1): Spielkarte[] {
     const echt = karten.filter((k: Spielkarte) => k.herkunft === 'ECHT')
-    let ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI' && (k.schwierigkeit_aktuell ?? 2) >= startMinSchwierigkeit)
+    let ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI' && (k.schwierigkeit_aktuell ?? 2) >= resolveMin(minSchwierigkeit, k))
 
     if (ki.length === 0) {
         ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI')
@@ -73,12 +80,20 @@ export function baueErschwerteReihenfolge(restKarten: Spielkarte[], minSchwierig
     return baueAusgeglicheneReihenfolge([...echt, ...ki])
 }
 
+// Kategorie (BILD/VIDEO/AUDIO/MUSIK) -> passende profiles-Spalte
+export const KATEGORIE_LEVEL_SPALTE: Record<string, string> = {
+    BILD: 'level_bild',
+    VIDEO: 'level_video',
+    AUDIO: 'level_audio',
+    MUSIK: 'level_musik',
+}
+
 // Userlevel (1-10) -> Startschwierigkeit für KI-Karten (1-5)
 export function levelZuStartSchwierigkeit(level: number): number {
     return Math.min(1 + Math.floor((level - 1) / 2), 5)
 }
 
-// Level-Multiplikator: höheres Level = mehr Punkte pro richtiger Antwort (gilt für ECHT + KI)
+// Level-Multiplikator: höheres Level = mehr Punkte pro richtiger Antwort
 export function levelMultiplikator(level: number): number {
     return 1 + (level - 1) * 0.05
 }
@@ -95,4 +110,10 @@ export function berechneKartenPunkte(schwierigkeit: number, userLevel: number): 
 
 export async function speichereAntwort(supabase: any, spielId: number, warRichtig: boolean) {
     await supabase.rpc('record_answer', { spiel_id: spielId, war_richtig: warRichtig })
+}
+// Gesamtlevel wird nicht separat gespeichert, sondern aus den 4 Kategorie-Leveln berechnet
+export function berechneGesamtlevel(levels: { BILD: number, VIDEO: number, AUDIO: number, MUSIK: number }): number {
+    const werte = [levels.BILD, levels.VIDEO, levels.AUDIO, levels.MUSIK]
+    const durchschnitt = werte.reduce((sum, w) => sum + w, 0) / werte.length
+    return Math.round(durchschnitt)
 }
