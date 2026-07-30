@@ -203,14 +203,14 @@ async function handleEntfernen(freundschaftId) {
     position: relative;
     display: flex;
     align-items: center;
+    margin-top: 0.5rem;
 }
 
 .suche_feld .formularfeld {
     flex: 1;
-    margin-top: 0;
     padding-right: 3.5rem;
     border-radius: 100px;
-    height: 3rem;
+    height: 2.5rem;
     /* feste Höhe, damit du sie kennst */
 }
 
@@ -222,9 +222,8 @@ async function handleEntfernen(freundschaftId) {
     background: var(--braun);
     border: none;
     border-radius: 50%;
-    width: 3.1rem;
-    /* etwas GRÖSSER als .formularfeld Höhe (3rem) */
-    height: 3.1rem;
+    width: 2.6rem;
+    height: 2.6rem;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -232,7 +231,7 @@ async function handleEntfernen(freundschaftId) {
 }
 
 .button_suche img {
-    width: 2rem;
+    width: 1.4rem;
     display: block;
 }
 
