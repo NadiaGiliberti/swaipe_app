@@ -19,9 +19,11 @@ const actionLoading = ref(false)
 const fileInput = ref(null)
 const avatarLoading = ref(false)
 
-// NEU: Refs für das Bearbeiten des Usernamens
+// Refs für das Bearbeiten des Usernamens
 const isEditingUsername = ref(false)
 const editUsernameInput = ref('')
+const usernameError = ref('')
+const usernameSaving = ref(false)
 
 async function ladeProfil() {
     loading.value = true
@@ -45,7 +47,6 @@ async function ladeProfil() {
         errorMsg.value = error.message
     } else {
         profil.value = data
-        // NEU: Den aktuellen Usernamen in das Edit-Feld vorladen
         editUsernameInput.value = data.username
     }
 
@@ -146,26 +147,29 @@ async function handleAvatarUpload(event) {
     }
 }
 
-// NEU: Aktiviert den Bearbeitungsmodus für den Usernamen
+// Aktiviert den Bearbeitungsmodus für den Usernamen
 function startEditingUsername() {
     editUsernameInput.value = profil.value.username
+    usernameError.value = ''
     isEditingUsername.value = true
 }
 
-// NEU: Speichert den geänderten Usernamen in Supabase
+// Speichert den neuen Usernamen, wenn er geändert wurde
 async function saveUsername() {
+    if (usernameSaving.value) return
+    usernameSaving.value = true
+
     const cleanedName = editUsernameInput.value.trim()
 
-    // Falls leer oder keine Änderung, einfach Modus beenden
     if (!cleanedName || cleanedName === profil.value.username) {
         isEditingUsername.value = false
+        usernameSaving.value = false
         return
     }
 
-    // NEU: Sicherheits-Check beim Ändern
     if (cleanedName.length > 15) {
-        errorMsg.value = 'Der Username darf maximal 15 Zeichen lang sein.'
-        isEditingUsername.value = false
+        usernameError.value = 'Der Username darf maximal 15 Zeichen lang sein.'
+        usernameSaving.value = false
         return
     }
 
@@ -178,14 +182,29 @@ async function saveUsername() {
             .update({ username: cleanedName })
             .eq('id', currentUser.id)
 
-        if (error) throw error
+        if (error) {
+            if (error.code === '23505') {
+                usernameError.value = 'Dieser Username ist bereits vergeben.'
+            } else {
+                usernameError.value = `Fehler beim Speichern: ${error.message}`
+            }
+            return
+        }
 
         profil.value.username = cleanedName
         isEditingUsername.value = false
+        usernameError.value = ''
     } catch (error) {
-        errorMsg.value = `Fehler beim Speichern des Usernamens: ${error.message}`
-        isEditingUsername.value = false
+        usernameError.value = `Fehler beim Speichern: ${error.message}`
+    } finally {
+        usernameSaving.value = false
     }
+}
+
+function cancelEditingUsername() {
+    editUsernameInput.value = profil.value.username
+    isEditingUsername.value = false
+    usernameError.value = ''
 }
 
 function resetActionState() {
@@ -292,11 +311,13 @@ const vFocus = {
 
                 <div class="container_username_edit">
                     <input v-if="isEditingUsername" v-model="editUsernameInput" type="text" class="input_username"
-                        maxlength="15" @keydown.enter="saveUsername" @blur="saveUsername" v-focus>
+                        maxlength="15" @keydown.enter="saveUsername" @keydown.esc="cancelEditingUsername"
+                        @blur="saveUsername" v-focus>
                     <h3 v-else class="h3_black username_clickable" @click="startEditingUsername">
                         {{ profil.username }}
                     </h3>
                 </div>
+                <p v-if="isEditingUsername && usernameError" class="error_text">{{ usernameError }}</p>
             </div>
 
             <badgesListe />
