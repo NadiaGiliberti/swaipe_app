@@ -248,6 +248,7 @@ async function saveCustomTheme() {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 6vw;
     text-align: left;
+    margin-top: 0;
 }
 
 .container_themes {
