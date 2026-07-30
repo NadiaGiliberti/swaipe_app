@@ -136,8 +136,8 @@ async function handleLogout() {
 
 .button_close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: calc(1rem + env(safe-area-inset-top));
+    right: calc(1rem + env(safe-area-inset-right));
 
     background: none;
     border: none;

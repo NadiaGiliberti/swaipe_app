@@ -37,7 +37,7 @@ onMounted(() => {
 .install_banner {
     position: fixed;
     left: 50%;
-    bottom: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
     transform: translateX(-50%);
     z-index: 9500;
 

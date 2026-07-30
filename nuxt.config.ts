@@ -35,15 +35,18 @@ export default defineNuxtConfig({
           sizes: [64, 192, 512],
           favicons: [[48, 'favicon.ico']],
         },
+        // Grosszügiges Padding, weil icon_swaipe.svg hochkant/schmal ist - Android
+        // beschneidet Maskable-Icons auf eine Kreis-Sicherheitszone; bei zu wenig
+        // Rand ragt Kopf/Fuss der Form heraus und wird abgeschnitten.
         maskable: {
           sizes: [512],
-          padding: 0.3,
-          resizeOptions: { background: '#ffda00' },
+          padding: 0.42,
+          resizeOptions: { background: '#ffffff' },
         },
         apple: {
           sizes: [180],
-          padding: 0.3,
-          resizeOptions: { background: '#ffda00' },
+          padding: 0.2,
+          resizeOptions: { background: '#ffffff' },
         },
       },
     },
@@ -70,6 +73,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'SWAIPE',
+      viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
       link: [
         {
           rel: 'icon',

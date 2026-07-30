@@ -7,6 +7,12 @@
   @tailwind utilities;
   ***/
 
+  /** ALLGEMEIN: Touch-Verhalten (iOS zeigt sonst einen grauen Tap-Flash bzw. "hängenbleibende" Hover-Farbe) **/
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
   /** ALLES zum Hintergrund **/
 
   body {
@@ -203,9 +209,13 @@
     flex: 0 0 calc(45% - 1rem);
   }
 
-  .button:hover,
-  .button_klein:hover {
-    background: var(--button-hover);
+  /* Nur auf Geräten mit echtem Maus-Hover anwenden - sonst bleibt der Hover-Zustand
+     auf Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen" */
+  @media (hover: hover) and (pointer: fine) {
+    .button:hover,
+    .button_klein:hover {
+      background: var(--button-hover);
+    }
   }
 
   .button:active,
@@ -232,7 +242,7 @@
 
   .container_back_button {
     position: fixed;
-    bottom: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
     display: flex;

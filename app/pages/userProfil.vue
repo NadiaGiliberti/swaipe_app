@@ -444,9 +444,11 @@ const vFocus = {
     text-transform: uppercase;
 }
 
-.username_clickable:hover {
-    opacity: 0.7;
-    /* Gibt dem User visuelles Feedback, dass es klickbar ist */
+@media (hover: hover) and (pointer: fine) {
+    .username_clickable:hover {
+        opacity: 0.7;
+        /* Gibt dem User visuelles Feedback, dass es klickbar ist */
+    }
 }
 
 .input_username {
