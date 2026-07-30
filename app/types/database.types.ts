@@ -14,44 +14,140 @@ export type Database = {
   }
   public: {
     Tables: {
+      badges: {
+        Row: {
+          beschreibung: string
+          code: string
+          icon: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          beschreibung: string
+          code: string
+          icon?: string | null
+          id?: never
+          name: string
+        }
+        Update: {
+          beschreibung?: string
+          code?: string
+          icon?: string | null
+          id?: never
+          name?: string
+        }
+        Relationships: []
+      }
+      freundschaften: {
+        Row: {
+          anfragender_id: string
+          created_at: string
+          empfaenger_id: string
+          id: number
+          status: Database["public"]["Enums"]["freundschaft_status"]
+        }
+        Insert: {
+          anfragender_id: string
+          created_at?: string
+          empfaenger_id: string
+          id?: never
+          status?: Database["public"]["Enums"]["freundschaft_status"]
+        }
+        Update: {
+          anfragender_id?: string
+          created_at?: string
+          empfaenger_id?: string
+          id?: never
+          status?: Database["public"]["Enums"]["freundschaft_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "freundschaften_anfragender_id_fkey"
+            columns: ["anfragender_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "freundschaften_empfaenger_id_fkey"
+            columns: ["empfaenger_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           aktiv: boolean
           created_at: string
+          gespielte_runden: number
           highscore: number
+          highscore_datum: string | null
           id: string
           last_login: string | null
           last_modified: string
+          level_audio: number
+          level_bild: number
+          level_musik: number
+          level_video: number
           profilbild_url: string | null
           theme_background_1: string | null
           theme_background_2: string | null
           theme_background_3: string | null
+          theme_background_4: string | null
+          theme_base: string | null
+          theme_text_dunkel: string | null
+          theme_text_hell: string | null
+          theme_text_schwarz: string | null
           username: string
         }
         Insert: {
           aktiv?: boolean
           created_at?: string
+          gespielte_runden?: number
           highscore?: number
+          highscore_datum?: string | null
           id: string
           last_login?: string | null
           last_modified?: string
+          level_audio?: number
+          level_bild?: number
+          level_musik?: number
+          level_video?: number
           profilbild_url?: string | null
           theme_background_1?: string | null
           theme_background_2?: string | null
           theme_background_3?: string | null
+          theme_background_4?: string | null
+          theme_base?: string | null
+          theme_text_dunkel?: string | null
+          theme_text_hell?: string | null
+          theme_text_schwarz?: string | null
           username: string
         }
         Update: {
           aktiv?: boolean
           created_at?: string
+          gespielte_runden?: number
           highscore?: number
+          highscore_datum?: string | null
           id?: string
           last_login?: string | null
           last_modified?: string
+          level_audio?: number
+          level_bild?: number
+          level_musik?: number
+          level_video?: number
           profilbild_url?: string | null
           theme_background_1?: string | null
           theme_background_2?: string | null
           theme_background_3?: string | null
+          theme_background_4?: string | null
+          theme_base?: string | null
+          theme_text_dunkel?: string | null
+          theme_text_hell?: string | null
+          theme_text_schwarz?: string | null
           username?: string
         }
         Relationships: []
@@ -94,6 +190,42 @@ export type Database = {
           used_counter?: number
         }
         Relationships: []
+      }
+      user_badges: {
+        Row: {
+          badge_id: number
+          erreicht_am: string
+          id: number
+          user_id: string
+        }
+        Insert: {
+          badge_id: number
+          erreicht_am?: string
+          id?: never
+          user_id: string
+        }
+        Update: {
+          badge_id?: number
+          erreicht_am?: string
+          id?: never
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_badges_badge_id_fkey"
+            columns: ["badge_id"]
+            isOneToOne: false
+            referencedRelation: "badges"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_badges_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
@@ -141,9 +273,13 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      record_answer: {
+        Args: { spiel_id: number; war_richtig: boolean }
+        Returns: undefined
+      }
     }
     Enums: {
+      freundschaft_status: "AUSSTEHEND" | "AKZEPTIERT"
       herkunft_typ: "ECHT" | "KI"
       kategorie_typ: "MUSIK" | "AUDIO" | "VIDEO" | "BILD"
     }
@@ -273,6 +409,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      freundschaft_status: ["AUSSTEHEND", "AKZEPTIERT"],
       herkunft_typ: ["ECHT", "KI"],
       kategorie_typ: ["MUSIK", "AUDIO", "VIDEO", "BILD"],
     },
