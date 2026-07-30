@@ -8,9 +8,40 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase'],
+  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@vite-pwa/nuxt'],
   supabase: {
     redirect: false,
+  },
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'SWAIPE',
+      short_name: 'SWAIPE',
+      description: 'Errate ob Bild, Video, Audio oder Musik echt oder KI-generiert ist.',
+      lang: 'de',
+      start_url: '/',
+      scope: '/',
+      display: 'standalone',
+      orientation: 'portrait',
+      theme_color: '#ffda00',
+      background_color: '#ffffff',
+    },
+    pwaAssets: {
+      image: 'public/pwa-icon-source.svg',
+      preset: 'minimal-2023',
+    },
+    workbox: {
+      globPatterns: ['**/*.{js,css,html,woff,woff2,svg,png,ico}'],
+      navigateFallbackDenylist: [/^\/api\//],
+    },
+    client: {
+      installPrompt: true,
+    },
+    devOptions: {
+      enabled: true,
+      type: 'module',
+    },
   },
 
   components: [
