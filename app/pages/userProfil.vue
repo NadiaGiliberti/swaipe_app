@@ -299,6 +299,8 @@ const vFocus = {
                 </div>
             </div>
 
+            <badgesListe />
+
             <div class="container_aktionen">
                 <button class="aktion" @click="showEmailModal = true">
                     E-MAIL ÄNDERN
@@ -311,9 +313,6 @@ const vFocus = {
                 </button>
             </div>
         </template>
-
-
-        <BadgesListe />
 
         <buttonZurueck />
 
@@ -451,7 +450,8 @@ const vFocus = {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.5rem;
-    margin-top: 10vh;
+    margin-top: 1rem;
+    padding-bottom: 8rem;
     width: 80%;
 }
 

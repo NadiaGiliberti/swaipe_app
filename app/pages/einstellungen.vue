@@ -141,39 +141,28 @@ async function saveCustomTheme() {
             <button class="button_sound_toggle" @click="toggleMute">
                 <img :src="soundIcon" alt="Lautstärke">
             </button>
-            <input
-                type="range"
-                min="0"
-                max="100"
-                class="slider_lautstaerke"
-                :value="volume"
-                @input="setVolume(Number($event.target.value))"
-            >
+            <input type="range" min="0" max="100" class="slider_lautstaerke" :value="volume"
+                @input="setVolume(Number($event.target.value))">
         </div>
 
         <div class="container_aktionen">
             <button class="aktion" @click="showThemeModal = true">
                 THEME
             </button>
-            <button class="aktion">
+            <NuxtLink to="/datenschutz" class="aktion">
                 DATENSCHUTZ
-            </button>
-            <button class="aktion">
+            </NuxtLink>
+            <NuxtLink to="/agb" class="aktion">
                 AGBs
-            </button>
+            </NuxtLink>
         </div>
 
         <buttonZurueck />
 
         <ModalBase :open="showThemeModal" title="THEME WÄHLEN" @close="closeThemeModal">
             <div class="container_themes">
-                <button
-                    v-for="theme in presetThemes"
-                    :key="theme.name"
-                    class="theme_option"
-                    :disabled="themeSaving"
-                    @click="choosePreset(theme)"
-                >
+                <button v-for="theme in presetThemes" :key="theme.name" class="theme_option" :disabled="themeSaving"
+                    @click="choosePreset(theme)">
                     <div class="theme_swatches">
                         <span :style="{ background: theme.colors[0] }"></span>
                         <span :style="{ background: theme.colors[1] }"></span>
@@ -195,20 +184,13 @@ async function saveCustomTheme() {
                 <div class="container_text_toggle">
                     <span class="toggle_label">SCHRIFTFARBE</span>
                     <div class="toggle_buttons">
-                        <button
-                            type="button"
-                            class="toggle_btn"
+                        <button type="button" class="toggle_btn"
                             :class="{ toggle_btn_aktiv: customTextMode === 'dunkel' }"
-                            @click="customTextMode = 'dunkel'"
-                        >
+                            @click="customTextMode = 'dunkel'">
                             DUNKEL
                         </button>
-                        <button
-                            type="button"
-                            class="toggle_btn"
-                            :class="{ toggle_btn_aktiv: customTextMode === 'hell' }"
-                            @click="customTextMode = 'hell'"
-                        >
+                        <button type="button" class="toggle_btn"
+                            :class="{ toggle_btn_aktiv: customTextMode === 'hell' }" @click="customTextMode = 'hell'">
                             HELL
                         </button>
                     </div>
