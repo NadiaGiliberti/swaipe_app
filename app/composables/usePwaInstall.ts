@@ -58,10 +58,12 @@ export function usePwaInstall() {
         canInstall.value = false
     }
 
-    // Zeigt den Hinweis bei jedem neuen Seitenaufruf/Login, solange die App nicht
-    // installiert ist - unabhängig davon, ob der native beforeinstallprompt gefeuert hat.
+    // Zeigt den Hinweis bei jedem neuen Seitenaufruf/Login (statt nur einmalig),
+    // aber nur wenn wirklich ein Installationsweg verfügbar ist: nativer Dialog
+    // (Android/Chrome) oder die Teilen-Anleitung (iOS). Kein Text-Fallback ohne
+    // echten Installationsweg, sonst verdeckt er den echten INSTALLIEREN-Button.
     const zeigeBanner = computed(() => {
-        return isMobile.value && !isStandalone.value && !wurdeDiesesMalVerworfen.value
+        return isMobile.value && !isStandalone.value && !wurdeDiesesMalVerworfen.value && (canInstall.value || isIos.value)
     })
 
     return { canInstall, isIos, isMobile, isStandalone, zeigeBanner, erkenneUmgebung, initListener, installieren, verwerfen }
