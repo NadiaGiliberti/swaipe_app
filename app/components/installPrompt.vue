@@ -1,5 +1,5 @@
 <script setup>
-const { isIos, zeigeBanner, erkenneUmgebung, initListener, installieren, verwerfen } = usePwaInstall()
+const { isIos, canInstall, zeigeBanner, erkenneUmgebung, initListener, installieren, verwerfen } = usePwaInstall()
 
 onMounted(() => {
     erkenneUmgebung()
@@ -17,12 +17,15 @@ onMounted(() => {
                 <p v-if="isIos" class="install_banner_hinweis">
                     Tippe unten auf <strong>Teilen</strong> und dann auf <strong>„Zum Home-Bildschirm"</strong>.
                 </p>
+                <p v-else-if="!canInstall" class="install_banner_hinweis">
+                    Öffne das Browser-Menü (⋮) und tippe auf <strong>„Zum Startbildschirm hinzufügen"</strong>.
+                </p>
                 <p v-else class="install_banner_hinweis">
                     Schneller Zugriff direkt vom Home-Bildschirm aus.
                 </p>
             </div>
 
-            <button v-if="!isIos" class="install_banner_button" @click="installieren">
+            <button v-if="canInstall" class="install_banner_button" @click="installieren">
                 INSTALLIEREN
             </button>
 

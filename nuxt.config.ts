@@ -28,11 +28,26 @@ export default defineNuxtConfig({
       background_color: '#ffffff',
     },
     pwaAssets: {
-      image: 'public/pwa-icon-source.svg',
-      preset: 'minimal-2023',
+      image: 'public/icon_swaipe.svg',
+      preset: {
+        transparent: {
+          sizes: [64, 192, 512],
+          favicons: [[48, 'favicon.ico']],
+        },
+        maskable: {
+          sizes: [512],
+          padding: 0.3,
+          resizeOptions: { background: '#ffda00' },
+        },
+        apple: {
+          sizes: [180],
+          padding: 0.3,
+          resizeOptions: { background: '#ffda00' },
+        },
+      },
     },
     workbox: {
-      globPatterns: ['**/*.{js,css,html,woff,woff2,svg,png,ico}'],
+      globPatterns: ['**/*.{js,css,html,woff,woff2,svg,png,webp,ico}'],
       navigateFallbackDenylist: [/^\/api\//],
     },
     client: {

@@ -81,10 +81,14 @@ onUnmounted(() => {
         radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
         var(--background-base);
 
-    background-attachment: fixed;
-
     transition: opacity 0.4s ease;
     opacity: 1;
+}
+
+@media (min-width: 768px) {
+    .loading_overlay {
+        background-attachment: fixed;
+    }
 }
 
 .loading_overlay::before {
@@ -93,7 +97,8 @@ onUnmounted(() => {
     inset: 0;
     z-index: -1;
 
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="400"><defs><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.95" numOctaves="4" seed="10" result="noise"/></filter><filter id="noise2"><feTurbulence type="fractalNoise" baseFrequency="1.6" numOctaves="3" seed="5" result="noise2"/></filter></defs><rect width="400" height="400" fill="%23000000" filter="url(%23noise)" opacity="0.72"/><rect width="400" height="400" fill="%23ffffff" filter="url(%23noise2)" opacity="0.55"/></svg>');
+    background-image: url('/textures/noise-main.webp');
+    background-repeat: repeat;
 
     mix-blend-mode: multiply;
 }
@@ -104,7 +109,8 @@ onUnmounted(() => {
     inset: 0;
     z-index: -1;
 
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><defs><filter id="noise3"><feTurbulence type="fractalNoise" baseFrequency="3.2" numOctaves="2" seed="8"/></filter></defs><rect width="300" height="300" fill="%23000000" filter="url(%23noise3)" opacity="0.75"/></svg>');
+    background-image: url('/textures/noise-overlay.webp');
+    background-repeat: repeat;
 
     mix-blend-mode: overlay;
 }

@@ -1,6 +1,5 @@
 // app/composables/usePwaInstall.ts
 const DISMISS_KEY = 'swaipe_install_dismissed'
-const DISMISS_DAUER_MS = 14 * 24 * 60 * 60 * 1000 // 14 Tage
 
 export function usePwaInstall() {
     const deferredPrompt = useState<any>('pwaDeferredPrompt', () => null)
@@ -8,19 +7,17 @@ export function usePwaInstall() {
     const isIos = useState('pwaIsIos', () => false)
     const isMobile = useState('pwaIsMobile', () => false)
     const isStandalone = useState('pwaIsStandalone', () => false)
+    const wurdeDiesesMalVerworfen = useState('pwaDismissedThisSession', () => false)
 
-    function wurdeKuerzlichAbgelehnt() {
+    function wurdeDiesesMalAbgelehnt() {
         if (!import.meta.client) return true
-        const wert = localStorage.getItem(DISMISS_KEY)
-        if (!wert) return false
-        return Date.now() - Number(wert) < DISMISS_DAUER_MS
+        return sessionStorage.getItem(DISMISS_KEY) === '1'
     }
 
     function verwerfen() {
         if (!import.meta.client) return
-        localStorage.setItem(DISMISS_KEY, String(Date.now()))
-        canInstall.value = false
-        isMobile.value = false
+        sessionStorage.setItem(DISMISS_KEY, '1')
+        wurdeDiesesMalVerworfen.value = true
     }
 
     function erkenneUmgebung() {
@@ -32,11 +29,14 @@ export function usePwaInstall() {
         isStandalone.value =
             window.matchMedia('(display-mode: standalone)').matches ||
             (window.navigator as any).standalone === true
+        wurdeDiesesMalVerworfen.value = wurdeDiesesMalAbgelehnt()
     }
 
     function initListener() {
         if (!import.meta.client) return
 
+        // Feuert bei Android/Chrome nicht bei jedem Aufruf (Browser-Heuristik) -
+        // wird nur genutzt, um den nativen Installations-Dialog auszulösen, falls verfügbar.
         window.addEventListener('beforeinstallprompt', (event: any) => {
             event.preventDefault()
             deferredPrompt.value = event
@@ -58,8 +58,10 @@ export function usePwaInstall() {
         canInstall.value = false
     }
 
+    // Zeigt den Hinweis bei jedem neuen Seitenaufruf/Login, solange die App nicht
+    // installiert ist - unabhängig davon, ob der native beforeinstallprompt gefeuert hat.
     const zeigeBanner = computed(() => {
-        return isMobile.value && !isStandalone.value && !wurdeKuerzlichAbgelehnt() && (canInstall.value || isIos.value)
+        return isMobile.value && !isStandalone.value && !wurdeDiesesMalVerworfen.value
     })
 
     return { canInstall, isIos, isMobile, isStandalone, zeigeBanner, erkenneUmgebung, initListener, installieren, verwerfen }
