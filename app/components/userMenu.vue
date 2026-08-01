@@ -3,6 +3,10 @@ defineProps({
     open: {
         type: Boolean,
         default: false
+    },
+    hatUngesehenes: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -42,6 +46,7 @@ async function handleLogout() {
                         <button class="menu_item" @click="goTo('/freunde')">
                             <img src="/icons/freunde_icon.svg">
                             <span>FREUNDE</span>
+                            <span v-if="hatUngesehenes" class="punkt_neu"></span>
                         </button>
 
                         <button class="menu_item" @click="goTo('/einstellungen')">
@@ -162,6 +167,7 @@ async function handleLogout() {
     display: flex;
     align-items: center;
     gap: 1rem;
+    position: relative;
 
     background: none;
     border: none;
@@ -173,6 +179,13 @@ async function handleLogout() {
 .menu_item img {
     width: 26px;
     display: block;
+}
+
+.punkt_neu {
+    width: 10px;
+    height: 10px;
+    background: var(--gelb);
+    border-radius: 50%;
 }
 
 /* ===== TRANSITION SYSTEM (Vue) ===== */

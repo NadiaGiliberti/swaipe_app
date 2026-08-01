@@ -214,8 +214,7 @@
 
   /** Allgemeines BUTTONS **/
 
-
-  .button {
+.button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -225,14 +224,15 @@
     letter-spacing: 0.1rem;
     font-size: 1.7rem;
     color: white;
+    background: var(--braun);
     font-weight: 400;
     text-align: center;
     text-decoration: none;
     transition: all 200ms;
     width: 100%;
-  }
+}
 
-  .button_klein {
+.button_klein {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -242,12 +242,13 @@
     letter-spacing: 0.1rem;
     font-size: 1.3rem;
     color: white;
+    background: var(--braun);
     font-weight: 400;
     text-align: center;
     text-decoration: none;
     transition: all 200ms;
     flex: 0 0 calc(45% - 1rem);
-  }
+}
 
   /* Nur auf Geräten mit echtem Maus-Hover anwenden - sonst bleibt der Hover-Zustand
      auf Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen" */

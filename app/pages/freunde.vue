@@ -11,6 +11,9 @@ const sucheInput = ref('')
 const sucheErgebnisse = ref([])
 const sucheLaeuft = ref(false)
 
+const showEntfernenModal = ref(false)
+const zuEntfernenderFreund = ref(null)
+
 async function ladeAlles() {
     loading.value = true
     const result = await ladeFreundeUndAnfragen(supabase)
@@ -18,6 +21,11 @@ async function ladeAlles() {
     eingehendeAnfragen.value = result.eingehendeAnfragen
     ausgehendeAnfragen.value = result.ausgehendeAnfragen
     loading.value = false
+
+    // Erst NACHDEM die Punkte kurz sichtbar waren, als gesehen markieren
+    setTimeout(() => {
+        markiereFreundschaftenAlsGesehen(supabase)
+    }, 1500)
 }
 
 onMounted(() => {
@@ -68,8 +76,20 @@ async function handleAblehnen(freundschaftId) {
     await ladeAlles()
 }
 
-async function handleEntfernen(freundschaftId) {
-    await entferneFreund(supabase, freundschaftId)
+function oeffneEntfernenModal(freund) {
+    zuEntfernenderFreund.value = freund
+    showEntfernenModal.value = true
+}
+
+function schliesseEntfernenModal() {
+    showEntfernenModal.value = false
+    zuEntfernenderFreund.value = null
+}
+
+async function bestaetigeEntfernen() {
+    if (!zuEntfernenderFreund.value) return
+    await entferneFreund(supabase, zuEntfernenderFreund.value.freundschaftId)
+    schliesseEntfernenModal()
     await ladeAlles()
 }
 </script>
@@ -85,8 +105,11 @@ async function handleEntfernen(freundschaftId) {
             <div class="container_freunde_liste">
                 <div v-for="freund in freunde" :key="freund.freundschaftId" class="freund_item">
                     <img :src="freund.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar">
-                    <span>{{ freund.username }}</span>
-                    <button class="button_entfernen" @click="handleEntfernen(freund.freundschaftId)">
+                    <span class="freund_name_wrapper">
+                        {{ freund.username }}
+                        <span v-if="freund.istNeu" class="punkt_neu"></span>
+                    </span>
+                    <button class="button_entfernen" @click="oeffneEntfernenModal(freund)">
                         <img src="/icons/delete_icon.svg" alt="Entfernen">
                     </button>
                 </div>
@@ -122,7 +145,10 @@ async function handleEntfernen(freundschaftId) {
                 <h3>ANFRAGEN</h3>
                 <div v-for="anfrage in eingehendeAnfragen" :key="anfrage.freundschaftId" class="freund_item">
                     <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar">
-                    <span>{{ anfrage.username }}</span>
+                    <span class="freund_name_wrapper">
+                        {{ anfrage.username }}
+                        <span v-if="anfrage.istNeu" class="punkt_neu"></span>
+                    </span>
                     <button class="button_check" @click="handleAkzeptieren(anfrage.freundschaftId)">
                         <img src="/icons/check_icon.svg" alt="Annehmen">
                     </button>
@@ -147,6 +173,18 @@ async function handleEntfernen(freundschaftId) {
         </template>
 
         <buttonZurueck />
+
+        <ModalBase :open="showEntfernenModal" title="FREUND ENTFERNEN" @close="schliesseEntfernenModal">
+            <p v-if="zuEntfernenderFreund">
+                Möchtest du {{ zuEntfernenderFreund.username }} wirklich aus deiner Freundesliste entfernen?
+            </p>
+
+            <div class="container_buttons_wm">
+                <button class="button button_danger" @click="bestaetigeEntfernen">
+                    JA, ENTFERNEN
+                </button>
+            </div>
+        </ModalBase>
 
     </main>
 </template>
@@ -176,6 +214,20 @@ async function handleEntfernen(freundschaftId) {
 .freund_item span {
     text-transform: uppercase;
     flex: 1;
+}
+
+.freund_name_wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.freund_item span.punkt_neu {
+    width: 8px;
+    height: 8px;
+    background: var(--gelb);
+    border-radius: 50%;
+    flex: 0 0 8px;
 }
 
 .button_entfernen,

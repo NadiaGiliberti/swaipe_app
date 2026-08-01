@@ -1,24 +1,30 @@
 <script setup>
 const menuOpen = ref(false)
-
 const supabase = useSupabaseClient()
+const hatUngesehenes = ref(false)
 
 const { data: spiele, error } = await supabase
   .from('spieldaten_live')
   .select('*')
 
 console.log('Fehler:', error)
+
+onMounted(async () => {
+  const anzahl = await zaehleUngeseheneFreundschaftsereignisse(supabase)
+  hatUngesehenes.value = anzahl > 0
+})
 </script>
 
 <template>
   <main class="container_main">
 
     <!-- User Menü -->
-    <UserMenu :open="menuOpen" @close="menuOpen = false" />
+    <UserMenu :open="menuOpen" :hat-ungesehenes="hatUngesehenes" @close="menuOpen = false" />
 
     <!-- Profil Icon -->
     <button v-if="!menuOpen" class="button_profile" @click="menuOpen = true">
       <img src="/icons/profil_icon.svg" alt="Profil">
+      <span v-if="hatUngesehenes" class="punkt_neu"></span>
     </button>
 
     <div class="container_swaipe">
@@ -65,6 +71,16 @@ console.log('Fehler:', error)
 .button_profile img {
   width: clamp(34px, 5vw, 44px);
   display: block;
+}
+
+.punkt_neu {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 12px;
+  height: 12px;
+  background: var(--gelb);
+  border-radius: 50%;
 }
 
 @media (min-width:768px) {}

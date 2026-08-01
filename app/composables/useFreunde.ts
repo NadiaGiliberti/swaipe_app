@@ -56,6 +56,8 @@ export async function ladeFreundeUndAnfragen(supabase: any) {
             status,
             anfragender_id,
             empfaenger_id,
+            empfaenger_gesehen,
+            anfragender_gesehen,
             anfragender:profiles!freundschaften_anfragender_id_fkey(id, username, profilbild_url, highscore, highscore_datum),
             empfaenger:profiles!freundschaften_empfaenger_id_fkey(id, username, profilbild_url, highscore, highscore_datum)
         `)
@@ -72,15 +74,59 @@ export async function ladeFreundeUndAnfragen(supabase: any) {
         const andererUser = istAnfragender ? eintrag.empfaenger : eintrag.anfragender
 
         if (eintrag.status === 'AKZEPTIERT') {
-            freunde.push({ freundschaftId: eintrag.id, ...andererUser })
+            // "neu" bedeutet: gerade erst akzeptiert und vom jeweiligen User noch nicht gesehen
+            const istNeu = istAnfragender ? !eintrag.anfragender_gesehen : false
+            freunde.push({ freundschaftId: eintrag.id, istNeu, ...andererUser })
         } else if (eintrag.status === 'AUSSTEHEND') {
             if (istAnfragender) {
                 ausgehendeAnfragen.push({ freundschaftId: eintrag.id, ...andererUser })
             } else {
-                eingehendeAnfragen.push({ freundschaftId: eintrag.id, ...andererUser })
+                eingehendeAnfragen.push({ freundschaftId: eintrag.id, istNeu: !eintrag.empfaenger_gesehen, ...andererUser })
             }
         }
     }
 
     return { freunde, eingehendeAnfragen, ausgehendeAnfragen }
+}
+
+// Zählt alles, was der aktuelle User noch nicht gesehen hat -> für den Punkt am Menü-Icon
+export async function zaehleUngeseheneFreundschaftsereignisse(supabase: any) {
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (!currentUser) return 0
+
+    const { count: eingehend } = await supabase
+        .from('freundschaften')
+        .select('id', { count: 'exact', head: true })
+        .eq('empfaenger_id', currentUser.id)
+        .eq('status', 'AUSSTEHEND')
+        .eq('empfaenger_gesehen', false)
+
+    const { count: akzeptiert } = await supabase
+        .from('freundschaften')
+        .select('id', { count: 'exact', head: true })
+        .eq('anfragender_id', currentUser.id)
+        .eq('status', 'AKZEPTIERT')
+        .eq('anfragender_gesehen', false)
+
+    return (eingehend ?? 0) + (akzeptiert ?? 0)
+}
+
+// Markiert alles als gesehen -> wird aufgerufen, sobald der User die Freunde-Seite besucht
+export async function markiereFreundschaftenAlsGesehen(supabase: any) {
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (!currentUser) return
+
+    await supabase
+        .from('freundschaften')
+        .update({ empfaenger_gesehen: true })
+        .eq('empfaenger_id', currentUser.id)
+        .eq('status', 'AUSSTEHEND')
+        .eq('empfaenger_gesehen', false)
+
+    await supabase
+        .from('freundschaften')
+        .update({ anfragender_gesehen: true })
+        .eq('anfragender_id', currentUser.id)
+        .eq('status', 'AKZEPTIERT')
+        .eq('anfragender_gesehen', false)
 }
