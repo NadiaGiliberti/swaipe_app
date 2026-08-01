@@ -18,6 +18,7 @@ const aktuelleSerie = ref(0)
 const besteSerie = ref(0)
 const ladeFehler = ref('')
 const bereit = ref(false)
+const sofortZuruecksetzen = ref(false)
 
 const userLevels = ref({ BILD: 1, VIDEO: 1, AUDIO: 1, MUSIK: 1 })
 const kategorieStats = ref({})
@@ -27,6 +28,7 @@ let timerInterval = null
 
 const kartenPosition = ref({ x: 0, y: 0, rotation: 0 })
 const wirdGezogen = ref(false)
+const wirdWeggeworfen = ref(false)
 let startX = 0
 let startY = 0
 
@@ -34,18 +36,40 @@ const comboAnzeige = ref('')
 let comboTimeout = null
 
 const aktuelleKarte = computed(() => karten.value[aktuellerIndex.value])
+const naechsteKarte = computed(() => karten.value[aktuellerIndex.value + 1])
 const fertig = computed(() => aktuellerIndex.value >= karten.value.length || (modus === 'score' && zeitVerbleibend.value <= 0))
-
-const labelKiOpacity = computed(() => {
-    return Math.min(Math.max(kartenPosition.value.x / 150, 0), 1)
-})
-
-const labelEchtOpacity = computed(() => {
-    return Math.min(Math.max(-kartenPosition.value.x / 150, 0), 1)
-})
 
 const zeitKnapp = computed(() => {
     return modus === 'score' && zeitVerbleibend.value <= 10 && zeitVerbleibend.value > 0
+})
+
+const echtHeaderOpacity = computed(() => {
+    if (kartenPosition.value.x <= 0) return 1
+    return Math.max(1 - kartenPosition.value.x / 150, 0.1)
+})
+
+const kiHeaderOpacity = computed(() => {
+    if (kartenPosition.value.x >= 0) return 1
+    return Math.max(1 - Math.abs(kartenPosition.value.x) / 150, 0.1)
+})
+
+const dragProgress = computed(() => {
+    const maxDistanz = 300
+    return Math.min(Math.abs(kartenPosition.value.x) / maxDistanz, 1)
+})
+
+const hintergrundScale = computed(() => {
+    if (wirdWeggeworfen.value) return 1
+    const basis = 0.94
+    const ziel = 0.976
+    return basis + (ziel - basis) * dragProgress.value
+})
+
+const hintergrundOpacity = computed(() => {
+    if (wirdWeggeworfen.value) return 1
+    const basis = 0.5
+    const ziel = 0.8
+    return basis + (ziel - basis) * dragProgress.value
 })
 
 function zeigeComboFalls(serie) {
@@ -142,13 +166,17 @@ function trackeKategorieStat(kategorieWert, warRichtig) {
     }
 }
 
-async function beantworten(antwortIstKI) {
+// WICHTIG: nicht mehr async/await für den Netzwerkaufruf -
+// dadurch passieren Kartenwechsel (Index) und Positions-Reset garantiert
+// im selben synchronen Moment, ohne Verzögerung dazwischen.
+function beantworten(antwortIstKI) {
     if (!aktuelleKarte.value) return
 
-    const warRichtig = (aktuelleKarte.value.herkunft === 'KI') === antwortIstKI
+    const karte = aktuelleKarte.value
+    const warRichtig = (karte.herkunft === 'KI') === antwortIstKI
 
     if (modus === 'score') {
-        trackeKategorieStat(aktuelleKarte.value.kategorie, warRichtig)
+        trackeKategorieStat(karte.kategorie, warRichtig)
     }
 
     if (warRichtig) {
@@ -159,8 +187,8 @@ async function beantworten(antwortIstKI) {
         }
 
         if (modus === 'score') {
-            const kartenLevel = userLevels.value[aktuelleKarte.value.kategorie] ?? 1
-            const kartenPunkte = berechneKartenPunkte(aktuelleKarte.value.schwierigkeit_aktuell, kartenLevel)
+            const kartenLevel = userLevels.value[karte.kategorie] ?? 1
+            const kartenPunkte = berechneKartenPunkte(karte.schwierigkeit_aktuell, kartenLevel)
             punkte.value += kartenPunkte + (aktuelleSerie.value * 10)
             zeigeComboFalls(aktuelleSerie.value)
         }
@@ -169,7 +197,8 @@ async function beantworten(antwortIstKI) {
         aktuelleSerie.value = 0
     }
 
-    await speichereAntwort(supabase, aktuelleKarte.value.id, warRichtig)
+    // Netzwerkaufruf im Hintergrund, blockiert die UI nicht mehr
+    speichereAntwort(supabase, karte.id, warRichtig)
 
     if (modus === 'score' && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
         const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / ESKALATION_ALLE_X_RICHTIGE), 5)
@@ -329,11 +358,20 @@ function endDrag() {
 
 function swipeAbschliessen(antwortIstKI) {
     const richtung = antwortIstKI ? 400 : -400
+    wirdWeggeworfen.value = true
     kartenPosition.value = { x: richtung, y: kartenPosition.value.y, rotation: antwortIstKI ? 30 : -30 }
 
     setTimeout(() => {
+        // Transition ausschalten UND Kartenwechsel im selben synchronen Block,
+        // damit Vue beides in einem einzigen Render-Schritt zusammenfasst.
+        sofortZuruecksetzen.value = true
         beantworten(antwortIstKI)
         kartenPosition.value = { x: 0, y: 0, rotation: 0 }
+
+        nextTick(() => {
+            sofortZuruecksetzen.value = false
+            wirdWeggeworfen.value = false
+        })
     }, 200)
 }
 
@@ -370,19 +408,39 @@ function buttonSwipe(antwortIstKI) {
                 <h1>{{ aktuellerIndex + 1 }}/{{ karten.length }}</h1>
             </div>
 
+            <div class="container_swipe_header">
+                <div class="swipe_header_seite" :style="{ opacity: echtHeaderOpacity }">
+                    <span class="swipe_header_label">ECHT</span>
+                    <img src="/icons/pfeil_links_icon.svg" alt="Nach links" class="swipe_header_pfeil">
+                </div>
+                <div class="swipe_header_seite" :style="{ opacity: kiHeaderOpacity }">
+                    <span class="swipe_header_label">KI</span>
+                    <img src="/icons/pfeil_rechts_icon.svg" alt="Nach rechts" class="swipe_header_pfeil">
+                </div>
+            </div>
+
             <div class="container_content">
-                <div class="label_swipe label_echt" :style="{ opacity: labelEchtOpacity }">ECHT</div>
-                <div class="label_swipe label_ki" :style="{ opacity: labelKiOpacity }">KI</div>
 
                 <Transition name="combo">
                     <div v-if="comboAnzeige" class="combo_anzeige">{{ comboAnzeige }}</div>
                 </Transition>
 
-                <div v-if="aktuelleKarte" class="karte" :style="{
+                <div v-if="naechsteKarte" class="karte karte_hintergrund" :style="{
+                    transform: `scale(${hintergrundScale})`,
+                    opacity: hintergrundOpacity
+                }">
+                    <img v-if="naechsteKarte.kategorie === 'BILD'" :src="naechsteKarte.datei_url" class="karte_bild"
+                        draggable="false">
+                    <video v-else-if="naechsteKarte.kategorie === 'VIDEO'" :src="naechsteKarte.datei_url"
+                        class="karte_video" muted playsinline></video>
+                    <div v-else class="karte_platzhalter"></div>
+                </div>
+
+                <div v-if="aktuelleKarte" class="karte" :key="aktuelleKarte.id" :style="{
                     transform: `translate(${kartenPosition.x}px, ${kartenPosition.y}px) rotate(${kartenPosition.rotation}deg)`,
-                    transition: wirdGezogen ? 'none' : 'transform 0.3s ease'
-                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag"
-                    @touchstart="startDrag" @touchmove="onDrag" @touchend="endDrag">
+                    transition: (wirdGezogen || sofortZuruecksetzen) ? 'none' : 'transform 0.3s ease'
+                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag" @touchstart="startDrag"
+                    @touchmove="onDrag" @touchend="endDrag">
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
@@ -404,7 +462,8 @@ function buttonSwipe(antwortIstKI) {
 
             <div class="container_swipe_info">
                 <h4 class="swipe_info_handy">Swipe nach links für Real erstellt und nach rechts für KI generiert</h4>
-                <h4 class="swipe_info_pc">Drücke die linke Pfeiltaste für Real erstellt und die rechte für KI generiert</h4>
+                <h4 class="swipe_info_pc">Drücke die linke Pfeiltaste für Real erstellt und die rechte für KI generiert
+                </h4>
             </div>
         </template>
 
@@ -443,12 +502,57 @@ function buttonSwipe(antwortIstKI) {
 }
 
 @keyframes zeit-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.15);
     }
+}
+
+.container_swipe_header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 80%;
+    position: relative;
+    z-index: 10;
+}
+
+.swipe_header_seite {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.15s ease;
+}
+
+.swipe_header_label {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 2.3rem;
+    position: relative;
+    top: 2rem;
+    text-align: center;
+    color: var(--gelb);
+    z-index: 2;
+}
+
+.swipe_header_pfeil {
+    width: 4rem;
+    display: block;
+    position: relative;
+    top: 1rem;
+    z-index: 1;
+}
+
+.swipe_header_seite:first-child .swipe_header_pfeil {
+    left: -1.8rem;
+}
+
+.swipe_header_seite:last-child .swipe_header_pfeil {
+    right: -1.8rem;
 }
 
 .container_content {
@@ -462,25 +566,7 @@ function buttonSwipe(antwortIstKI) {
     margin: 2%;
     position: relative;
     overflow: hidden;
-}
-
-.label_swipe {
-    position: absolute;
-    top: 1rem;
-    font-family: 'DotGothic16', sans-serif;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: white;
-    z-index: 2;
-    pointer-events: none;
-}
-
-.label_echt {
-    left: 1rem;
-}
-
-.label_ki {
-    right: 1rem;
+    z-index: 1;
 }
 
 .combo_anzeige {
@@ -514,10 +600,12 @@ function buttonSwipe(antwortIstKI) {
         transform: translate(-50%, -50%) scale(0.5);
         opacity: 0;
     }
+
     60% {
         transform: translate(-50%, -50%) scale(1.2);
         opacity: 1;
     }
+
     100% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 1;
@@ -533,6 +621,24 @@ function buttonSwipe(antwortIstKI) {
     cursor: grab;
     user-select: none;
     touch-action: none;
+    position: relative;
+    z-index: 1;
+}
+
+.karte_hintergrund {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    cursor: default;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.karte_platzhalter {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 30px;
 }
 
 .karte_bild {
@@ -583,6 +689,12 @@ function buttonSwipe(antwortIstKI) {
 
 .container_swipe_buttons {
     display: none;
+}
+
+.container_swipe_info {
+    text-align: center;
+    margin-top: 1rem;
+    width: 80%;
 }
 
 .swipe_info_pc {
