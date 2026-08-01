@@ -3,29 +3,47 @@
   /** RESET: Das Layout ist auf box-sizing:border-box und margin-freie Elemente
       ausgelegt (das kam bisher stillschweigend von Tailwinds Preflight mit) **/
 
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
     border-width: 0;
     border-style: solid;
     border-color: currentColor;
   }
 
-  html, body {
+  html,
+  body {
     margin: 0;
     padding: 0;
   }
 
-  h1, h2, h3, h4, h5, h6, p, blockquote, figure, dl, dd, hr {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  blockquote,
+  figure,
+  dl,
+  dd,
+  hr {
     margin: 0;
   }
 
-  ol, ul {
+  ol,
+  ul {
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  button, input, textarea, select {
+  button,
+  input,
+  textarea,
+  select {
     font: inherit;
     color: inherit;
     margin: 0;
@@ -37,7 +55,10 @@
     background: none;
   }
 
-  img, svg, video, canvas {
+  img,
+  svg,
+  video,
+  canvas {
     display: block;
     max-width: 100%;
   }
@@ -114,7 +135,7 @@
 
   /** ALLGEMEINES Farben und schriften**/
 
-:root {
+  :root {
     --background-base: #ffffff;
     --background-1: #f898c1;
     --background-2: #5aeaa2;
@@ -127,7 +148,8 @@
     --text-dunkel: #560000;
     --text-schwarz: #000000;
     --text-hell: #ffffff;
-}
+  }
+
   .container_main {
     display: flex;
     flex-direction: column;
@@ -170,7 +192,7 @@
     font-weight: 400;
   }
 
-  
+
   .h1_black {
     color: var(--text-schwarz);
   }
@@ -214,7 +236,7 @@
 
   /** Allgemeines BUTTONS **/
 
-.button {
+  .button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -230,9 +252,9 @@
     text-decoration: none;
     transition: all 200ms;
     width: 100%;
-}
+  }
 
-.button_klein {
+  .button_klein {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -248,11 +270,12 @@
     text-decoration: none;
     transition: all 200ms;
     flex: 0 0 calc(45% - 1rem);
-}
+  }
 
   /* Nur auf Geräten mit echtem Maus-Hover anwenden - sonst bleibt der Hover-Zustand
      auf Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen" */
   @media (hover: hover) and (pointer: fine) {
+
     .button:hover,
     .button_klein:hover {
       background: var(--button-hover);
@@ -278,7 +301,7 @@
     flex-direction: column;
     gap: 0.3rem;
     width: 55%;
-    margin-top: 0.5rem;
+    margin: 0.5rem auto 0;
   }
 
   .container_back_button {

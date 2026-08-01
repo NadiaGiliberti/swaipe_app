@@ -181,7 +181,10 @@ async function bestaetigeEntfernen() {
 
             <div class="container_buttons_wm">
                 <button class="button button_danger" @click="bestaetigeEntfernen">
-                    JA, ENTFERNEN
+                    ENTFERNEN
+                </button>
+                <button class="button button_abbrechen" @click="schliesseEntfernenModal">
+                    ABBRECHEN
                 </button>
             </div>
         </ModalBase>
@@ -320,5 +323,10 @@ async function bestaetigeEntfernen() {
 .container_anfragen {
     width: 85%;
     margin-top: 3rem;
+}
+
+.button_abbrechen {
+    background: var(--braun);
+    opacity: 0.6;
 }
 </style>
