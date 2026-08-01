@@ -8,20 +8,25 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const erfolgsmeldung = ref('')
+const errorMsg = ref('')
+const resendLoading = ref(false)
+const resendMeldung = ref('')
 
 async function registrieren() {
+  errorMsg.value = ''
+
   if (!user.value || !email.value || !password.value) {
-    alert('Bitte alle Felder ausfüllen.')
+    errorMsg.value = 'Bitte alle Felder ausfüllen.'
     return
   }
 
   if (user.value.length > 15) {
-    alert('Der Username darf maximal 15 Zeichen lang sein.')
+    errorMsg.value = 'Der Username darf maximal 15 Zeichen lang sein.'
     return
   }
 
   loading.value = true
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email: email.value,
     password: password.value,
     options: {
@@ -34,11 +39,35 @@ async function registrieren() {
   loading.value = false
 
   if (error) {
-    alert(error.message)
+    errorMsg.value = error.message
+    return
+  }
+
+  if (data.user && data.user.identities && data.user.identities.length === 0) {
+    errorMsg.value = 'Diese E-Mail-Adresse ist bereits registriert. Bitte logge dich ein oder nutze eine andere E-Mail.'
     return
   }
 
   erfolgsmeldung.value = 'Fast geschafft! Wir haben dir einen Bestätigungslink an deine E-Mail-Adresse geschickt. Bitte klicke darauf, um deinen Account zu aktivieren.'
+}
+
+async function linkErneutSenden() {
+  resendLoading.value = true
+  resendMeldung.value = ''
+
+  const { error } = await supabase.auth.resend({
+    type: 'signup',
+    email: email.value
+  })
+
+  resendLoading.value = false
+
+  if (error) {
+    resendMeldung.value = error.message
+    return
+  }
+
+  resendMeldung.value = 'Neuer Bestätigungslink wurde gesendet.'
 }
 </script>
 
@@ -79,12 +108,27 @@ async function registrieren() {
           </button>
         </div>
 
+        <p v-if="errorMsg" class="error_text">{{ errorMsg }}</p>
+
       </form>
     </template>
 
     <template v-else>
       <h1>REGISTRIEREN</h1>
       <p class="erfolg_text">{{ erfolgsmeldung }}</p>
+
+      <p class="erfolg_text_klein">
+        Keine E-Mail erhalten? Schau auch im Spam-Ordner nach, oder fordere einen neuen Link an.
+      </p>
+
+      <div class="container_buttons_wm">
+        <button class="button_klein" :disabled="resendLoading" @click="linkErneutSenden">
+          {{ resendLoading ? 'SENDET...' : 'LINK ERNEUT SENDEN' }}
+        </button>
+      </div>
+
+      <p v-if="resendMeldung" class="erfolg_text_klein">{{ resendMeldung }}</p>
+
       <div class="container_buttons_wm">
         <NuxtLink to="/login" class="button button_registrieren">ZUM LOGIN</NuxtLink>
       </div>
@@ -108,5 +152,22 @@ async function registrieren() {
   text-align: center;
   width: 85%;
   margin-top: 2rem;
+}
+
+.erfolg_text_klein {
+  font-family: 'DotGothic16', sans-serif;
+  font-size: 0.8rem;
+  color: var(--text-dunkel);
+  text-align: center;
+  width: 85%;
+  margin-top: 1rem;
+}
+
+.error_text {
+  color: var(--background-3);
+  font-family: 'DotGothic16', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 1rem;
 }
 </style>

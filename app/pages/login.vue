@@ -7,10 +7,13 @@ const user = useSupabaseUser()
 const userInput = ref('')
 const password = ref('')
 const loading = ref(false)
+const errorMsg = ref('')
 
 async function login() {
+  errorMsg.value = ''
+
   if (!userInput.value || !password.value) {
-    alert('Bitte E-Mail und Passwort ausfüllen.')
+    errorMsg.value = 'Bitte E-Mail und Passwort ausfüllen.'
     return
   }
 
@@ -24,9 +27,11 @@ async function login() {
   if (error) {
     loading.value = false
     if (error.message === 'Email not confirmed') {
-      alert('Bitte bestätige zuerst deine E-Mail-Adresse. Wir haben dir einen Link geschickt.')
+      errorMsg.value = 'Bitte bestätige zuerst deine E-Mail-Adresse. Wir haben dir einen Link geschickt.'
+    } else if (error.message === 'Invalid login credentials') {
+      errorMsg.value = 'E-Mail oder Passwort falsch.'
     } else {
-      alert(error.message)
+      errorMsg.value = error.message
     }
     return
   }
@@ -40,7 +45,7 @@ async function login() {
   if (profilError || (profilData && profilData.aktiv === false)) {
     await supabase.auth.signOut()
     loading.value = false
-    alert('Dieser Account wurde deaktiviert. Bitte kontaktiere den Support.')
+    errorMsg.value = 'Dieser Account wurde deaktiviert. Bitte kontaktiere den Support.'
     return
   }
 
@@ -88,6 +93,8 @@ async function login() {
         </button>
       </div>
 
+      <p v-if="errorMsg" class="error_text">{{ errorMsg }}</p>
+
     </form>
 
 
@@ -98,6 +105,14 @@ async function login() {
 <style>
 .button_login {
   background: var(--braun);
+  margin-top: 1rem;
+}
+
+.error_text {
+  color: var(--background-3);
+  font-family: 'DotGothic16', sans-serif;
+  font-size: 0.85rem;
+  text-align: center;
   margin-top: 1rem;
 }
 </style>
