@@ -39,6 +39,11 @@ const aktuelleKarte = computed(() => karten.value[aktuellerIndex.value])
 const naechsteKarte = computed(() => karten.value[aktuellerIndex.value + 1])
 const fertig = computed(() => aktuellerIndex.value >= karten.value.length || (modus === 'score' && zeitVerbleibend.value <= 0))
 
+// Lädt die nächsten paar Karten (nach der bereits sichtbaren naechsteKarte) unsichtbar im
+// Hintergrund vor, damit Videos/Audios beim Hinswipen schon im Browser-Cache liegen.
+const VORLADE_ANZAHL = 3
+const vorausKarten = computed(() => karten.value.slice(aktuellerIndex.value + 2, aktuellerIndex.value + 2 + VORLADE_ANZAHL))
+
 const zeitKnapp = computed(() => {
     return modus === 'score' && zeitVerbleibend.value <= 10 && zeitVerbleibend.value > 0
 })
@@ -432,7 +437,7 @@ function buttonSwipe(antwortIstKI) {
                     <img v-if="naechsteKarte.kategorie === 'BILD'" :src="naechsteKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="naechsteKarte.kategorie === 'VIDEO'" :src="naechsteKarte.datei_url"
-                        class="karte_video" muted playsinline></video>
+                        class="karte_video" preload="auto" muted playsinline></video>
                     <div v-else class="karte_platzhalter"></div>
                 </div>
 
@@ -444,10 +449,20 @@ function buttonSwipe(antwortIstKI) {
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
-                        class="karte_video" autoplay loop muted playsinline></video>
+                        class="karte_video" preload="auto" autoplay loop muted playsinline></video>
                     <audio v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
-                        :src="aktuelleKarte.datei_url" class="karte_audio" autoplay controls loop></audio>
+                        :src="aktuelleKarte.datei_url" class="karte_audio" preload="auto" autoplay controls loop></audio>
                     <p v-else>{{ aktuelleKarte.content_type }} / {{ aktuelleKarte.stil }}</p>
+                </div>
+
+                <div class="vorlade_bereich" aria-hidden="true">
+                    <template v-for="karte in vorausKarten" :key="'vorlade-' + karte.id">
+                        <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url">
+                        <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url" preload="auto" muted
+                            playsinline></video>
+                        <audio v-else-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'"
+                            :src="karte.datei_url" preload="auto"></audio>
+                    </template>
                 </div>
             </div>
 
@@ -623,6 +638,9 @@ function buttonSwipe(antwortIstKI) {
     touch-action: none;
     position: relative;
     z-index: 1;
+    background: rgba(0, 0, 0, 0.85);
+    border-radius: 30px;
+    overflow: hidden;
 }
 
 .karte_hintergrund {
@@ -646,6 +664,16 @@ function buttonSwipe(antwortIstKI) {
     height: 100%;
     object-fit: cover;
     border-radius: 30px;
+    pointer-events: none;
+}
+
+/* Absichtlich NICHT display:none - manche Browser brechen dann das Laden ab */
+.vorlade_bereich {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    opacity: 0;
     pointer-events: none;
 }
 

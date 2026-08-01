@@ -1,11 +1,51 @@
   @import './fonts.css';
 
+  /** RESET: Das Layout ist auf box-sizing:border-box und margin-freie Elemente
+      ausgelegt (das kam bisher stillschweigend von Tailwinds Preflight mit) **/
 
-  /*** falls ich mal noch Tailwind integrieren will 
-  @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
-  ***/
+  *, *::before, *::after {
+    box-sizing: border-box;
+    border-width: 0;
+    border-style: solid;
+    border-color: currentColor;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+
+  h1, h2, h3, h4, h5, h6, p, blockquote, figure, dl, dd, hr {
+    margin: 0;
+  }
+
+  ol, ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  button, input, textarea, select {
+    font: inherit;
+    color: inherit;
+    margin: 0;
+    padding: 0;
+  }
+
+  button {
+    cursor: pointer;
+    background: none;
+  }
+
+  img, svg, video, canvas {
+    display: block;
+    max-width: 100%;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: inherit;
+  }
 
   /** ALLGEMEIN: Touch-Verhalten (iOS zeigt sonst einen grauen Tap-Flash bzw. "hängenbleibende" Hover-Farbe) **/
 

@@ -8,7 +8,7 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
-  modules: ['@nuxtjs/tailwindcss', '@nuxtjs/supabase', '@vite-pwa/nuxt'],
+  modules: ['@nuxtjs/supabase', '@vite-pwa/nuxt'],
   supabase: {
     redirect: false,
   },
