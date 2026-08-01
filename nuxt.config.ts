@@ -52,14 +52,17 @@ export default defineNuxtConfig({
     },
     workbox: {
       globPatterns: ['**/*.{js,css,html,woff,woff2,svg,png,webp,ico}'],
-      navigateFallbackDenylist: [/^\/api\//],
+      // Wichtig für diese SSR-App: KEIN navigateFallback. Das Modul würde sonst
+      // standardmässig alle Seitenaufrufe auf die gecachte Startseite umleiten
+      // (SPA-Verhalten) - das kollidiert mit serverseitig gerenderten Seiten
+      // (Login-Check, persönliche Daten) und führt zu falschen/alten Seiteninhalten.
+      navigateFallback: undefined,
     },
     client: {
       installPrompt: true,
     },
     devOptions: {
-      enabled: true,
-      type: 'module',
+      enabled: false,
     },
   },
 
@@ -82,6 +85,10 @@ export default defineNuxtConfig({
         },
       ],
       meta: [
+        // mobile-web-app-capable: Standard-Tag für Chrome/Android
+        { name: 'mobile-web-app-capable', content: 'yes' },
+        // apple-mobile-web-app-*: iOS Safari kennt nur diese Variante, wird von Chrome
+        // zwar als "deprecated" gemeldet, ist für Safari aber weiterhin nötig
         { name: 'apple-mobile-web-app-capable', content: 'yes' },
         { name: 'apple-mobile-web-app-status-bar-style', content: 'black' },
       ],

@@ -457,7 +457,7 @@ const vFocus = {
     font-size: 1.17em;
     /* Ungefähre h3-Größe */
     font-weight: bold;
-    text-align: center;
+    text-align: center; 
     border: none;
     border-bottom: 2px solid var(--braun, #000);
     /* Kleiner Unterstrich beim Editieren */
