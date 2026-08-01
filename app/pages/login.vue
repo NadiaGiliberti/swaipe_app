@@ -23,7 +23,11 @@ async function login() {
 
   if (error) {
     loading.value = false
-    alert(error.message)
+    if (error.message === 'Email not confirmed') {
+      alert('Bitte bestätige zuerst deine E-Mail-Adresse. Wir haben dir einen Link geschickt.')
+    } else {
+      alert(error.message)
+    }
     return
   }
 
@@ -65,14 +69,14 @@ async function login() {
 
       <div class="container_formularfeld">
         <label for="email">E-MAIL</label>
-        <input v-model="userInput" class="formularfeld" id="email" type="email"
+        <input v-model="userInput" class="formularfeld" id="email" name="username" type="email" autocomplete="username"
           placeholder="E-Mail eingeben" required>
       </div>
 
       <div class="container_formularfeld">
         <label for="password">PASSWORT</label>
-        <input v-model="password" class="formularfeld" id="password" type="password" placeholder="Passwort eingeben"
-          required>
+        <input v-model="password" class="formularfeld" id="password" name="password" type="password"
+          autocomplete="current-password" placeholder="Passwort eingeben" required>
       </div>
 
       <a href="/registrieren">Registrieren</a>
