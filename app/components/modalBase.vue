@@ -78,4 +78,8 @@ const emit = defineEmits(['close'])
 .fade-leave-active {
     transition: opacity 0.2s ease;
 }
+
+.modal_box h3 {
+    color: var(--braun);
+}
 </style>
