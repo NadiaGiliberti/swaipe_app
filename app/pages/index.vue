@@ -63,11 +63,9 @@ console.log('Fehler:', error)
 }
 
 .button_profile img {
-  width: 28px;
+  width: clamp(34px, 5vw, 44px);
   display: block;
 }
-@media (min-width:768px) {
 
-
-}
+@media (min-width:768px) {}
 </style>

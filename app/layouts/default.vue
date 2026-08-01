@@ -4,7 +4,9 @@
       <navigation />
     </header>
 
+    <SchliessenButton />
+
     <slot />
-    
+
   </div>
 </template>

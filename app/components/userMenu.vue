@@ -145,7 +145,7 @@ async function handleLogout() {
 }
 
 .button_close img {
-    width: 28px;
+    width: clamp(34px, 5vw, 44px);
     display: block;
 }
 

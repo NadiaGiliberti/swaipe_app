@@ -35,12 +35,41 @@ let startY = 0
 const comboAnzeige = ref('')
 let comboTimeout = null
 
+// ===== VERLASSEN-BESTÄTIGUNG =====
+const spielBeendet = ref(false)
+const zeigeVerlassenModal = ref(false)
+let ausstehendeResolve = null
+
+onBeforeRouteLeave(() => {
+    if (spielBeendet.value || !bereit.value) return true
+
+    return new Promise((resolve) => {
+        ausstehendeResolve = resolve
+        zeigeVerlassenModal.value = true
+    })
+})
+
+function bestaetigeVerlassen() {
+    spielBeendet.value = true
+    zeigeVerlassenModal.value = false
+    if (ausstehendeResolve) {
+        ausstehendeResolve(true)
+        ausstehendeResolve = null
+    }
+}
+
+function abbrechenVerlassen() {
+    zeigeVerlassenModal.value = false
+    if (ausstehendeResolve) {
+        ausstehendeResolve(false)
+        ausstehendeResolve = null
+    }
+}
+
 const aktuelleKarte = computed(() => karten.value[aktuellerIndex.value])
 const naechsteKarte = computed(() => karten.value[aktuellerIndex.value + 1])
 const fertig = computed(() => aktuellerIndex.value >= karten.value.length || (modus === 'score' && zeitVerbleibend.value <= 0))
 
-// Lädt die nächsten paar Karten (nach der bereits sichtbaren naechsteKarte) unsichtbar im
-// Hintergrund vor, damit Videos/Audios beim Hinswipen schon im Browser-Cache liegen.
 const VORLADE_ANZAHL = 3
 const vorausKarten = computed(() => karten.value.slice(aktuellerIndex.value + 2, aktuellerIndex.value + 2 + VORLADE_ANZAHL))
 
@@ -50,12 +79,12 @@ const zeitKnapp = computed(() => {
 
 const echtHeaderOpacity = computed(() => {
     if (kartenPosition.value.x <= 0) return 1
-    return Math.max(1 - kartenPosition.value.x / 150, 0.1)
+    return Math.max(1 - kartenPosition.value.x / 150, 0)
 })
 
 const kiHeaderOpacity = computed(() => {
     if (kartenPosition.value.x >= 0) return 1
-    return Math.max(1 - Math.abs(kartenPosition.value.x) / 150, 0.1)
+    return Math.max(1 - Math.abs(kartenPosition.value.x) / 150, 0)
 })
 
 const dragProgress = computed(() => {
@@ -171,9 +200,6 @@ function trackeKategorieStat(kategorieWert, warRichtig) {
     }
 }
 
-// WICHTIG: nicht mehr async/await für den Netzwerkaufruf -
-// dadurch passieren Kartenwechsel (Index) und Positions-Reset garantiert
-// im selben synchronen Moment, ohne Verzögerung dazwischen.
 function beantworten(antwortIstKI) {
     if (!aktuelleKarte.value) return
 
@@ -202,7 +228,6 @@ function beantworten(antwortIstKI) {
         aktuelleSerie.value = 0
     }
 
-    // Netzwerkaufruf im Hintergrund, blockiert die UI nicht mehr
     speichereAntwort(supabase, karte.id, warRichtig)
 
     if (modus === 'score' && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
@@ -223,6 +248,8 @@ function beantworten(antwortIstKI) {
 }
 
 async function beendeSpiel() {
+    spielBeendet.value = true
+
     if (timerInterval) clearInterval(timerInterval)
 
     const gesamtAntworten = korrekt.value + falsch.value
@@ -367,8 +394,6 @@ function swipeAbschliessen(antwortIstKI) {
     kartenPosition.value = { x: richtung, y: kartenPosition.value.y, rotation: antwortIstKI ? 30 : -30 }
 
     setTimeout(() => {
-        // Transition ausschalten UND Kartenwechsel im selben synchronen Block,
-        // damit Vue beides in einem einzigen Render-Schritt zusammenfasst.
         sofortZuruecksetzen.value = true
         beantworten(antwortIstKI)
         kartenPosition.value = { x: 0, y: 0, rotation: 0 }
@@ -485,6 +510,19 @@ function buttonSwipe(antwortIstKI) {
         <template v-else>
             <p>Lädt...</p>
         </template>
+
+        <Transition name="fade">
+            <div v-if="zeigeVerlassenModal" class="verlassen_modal">
+                <div class="verlassen_modal_inner">
+                    <h3>Spiel verlassen?</h3>
+                    <p>Dein Fortschritt in dieser Runde geht verloren, wenn du jetzt gehst.</p>
+                    <div class="verlassen_modal_buttons">
+                        <button class="button_klein verlassen_btn_weiter" @click="abbrechenVerlassen">WEITERSPIELEN</button>
+                        <button class="button_klein verlassen_btn_raus" @click="bestaetigeVerlassen">VERLASSEN</button>
+                    </div>
+                </div>
+            </div>
+        </Transition>
 
     </main>
 </template>
@@ -638,7 +676,7 @@ function buttonSwipe(antwortIstKI) {
     touch-action: none;
     position: relative;
     z-index: 1;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgb(0, 0, 0);
     border-radius: 30px;
     overflow: hidden;
 }
@@ -667,7 +705,6 @@ function buttonSwipe(antwortIstKI) {
     pointer-events: none;
 }
 
-/* Absichtlich NICHT display:none - manche Browser brechen dann das Laden ab */
 .vorlade_bereich {
     position: absolute;
     width: 1px;
@@ -741,5 +778,54 @@ function buttonSwipe(antwortIstKI) {
     .swipe_info_pc {
         display: block;
     }
+}
+
+.verlassen_modal {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+.verlassen_modal_inner {
+    background: var(--background-base);
+    border-radius: 20px;
+    padding: 2rem 1.5rem;
+    max-width: 320px;
+    text-align: center;
+}
+
+.verlassen_modal_inner p {
+    font-size: 4vw;
+    margin-top: 0.5rem;
+}
+
+.verlassen_modal_buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+}
+
+.verlassen_btn_weiter {
+    background: var(--braun);
+}
+
+.verlassen_btn_raus {
+    background: var(--background-3);
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
 }
 </style>
