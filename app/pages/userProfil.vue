@@ -8,6 +8,7 @@ const errorMsg = ref('')
 const showEmailModal = ref(false)
 const showPasswordModal = ref(false)
 const showDeleteModal = ref(false)
+const showAvatarModal = ref(false)
 
 const newEmail = ref('')
 const newPassword = ref('')
@@ -17,6 +18,13 @@ const actionLoading = ref(false)
 
 const fileInput = ref(null)
 const avatarLoading = ref(false)
+
+const vorgabeAvatare = [
+    '/icons/avatare/avatar_1.png',
+    '/icons/avatare/avatar_2.png',
+    '/icons/avatare/avatar_3.png',
+    '/icons/avatare/avatar_4.png'
+]
 
 const isEditingUsername = ref(false)
 const editUsernameInput = ref('')
@@ -56,8 +64,42 @@ onMounted(() => {
 })
 
 function handleEditAvatar() {
+    showAvatarModal.value = true
+}
+
+function closeAvatarModal() {
+    showAvatarModal.value = false
+}
+
+function waehleEigenesBild() {
+    showAvatarModal.value = false
     if (fileInput.value) {
         fileInput.value.click()
+    }
+}
+
+async function waehleVorgabeAvatar(url) {
+    avatarLoading.value = true
+    errorMsg.value = ''
+    showAvatarModal.value = false
+
+    try {
+        const { data: { user: currentUser } } = await supabase.auth.getUser()
+        if (!currentUser) throw new Error('Nicht eingeloggt.')
+
+        const { error: dbError } = await supabase
+            .from('profiles')
+            .update({ profilbild_url: url })
+            .eq('id', currentUser.id)
+
+        if (dbError) throw dbError
+
+        profil.value.profilbild_url = url
+        speichereAvatarCookie(url)
+    } catch (error) {
+        errorMsg.value = `Fehler: ${error.message || error}`
+    } finally {
+        avatarLoading.value = false
     }
 }
 
@@ -133,7 +175,6 @@ async function handleAvatarUpload(event) {
 
         if (dbError) throw dbError
 
-        profil.value.profilbild_url = publicUrl
         profil.value.profilbild_url = publicUrl
         speichereAvatarCookie(publicUrl)
 
@@ -294,8 +335,8 @@ const vFocus = {
             <div class="container_user">
                 <div class="container_userbild">
                     <img :src="profil.profilbild_url || '/icons/profil_icon.svg'" id="profilbildUser"
-                        :class="{ bild_umrandet: profil.profilbild_url }" :style="{ opacity: avatarLoading ? 0.5 : 1 }"
-                        alt="Profilbild">
+                        :class="{ bild_umrandet: profil.profilbild_url }"
+                        :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
 
                     <input type="file" ref="fileInput" style="display: none" accept="image/png, image/jpeg, image/webp"
                         @change="handleAvatarUpload">
@@ -332,6 +373,25 @@ const vFocus = {
         </template>
 
         <buttonZurueck />
+
+        <ModalBase :open="showAvatarModal" title="PROFILBILD WÄHLEN" @close="closeAvatarModal">
+            <div class="avatar_auswahl_grid">
+                <button
+                    v-for="(avatar, index) in vorgabeAvatare"
+                    :key="index"
+                    class="avatar_auswahl_item"
+                    @click="waehleVorgabeAvatar(avatar)"
+                >
+                    <img :src="avatar" alt="Vorgabe-Avatar">
+                </button>
+            </div>
+
+            <div class="container_buttons_wm">
+                <button class="button" @click="waehleEigenesBild">
+                    EIGENES BILD
+                </button>
+            </div>
+        </ModalBase>
 
         <ModalBase :open="showEmailModal" title="E-MAIL ÄNDERN" @close="closeEmailModal">
             <div class="container_formularfeld">
@@ -407,7 +467,7 @@ const vFocus = {
 }
 
 .bild_umrandet {
-    border: 2.5px solid #000000;
+    border: 2px solid #000000;
 }
 
 .button_edit {
@@ -489,5 +549,29 @@ const vFocus = {
 
 .button_danger {
     background: var(--background-3);
+}
+
+.avatar_auswahl_grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.avatar_auswahl_item {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    border-radius: 50%;
+    overflow: hidden;
+    aspect-ratio: 1;
+}
+
+.avatar_auswahl_item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 </style>
