@@ -7,6 +7,10 @@ defineProps({
     hatUngesehenes: {
         type: Boolean,
         default: false
+    },
+    avatarUrl: {
+        type: String,
+        default: ''
     }
 })
 
@@ -39,7 +43,7 @@ async function handleLogout() {
                     <nav class="container_menu">
 
                         <button class="menu_item" @click="goTo('/userProfil')">
-                            <img src="/icons/profil_icon.svg">
+                            <img :src="avatarUrl || '/icons/profil_icon.svg'" :class="{ bild_umrandet: avatarUrl }" class="menu_avatar">
                             <span>DEIN PROFIL</span>
                         </button>
 
@@ -179,6 +183,17 @@ async function handleLogout() {
 .menu_item img {
     width: 26px;
     display: block;
+}
+
+.menu_avatar {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.menu_avatar.bild_umrandet {
+    border: 1.5px solid #000000;
 }
 
 .punkt_neu {

@@ -2,6 +2,7 @@
 const menuOpen = ref(false)
 const supabase = useSupabaseClient()
 const hatUngesehenes = ref(false)
+const avatarUrl = ref('')
 
 const { data: spiele, error } = await supabase
   .from('spieldaten_live')
@@ -12,6 +13,19 @@ console.log('Fehler:', error)
 onMounted(async () => {
   const anzahl = await zaehleUngeseheneFreundschaftsereignisse(supabase)
   hatUngesehenes.value = anzahl > 0
+
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (currentUser) {
+    const { data: profilData } = await supabase
+      .from('profiles')
+      .select('profilbild_url')
+      .eq('id', currentUser.id)
+      .single()
+
+    if (profilData) {
+      avatarUrl.value = profilData.profilbild_url || ''
+    }
+  }
 })
 </script>
 
@@ -19,11 +33,11 @@ onMounted(async () => {
   <main class="container_main">
 
     <!-- User Menü -->
-    <UserMenu :open="menuOpen" :hat-ungesehenes="hatUngesehenes" @close="menuOpen = false" />
+    <UserMenu :open="menuOpen" :hat-ungesehenes="hatUngesehenes" :avatar-url="avatarUrl" @close="menuOpen = false" />
 
     <!-- Profil Icon -->
     <button v-if="!menuOpen" class="button_profile" @click="menuOpen = true">
-      <img src="/icons/profil_icon.svg" alt="Profil">
+      <img :src="avatarUrl || '/icons/profil_icon.svg'" :class="{ bild_umrandet: avatarUrl }" alt="Profil">
       <span v-if="hatUngesehenes" class="punkt_neu"></span>
     </button>
 
@@ -70,7 +84,14 @@ onMounted(async () => {
 
 .button_profile img {
   width: clamp(34px, 5vw, 44px);
+  height: clamp(34px, 5vw, 44px);
+  border-radius: 50%;
+  object-fit: cover;
   display: block;
+}
+
+.bild_umrandet {
+  border: 2px solid #000000;
 }
 
 .punkt_neu {
