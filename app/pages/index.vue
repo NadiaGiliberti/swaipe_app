@@ -11,12 +11,30 @@ const { data: spiele, error } = await supabase
 console.log('Fehler:', error)
 
 onMounted(async () => {
-  avatarUrl.value = ladeAvatarAusCookie()
-
   const anzahl = await zaehleUngeseheneFreundschaftsereignisse(supabase)
   hatUngesehenes.value = anzahl > 0
 
-  avatarUrl.value = await ladeUndSpeichereAvatar(supabase)
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  if (currentUser) {
+    const { data: profilData } = await supabase
+      .from('profiles')
+      .select('profilbild_url, hilfe_gesehen')
+      .eq('id', currentUser.id)
+      .single()
+
+    if (profilData) {
+      avatarUrl.value = profilData.profilbild_url || ''
+
+      if (!profilData.hilfe_gesehen) {
+        await supabase
+          .from('profiles')
+          .update({ hilfe_gesehen: true })
+          .eq('id', currentUser.id)
+
+        await navigateTo('/hilfe')
+      }
+    }
+  }
 })
 
 </script>

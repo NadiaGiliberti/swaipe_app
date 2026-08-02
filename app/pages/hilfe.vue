@@ -6,7 +6,7 @@
         <div class="container_hilfe">
 
             <section class="hilfe_abschnitt">
-                <h2>STEUERUNG</h2>
+                <h2>SPIEL STEUERUNG</h2>
                 <p class="hilfe_text hilfe_text_handy">
                     Wische mit dem Finger nach links oder rechts, um zu entscheiden, ob es sich um "Echt" oder
                     "KI" handelt.
@@ -27,12 +27,11 @@
             <section class="hilfe_abschnitt">
                 <h2>DEFINITION ECHT UND KI</h2>
                 <p class="hilfe_text">
-                    Unter dem Begriff "Echt" verstehen sich alle Inhalte, die echt festgehaltene Dinge oder von Menschen
-                    echt erstellte Inhalte sind, sei es Kunst,
-                    Zeichnungen, Fotografien, Musik oder Texte.
+                    Unter dem Begriff "Echt" werden alle Inhalte verstanden, die echte festgehaltene Dinge oder von Menschen
+                    echt erstellte Inhalte sind, sei es Kunst, Zeichnungen, Fotografien, Videos, Musik oder Texte.
                 </p>
                 <p class="hilfe_text">
-                    Unter dem Begriff "KI" versteht man alle Inhalte, die von einer Künstlichen Intelligenz
+                    Unter dem Begriff "KI" werden alle Inhalte verstanden, die von einer Künstlichen Intelligenz
                     (synthetisch) erstellt wurden. KI kann dabei auf verschiedene Arten eingesetzt werden, um Inhalte zu
                     erstellen.
                 </p>
