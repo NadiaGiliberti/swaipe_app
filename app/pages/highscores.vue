@@ -13,7 +13,7 @@ const freundeRanking = ref([])
 const freundeAlleAnzeigen = ref(false)
 
 async function ladeAlle() {
-  const result = await ladeTopAlle(supabase, 10)
+  const result = await ladeTopAlle(supabase, 5)
   topAlleListe.value = result.liste
   eigenerRang.value = result.eigenerRang
   eigenerEintrag.value = result.eigenerEintrag
@@ -80,30 +80,31 @@ function istEigenerUser(id) {
       </div>
 
       <!-- ALLE -->
-      <div v-if="aktiverTab === 'alle'" class="container_rangliste">
-        <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
-          :class="{ rang_item_ich: istEigenerUser(eintrag.id) }">
-          <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
+<div v-if="aktiverTab === 'alle'" class="container_rangliste">
+    <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
+        :class="{ rang_item_ich: eintrag.istIch }">
+        <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
             :class="{ bild_umrandet: eintrag.profilbild_url }">
-          <span class="rang_name">
-            {{ istEigenerUser(eintrag.id) ? 'DU' : eintrag.username }}
+        <span class="rang_name">
+            {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
-          </span>
-          <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
-        </div>
+        </span>
+        <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
+    </div>
 
-        <template v-if="eigenerRang && eigenerEintrag">
-          <div class="rang_trenner">...</div>
-          <div class="rang_item rang_item_ich">
-            <span class="rang_platz">{{ eigenerRang }}.</span>
+    <template v-if="eigenerRang && eigenerEintrag">
+        <div class="rang_trenner">...</div>
+        <div class="rang_item rang_item_ich">
             <img :src="eigenerEintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
-              :class="{ bild_umrandet: eigenerEintrag.profilbild_url }">
-            <span class="rang_name">DU</span>
+                :class="{ bild_umrandet: eigenerEintrag.profilbild_url }">
+            <span class="rang_name">
+                DU
+                <span class="rang_datum">am {{ formatDatum(eigenerEintrag.highscore_datum) }}</span>
+            </span>
             <span class="rang_score">{{ (eigenerEintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
-          </div>
-        </template>
-      </div>
-
+        </div>
+    </template>
+</div>
     </template>
 
     <buttonZurueck />
@@ -140,8 +141,6 @@ function istEigenerUser(id) {
   gap: 1.2rem;
   width: 85%;
   margin-top: 3rem;
-      padding-bottom: 8rem;
-
 }
 
 .rang_item {
@@ -163,14 +162,15 @@ function istEigenerUser(id) {
 }
 
 .bild_umrandet {
-  border: 2.5px solid #000000;
+  border: 1.5px solid #000000;
 }
+
 .rang_name {
-    flex: 1;
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 1.4rem;
-    color: var(--text-dunkel);
-    text-transform: uppercase;
+  flex: 1;
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 1.4rem;
+  color: var(--text-dunkel);
+  text-transform: uppercase;
 }
 
 .rang_datum {
@@ -185,12 +185,6 @@ function istEigenerUser(id) {
   font-family: 'BarlowCondensed', sans-serif;
   font-size: 1.4rem;
   color: var(--text-dunkel);
-}
-
-.rang_platz {
-  font-family: 'DotGothic16', sans-serif;
-  font-size: 0.9rem;
-  color: var(--gelb);
 }
 
 .rang_trenner {
