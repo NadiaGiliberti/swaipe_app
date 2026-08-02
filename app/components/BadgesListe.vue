@@ -37,16 +37,8 @@ onMounted(async () => {
     loading.value = false
 })
 
-function naechsterMeilenstein(level) {
-    if (level >= 10) return null
-    return level < 5 ? 5 : 10
-}
-
 function fortschrittProzent(level) {
-    const ziel = naechsterMeilenstein(level)
-    if (!ziel) return 100
-    const start = ziel === 5 ? 1 : 5
-    return Math.round(((level - start) / (ziel - start)) * 100)
+    return Math.min((level / 10) * 100, 100)
 }
 </script>
 
@@ -69,15 +61,6 @@ function fortschrittProzent(level) {
                         :style="{ width: fortschrittProzent(levels[kat]) + '%' }"
                     ></div>
                 </div>
-
-                <span class="fortschritt_text">
-                    <template v-if="naechsterMeilenstein(levels[kat])">
-                        Level {{ levels[kat] }} von {{ naechsterMeilenstein(levels[kat]) }} bis zum nächsten Abzeichen
-                    </template>
-                    <template v-else>
-                        Meister erreicht 🏆
-                    </template>
-                </span>
             </div>
         </div>
 
@@ -173,12 +156,6 @@ function fortschrittProzent(level) {
     transition: width 0.4s ease;
 }
 
-.fortschritt_text {
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 0.85rem;
-    color: var(--text-dunkel);
-    opacity: 0.8;
-}
 .badges_container h3 {
     text-align: left;
 }

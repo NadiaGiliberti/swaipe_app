@@ -62,7 +62,8 @@ function istEigenerUser(id) {
       <div v-if="aktiverTab === 'freunde'" class="container_rangliste">
         <div v-for="(eintrag, index) in sichtbareFreunde" :key="eintrag.id" class="rang_item"
           :class="{ rang_item_ich: eintrag.istIch }">
-          <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar">
+          <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
+            :class="{ bild_umrandet: eintrag.profilbild_url }">
           <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
@@ -81,10 +82,11 @@ function istEigenerUser(id) {
       <!-- ALLE -->
       <div v-if="aktiverTab === 'alle'" class="container_rangliste">
         <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
-          :class="{ rang_item_ich: eintrag.istIch }">
-          <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar">
+          :class="{ rang_item_ich: istEigenerUser(eintrag.id) }">
+          <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
+            :class="{ bild_umrandet: eintrag.profilbild_url }">
           <span class="rang_name">
-            {{ eintrag.istIch ? 'DU' : eintrag.username }}
+            {{ istEigenerUser(eintrag.id) ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
           </span>
           <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
@@ -94,7 +96,8 @@ function istEigenerUser(id) {
           <div class="rang_trenner">...</div>
           <div class="rang_item rang_item_ich">
             <span class="rang_platz">{{ eigenerRang }}.</span>
-            <img :src="eigenerEintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar">
+            <img :src="eigenerEintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
+              :class="{ bild_umrandet: eigenerEintrag.profilbild_url }">
             <span class="rang_name">DU</span>
             <span class="rang_score">{{ (eigenerEintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
           </div>
@@ -157,13 +160,15 @@ function istEigenerUser(id) {
   object-fit: cover;
 }
 
+.bild_umrandet {
+  border: 2.5px solid #000000;
+}
 .rang_name {
-  flex: 1;
-  font-family: 'BarlowCondensed', sans-serif;
-  font-size: 1.4rem;
-  color: var(--text-dunkel);
-  text-transform: uppercase;
-
+    flex: 1;
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 1.4rem;
+    color: var(--text-dunkel);
+    text-transform: uppercase;
 }
 
 .rang_datum {

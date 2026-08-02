@@ -22,7 +22,6 @@ async function ladeAlles() {
     ausgehendeAnfragen.value = result.ausgehendeAnfragen
     loading.value = false
 
-    // Erst NACHDEM die Punkte kurz sichtbar waren, als gesehen markieren
     setTimeout(() => {
         markiereFreundschaftenAlsGesehen(supabase)
     }, 1500)
@@ -104,7 +103,8 @@ async function bestaetigeEntfernen() {
         <template v-else>
             <div class="container_freunde_liste">
                 <div v-for="freund in freunde" :key="freund.freundschaftId" class="freund_item">
-                    <img :src="freund.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar">
+                    <img :src="freund.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
+                        :class="{ bild_umrandet: freund.profilbild_url }">
                     <span class="freund_name_wrapper">
                         {{ freund.username }}
                         <span v-if="freund.istNeu" class="punkt_neu"></span>
@@ -128,7 +128,8 @@ async function bestaetigeEntfernen() {
 
                 <div v-if="sucheErgebnisse.length > 0" class="container_suchergebnisse">
                     <div v-for="user in sucheErgebnisse" :key="user.id" class="freund_item">
-                        <img :src="user.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar">
+                        <img :src="user.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
+                            :class="{ bild_umrandet: user.profilbild_url }">
                         <span>{{ user.username }}</span>
 
                         <span v-if="istBereitsFreund(user.id)" class="hinweis_text_klein">Bereits Freunde</span>
@@ -144,7 +145,8 @@ async function bestaetigeEntfernen() {
             <div class="container_anfragen" v-if="eingehendeAnfragen.length > 0">
                 <h3>ANFRAGEN</h3>
                 <div v-for="anfrage in eingehendeAnfragen" :key="anfrage.freundschaftId" class="freund_item">
-                    <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar">
+                    <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
+                        :class="{ bild_umrandet: anfrage.profilbild_url }">
                     <span class="freund_name_wrapper">
                         {{ anfrage.username }}
                         <span v-if="anfrage.istNeu" class="punkt_neu"></span>
@@ -161,7 +163,8 @@ async function bestaetigeEntfernen() {
             <div class="container_anfragen" v-if="ausgehendeAnfragen.length > 0">
                 <h3>GESENDETE ANFRAGEN</h3>
                 <div v-for="anfrage in ausgehendeAnfragen" :key="anfrage.freundschaftId" class="freund_item">
-                    <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar">
+                    <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
+                        :class="{ bild_umrandet: anfrage.profilbild_url }">
                     <span>{{ anfrage.username }}</span>
                     <button class="button_x" @click="handleAnfrageZurueckziehen(anfrage.freundschaftId)">
                         <img src="/icons/close_icon.svg" alt="Zurückziehen">
@@ -212,6 +215,10 @@ async function bestaetigeEntfernen() {
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
+}
+
+.bild_umrandet {
+    border: 2.5px solid #000000;
 }
 
 .freund_item span {
@@ -266,7 +273,6 @@ async function bestaetigeEntfernen() {
     padding-right: 3.5rem;
     border-radius: 100px;
     height: 2.5rem;
-    /* feste Höhe, damit du sie kennst */
 }
 
 .button_suche {

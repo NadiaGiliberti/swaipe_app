@@ -15,11 +15,9 @@ const actionError = ref('')
 const actionSuccess = ref('')
 const actionLoading = ref(false)
 
-// Refs für den Avatar-Upload
 const fileInput = ref(null)
 const avatarLoading = ref(false)
 
-// Refs für das Bearbeiten des Usernamens
 const isEditingUsername = ref(false)
 const editUsernameInput = ref('')
 const usernameError = ref('')
@@ -57,14 +55,12 @@ onMounted(() => {
     ladeProfil()
 })
 
-// Triggert den Klick auf das versteckte Datei-Auswahl-Feld
 function handleEditAvatar() {
     if (fileInput.value) {
         fileInput.value.click()
     }
 }
 
-// Hilfsfunktion: Komprimiert das Bild mit Hilfe eines HTML Canvas Elementes
 function compressImage(file, maxWidth = 400, quality = 0.7) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader()
@@ -102,7 +98,6 @@ function compressImage(file, maxWidth = 400, quality = 0.7) {
     })
 }
 
-// Verarbeitet das ausgewählte Bild, komprimiert es und lädt es hoch
 async function handleAvatarUpload(event) {
     const file = event.target.files[0]
     if (!file) return
@@ -147,14 +142,12 @@ async function handleAvatarUpload(event) {
     }
 }
 
-// Aktiviert den Bearbeitungsmodus für den Usernamen
 function startEditingUsername() {
     editUsernameInput.value = profil.value.username
     usernameError.value = ''
     isEditingUsername.value = true
 }
 
-// Speichert den neuen Usernamen, wenn er geändert wurde
 async function saveUsername() {
     if (usernameSaving.value) return
     usernameSaving.value = true
@@ -299,6 +292,7 @@ const vFocus = {
             <div class="container_user">
                 <div class="container_userbild">
                     <img :src="profil.profilbild_url || '/icons/profil_icon.svg'" id="profilbildUser"
+                        :class="{ bild_umrandet: profil.profilbild_url }"
                         :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
 
                     <input type="file" ref="fileInput" style="display: none" accept="image/png, image/jpeg, image/webp"
@@ -390,8 +384,6 @@ const vFocus = {
 </template>
 
 <style>
-/* Trick für CSS-Validierung im Kombi-Block */
-
 .container_user {
     display: flex;
     flex-direction: column;
@@ -412,6 +404,10 @@ const vFocus = {
     display: block;
 }
 
+.bild_umrandet {
+    border: 2.5px solid #000000;
+}
+
 .button_edit {
     display: flex;
     align-items: center;
@@ -428,11 +424,9 @@ const vFocus = {
     display: block;
 }
 
-/* NEUE STYLES FÜR DEN USERNAME-EDIT */
 .container_username_edit {
     margin-top: 2vh;
     min-height: 40px;
-    /* Verhindert Springen des Layouts */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -444,23 +438,17 @@ const vFocus = {
     text-transform: uppercase;
 }
 
-@media (hover: hover) and (pointer: fine) {
-    .username_clickable:hover {
-        opacity: 0.7;
-        /* Gibt dem User visuelles Feedback, dass es klickbar ist */
-    }
+.username_clickable:hover {
+    opacity: 0.7;
 }
 
 .input_username {
     font-family: 'BarlowCondensed', sans-serif;
-    /* Gleiche Schriftart wie deine h3_black */
     font-size: 1.17em;
-    /* Ungefähre h3-Größe */
     font-weight: bold;
-    text-align: center; 
+    text-align: center;
     border: none;
     border-bottom: 2px solid var(--braun, #000);
-    /* Kleiner Unterstrich beim Editieren */
     text-transform: uppercase;
     outline: none;
     background: transparent;

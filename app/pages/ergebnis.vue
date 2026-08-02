@@ -68,13 +68,17 @@ const genauigkeit = computed(() => {
                 </div>
             </div>
 
-            <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0"
-                class="container_freunde_vergleich">
+            <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
                 <h2>FREUNDE</h2>
 
-                <div v-for="eintrag in top3Freunde" :key="eintrag.id" class="freund_vergleich_item"
-                    :class="{ freund_vergleich_item_ich: eintrag.istIch }">
-                    <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="freund_vergleich_avatar">
+                <div
+                    v-for="eintrag in top3Freunde"
+                    :key="eintrag.id"
+                    class="freund_vergleich_item"
+                    :class="{ freund_vergleich_item_ich: eintrag.istIch }"
+                >
+                    <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="freund_vergleich_avatar"
+                        :class="{ bild_umrandet: eintrag.profilbild_url }">
                     <span class="freund_vergleich_name">
                         {{ eintrag.istIch ? 'DU' : eintrag.username }}
                         <span class="freund_vergleich_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
@@ -157,12 +161,15 @@ const genauigkeit = computed(() => {
     object-fit: cover;
 }
 
+.bild_umrandet {
+    border: 2.5px solid #000000;
+}
+
 .freund_vergleich_name {
     flex: 1;
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 1.2rem;
     color: var(--text-dunkel);
-    text-transform: uppercase;
 }
 
 .freund_vergleich_datum {
