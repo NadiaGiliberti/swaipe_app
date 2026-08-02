@@ -13,6 +13,7 @@ export async function ladeTopAlle(supabase: any, limit = 10) {
     const { data: topListe, error } = await supabase
         .from('profiles')
         .select('id, username, profilbild_url, highscore, highscore_datum')
+        .gt('highscore', 0)
         .order('highscore', { ascending: false })
         .limit(limit)
 
@@ -34,6 +35,10 @@ export async function ladeTopAlle(supabase: any, limit = 10) {
         .select('id, username, profilbild_url, highscore, highscore_datum')
         .eq('id', currentUser.id)
         .single()
+
+    if (!eigenesProfil || eigenesProfil.highscore === 0) {
+        return { liste: topListeMitFlag, eigenerRang: null, eigenerEintrag: null }
+    }
 
     const { count } = await supabase
         .from('profiles')

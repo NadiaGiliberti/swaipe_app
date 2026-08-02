@@ -26,6 +26,20 @@ async function registrieren() {
   }
 
   loading.value = true
+
+  // Username-Verfügbarkeit vorab prüfen (case-insensitive)
+  const { data: vorhandenerUsername } = await supabase
+    .from('profiles')
+    .select('id')
+    .ilike('username', user.value.trim())
+    .maybeSingle()
+
+  if (vorhandenerUsername) {
+    loading.value = false
+    errorMsg.value = 'Dieser Username ist bereits vergeben.'
+    return
+  }
+
   const { data, error } = await supabase.auth.signUp({
     email: email.value,
     password: password.value,
@@ -39,9 +53,14 @@ async function registrieren() {
   loading.value = false
 
   if (error) {
-    errorMsg.value = error.message
+    console.error('Registrierungsfehler:', error)
+    if (error.message.includes('rate limit')) {
+        errorMsg.value = 'Zu viele Versuche in kurzer Zeit. Bitte warte einen Moment und versuche es erneut.'
+    } else {
+        errorMsg.value = 'Bei der Registrierung ist ein Fehler aufgetreten. Bitte versuche es erneut.'
+    }
     return
-  }
+}
 
   if (data.user && data.user.identities && data.user.identities.length === 0) {
     errorMsg.value = 'Diese E-Mail-Adresse ist bereits registriert. Bitte logge dich ein oder nutze eine andere E-Mail.'
