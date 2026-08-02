@@ -134,6 +134,8 @@ async function handleAvatarUpload(event) {
         if (dbError) throw dbError
 
         profil.value.profilbild_url = publicUrl
+        profil.value.profilbild_url = publicUrl
+        speichereAvatarCookie(publicUrl)
 
     } catch (error) {
         errorMsg.value = `Avatar-Fehler: ${error.message || error}`
@@ -292,8 +294,8 @@ const vFocus = {
             <div class="container_user">
                 <div class="container_userbild">
                     <img :src="profil.profilbild_url || '/icons/profil_icon.svg'" id="profilbildUser"
-                        :class="{ bild_umrandet: profil.profilbild_url }"
-                        :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
+                        :class="{ bild_umrandet: profil.profilbild_url }" :style="{ opacity: avatarLoading ? 0.5 : 1 }"
+                        alt="Profilbild">
 
                     <input type="file" ref="fileInput" style="display: none" accept="image/png, image/jpeg, image/webp"
                         @change="handleAvatarUpload">
