@@ -329,6 +329,8 @@ async function bestaetigeEntfernen() {
 .container_anfragen {
     width: 85%;
     margin-top: 3rem;
+    padding-bottom: 8rem;
+
 }
 
 .button_abbrechen {

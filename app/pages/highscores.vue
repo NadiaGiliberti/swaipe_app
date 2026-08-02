@@ -140,6 +140,8 @@ function istEigenerUser(id) {
   gap: 1.2rem;
   width: 85%;
   margin-top: 3rem;
+      padding-bottom: 8rem;
+
 }
 
 .rang_item {

@@ -293,6 +293,8 @@
     gap: 0.3rem;
     width: 55%;
     margin-top: 6rem;
+    padding-bottom: 2rem;
+
   }
 
   /** container mit weniger margin (im Text) **/

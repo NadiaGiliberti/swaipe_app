@@ -33,7 +33,8 @@
                 </p>
                 <p class="hilfe_text">
                     Unter dem Begriff "KI" versteht man alle Inhalte, die von einer Künstlichen Intelligenz
-                    (synthetisch) erstellt wurden. KI kann dabei auf verschiedene Arten eingesetzt werden, um Inhalte zu erstellen.
+                    (synthetisch) erstellt wurden. KI kann dabei auf verschiedene Arten eingesetzt werden, um Inhalte zu
+                    erstellen.
                 </p>
             </section>
 
@@ -63,6 +64,8 @@
     width: 85%;
     margin-top: 1rem;
     margin-bottom: 3rem;
+    padding-bottom: 8rem;
+
 }
 
 .hilfe_abschnitt h2 {
