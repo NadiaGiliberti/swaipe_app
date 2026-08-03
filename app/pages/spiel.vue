@@ -41,6 +41,9 @@ const audioIstAktiv = ref(false)
 const audioAktuelleZeit = ref(0)
 const audioGesamtZeit = ref(0)
 
+// ===== VIDEO FADE-IN (gegen schwarzes Flackern beim Kartenwechsel) =====
+const videoBereit = ref(false)
+
 // ===== VERLASSEN-BESTÄTIGUNG =====
 const spielBeendet = ref(false)
 const zeigeVerlassenModal = ref(false)
@@ -172,6 +175,7 @@ watch(aktuelleKarte, () => {
     audioAktuelleZeit.value = 0
     audioGesamtZeit.value = 0
     audioIstAktiv.value = false
+    videoBereit.value = false
 })
 
 async function ladeUserLevel() {
@@ -531,7 +535,9 @@ function buttonSwipe(antwortIstKI) {
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
-                        class="karte_video" preload="auto" fetchpriority="high" autoplay loop muted playsinline></video>
+                        class="karte_video" :class="{ karte_video_bereit: videoBereit }"
+                        preload="auto" fetchpriority="high" autoplay loop muted playsinline
+                        @loadeddata="videoBereit = true"></video>
 
                     <div v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
                         class="audio_player">
@@ -805,6 +811,12 @@ function buttonSwipe(antwortIstKI) {
     object-fit: cover;
     border-radius: 30px;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.karte_video_bereit {
+    opacity: 1;
 }
 
 .audio_player {
