@@ -9,6 +9,7 @@ const zeigePerfekteRunde = ref(false)
 
 const perzentilBesser = ref(null)
 const communityGenauigkeit = ref(null)
+const eigenerUeberlebensHighscore = ref(null)
 
 function persistErgebnis() {
     if (ergebnis.value) {
@@ -24,6 +25,8 @@ function nochmal() {
 
     if (ergebnis.value.modus === 'score') {
         navigateTo('/spiel?modus=score')
+    } else if (ergebnis.value.modus === 'ueberleben') {
+        navigateTo('/spiel?modus=ueberleben')
     } else if (ergebnis.value.kategorie) {
         navigateTo(`/spiel?modus=uebung&kategorie=${ergebnis.value.kategorie}`)
     } else {
@@ -36,20 +39,86 @@ function schliesseBadgePopup() {
     persistErgebnis()
 }
 
+async function ladeFreundeVergleich() {
+    if (!ergebnis.value) return
+
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (!currentUser) return
+
+    if (ergebnis.value.modus === 'score') {
+        const ranking = await ladeFreundeRanking(supabase, currentUser.id)
+        top3Freunde.value = ranking.slice(0, 3)
+        return
+    }
+
+    if (ergebnis.value.modus === 'ueberleben') {
+        const { data: freundschaften } = await supabase
+            .from('freundschaften')
+            .select('anfragender_id, empfaenger_id')
+            .eq('status', 'AKZEPTIERT')
+            .or(`anfragender_id.eq.${currentUser.id},empfaenger_id.eq.${currentUser.id}`)
+
+        const freundeIds = (freundschaften || []).map(f =>
+            f.anfragender_id === currentUser.id ? f.empfaenger_id : f.anfragender_id
+        )
+
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id, username, profilbild_url, ueberlebens_highscore, ueberlebens_highscore_datum')
+            .in('id', [...freundeIds, currentUser.id])
+
+        if (profile) {
+            top3Freunde.value = profile
+                .map(p => ({
+                    id: p.id,
+                    username: p.username,
+                    profilbild_url: p.profilbild_url,
+                    highscore: p.ueberlebens_highscore,
+                    highscore_datum: p.ueberlebens_highscore_datum,
+                    istIch: p.id === currentUser.id
+                }))
+                .sort((a, b) => (b.highscore ?? 0) - (a.highscore ?? 0))
+                .slice(0, 3)
+        }
+    }
+}
+
+async function ladeEigenerUeberlebensHighscore() {
+    if (!ergebnis.value || ergebnis.value.modus !== 'ueberleben') return
+
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+    if (!currentUser) return
+
+    const { data } = await supabase
+        .from('profiles')
+        .select('ueberlebens_highscore')
+        .eq('id', currentUser.id)
+        .single()
+
+    if (data) {
+        eigenerUeberlebensHighscore.value = data.ueberlebens_highscore ?? 0
+    }
+}
+
 async function ladePerzentil() {
-    if (!ergebnis.value || ergebnis.value.modus !== 'score') return
+    if (!ergebnis.value || (ergebnis.value.modus !== 'score' && ergebnis.value.modus !== 'ueberleben')) return
+
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    const spalte = ergebnis.value.modus === 'score' ? 'highscore' : 'ueberlebens_highscore'
 
     const { data, error } = await supabase
         .from('profiles')
-        .select('id, highscore')
+        .select(`id, ${spalte}`)
         .eq('aktiv', true)
-        .gt('highscore', 0)
+        .gt(spalte, 0)
 
     if (!error && data && data.length > 0) {
-        const andere = data.filter(p => p.id !== user.value?.id)
+        const andere = data.filter(p => p.id !== currentUser?.id)
+        const eigenerWert = ergebnis.value.modus === 'score' ? ergebnis.value.punkte : ergebnis.value.korrekt
 
         if (andere.length > 0) {
-            const besser = andere.filter(p => p.highscore > ergebnis.value.punkte).length
+            const besser = andere.filter(p => p[spalte] > eigenerWert).length
             perzentilBesser.value = Math.round((besser / andere.length) * 100)
         }
     }
@@ -89,11 +158,11 @@ onMounted(async () => {
         }, 2500)
     }
 
-    if (ergebnis.value?.modus === 'score' && user.value) {
-        const ranking = await ladeFreundeRanking(supabase, user.value.id)
-        top3Freunde.value = ranking.slice(0, 3)
+    if (ergebnis.value?.modus === 'score' || ergebnis.value?.modus === 'ueberleben') {
+        await ladeFreundeVergleich()
     }
 
+    await ladeEigenerUeberlebensHighscore()
     await ladePerzentil()
     await ladeCommunityGenauigkeit()
 
@@ -114,6 +183,10 @@ const genauigkeit = computed(() => {
                 <h1>{{ ergebnis.punkte.toLocaleString('de-CH') }}</h1>
                 <h3>PUNKTE</h3>
             </template>
+            <template v-else-if="ergebnis.modus === 'ueberleben'">
+                <h1>{{ ergebnis.korrekt }}</h1>
+                <h3>ÜBERLEBT</h3>
+            </template>
             <template v-else>
                 <h1>{{ ergebnis.korrekt }}/{{ ergebnis.gesamt }}</h1>
                 <h3>RICHTIG</h3>
@@ -124,23 +197,26 @@ const genauigkeit = computed(() => {
 
                 <div class="stat_zeile">
                     <span>BESTSERIE</span>
-                    <span>{{ ergebnis.besteSerie }}</span>
+                    <span>{{ ergebnis.modus === 'ueberleben' ? (eigenerUeberlebensHighscore ?? '-') : ergebnis.besteSerie }}</span>
                 </div>
-                <div class="stat_zeile">
-                    <span>RICHTIG</span>
-                    <span>{{ ergebnis.korrekt }}/{{ ergebnis.gesamt }}</span>
-                </div>
-                <div class="stat_zeile">
-                    <span>FALSCH</span>
-                    <span>{{ ergebnis.falsch }}/{{ ergebnis.gesamt }}</span>
-                </div>
-                <div class="stat_zeile">
-                    <span>GENAUIGKEIT</span>
-                    <span>{{ genauigkeit }}%</span>
-                </div>
+
+                <template v-if="ergebnis.modus !== 'ueberleben'">
+                    <div class="stat_zeile">
+                        <span>RICHTIG</span>
+                        <span>{{ ergebnis.korrekt }}/{{ ergebnis.gesamt }}</span>
+                    </div>
+                    <div class="stat_zeile">
+                        <span>FALSCH</span>
+                        <span>{{ ergebnis.falsch }}/{{ ergebnis.gesamt }}</span>
+                    </div>
+                    <div class="stat_zeile">
+                        <span>GENAUIGKEIT</span>
+                        <span>{{ genauigkeit }}%</span>
+                    </div>
+                </template>
             </div>
 
-            <div v-if="ergebnis.modus === 'score' && perzentilBesser !== null" class="container_perzentil">
+            <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && perzentilBesser !== null" class="container_perzentil">
                 <p>{{ perzentilBesser }}% der Spieler haben einen höheren Highscore erzielt als dieses Ergebnis.</p>
             </div>
 
@@ -168,7 +244,7 @@ const genauigkeit = computed(() => {
                 </div>
             </div>
 
-            <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
+            <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
                 <h2>FREUNDE</h2>
 
                 <div
@@ -191,7 +267,7 @@ const genauigkeit = computed(() => {
             <div class="container_buttons">
                 <button class="button button_nochmal" @click="nochmal">NOCHMAL</button>
                 <NuxtLink to="/kategorien" class="button_klein button_kategorien_highscores">KATEGORIEN</NuxtLink>
-                <NuxtLink to="/highscores" class="button_klein button_kategorien_highscores">HIGHSCORES</NuxtLink>
+                <NuxtLink v-if="ergebnis.modus !== 'ueberleben'" to="/highscores" class="button_klein button_kategorien_highscores">HIGHSCORES</NuxtLink>
             </div>
         </template>
 
@@ -215,7 +291,7 @@ const genauigkeit = computed(() => {
                         <span class="badge_popup_name">{{ badge.name }}</span>
                         <span class="badge_popup_beschreibung">{{ badge.beschreibung }}</span>
                     </div>
-                    <button class="button_klein" id="badge_weiter_button" @click="schliesseBadgePopup">Weiter</button>
+                    <button class="button_klein" id="badge_weiter_button" @click="schliesseBadgePopup">OK</button>
                 </div>
             </div>
         </Transition>
@@ -345,6 +421,7 @@ const genauigkeit = computed(() => {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 1.2rem;
     color: var(--text-dunkel);
+    text-transform: uppercase;
 }
 
 .freund_vergleich_datum {

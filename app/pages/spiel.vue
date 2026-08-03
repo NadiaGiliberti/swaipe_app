@@ -2,9 +2,9 @@
 const route = useRoute()
 const supabase = useSupabaseClient()
 
-const modus = route.query.modus === 'score' ? 'score' : 'uebung'
+const modus = route.query.modus === 'score' ? 'score' : route.query.modus === 'ueberleben' ? 'ueberleben' : 'uebung'
 const kategorie = route.query.kategorie || null
-const anzahlFragen = modus === 'score' ? 999 : 10
+const anzahlFragen = modus === 'uebung' ? 10 : 999
 
 const ESKALATION_ALLE_X_RICHTIGE = 15
 const PERFEKTE_RUNDE_BONUS = 500
@@ -78,7 +78,11 @@ function abbrechenVerlassen() {
 
 const aktuelleKarte = computed(() => karten.value[aktuellerIndex.value])
 const naechsteKarte = computed(() => karten.value[aktuellerIndex.value + 1])
-const fertig = computed(() => aktuellerIndex.value >= karten.value.length || (modus === 'score' && zeitVerbleibend.value <= 0))
+const fertig = computed(() => {
+    if (modus === 'score' && zeitVerbleibend.value <= 0) return true
+    if (modus === 'ueberleben' && falsch.value > 0) return true
+    return aktuellerIndex.value >= karten.value.length
+})
 
 const VORLADE_ANZAHL = 3
 const vorausKarten = computed(() => karten.value.slice(aktuellerIndex.value + 2, aktuellerIndex.value + 2 + VORLADE_ANZAHL))
@@ -180,7 +184,7 @@ watch(aktuelleKarte, () => {
 })
 
 async function ladeUserLevel() {
-    if (modus !== 'score') return
+    if (modus !== 'score' && modus !== 'ueberleben') return
 
     const { data: { user: currentUser } } = await supabase.auth.getUser()
     if (!currentUser) return
@@ -204,14 +208,14 @@ async function ladeUserLevel() {
 async function initSpiel() {
     await ladeUserLevel()
 
-    const geladen = await ladeSpielkarten(supabase, kategorie, modus === 'score' ? 100 : anzahlFragen)
+    const geladen = await ladeSpielkarten(supabase, kategorie, modus === 'uebung' ? anzahlFragen : (modus === 'ueberleben' ? 200 : 100))
 
     if (geladen.length === 0) {
         ladeFehler.value = 'Keine Inhalte gefunden.'
         return
     }
 
-    if (modus === 'score') {
+    if (modus === 'score' || modus === 'ueberleben') {
         const startResolver = (karte) => levelZuStartSchwierigkeit(userLevels.value[karte.kategorie] ?? 1)
         karten.value = baueAusgeglicheneReihenfolge(geladen, startResolver)
     } else {
@@ -268,7 +272,7 @@ function beantworten(antwortIstKI) {
     const karte = aktuelleKarte.value
     const warRichtig = (karte.herkunft === 'KI') === antwortIstKI
 
-    if (modus === 'score') {
+    if (modus === 'score' || modus === 'ueberleben') {
         trackeKategorieStat(karte.kategorie, warRichtig)
     }
 
@@ -279,7 +283,7 @@ function beantworten(antwortIstKI) {
             besteSerie.value = aktuelleSerie.value
         }
 
-        if (modus === 'score') {
+        if (modus === 'score' || modus === 'ueberleben') {
             const kartenLevel = userLevels.value[karte.kategorie] ?? 1
             const kartenPunkte = berechneKartenPunkte(karte.schwierigkeit_aktuell, kartenLevel)
             punkte.value += kartenPunkte + (aktuelleSerie.value * 10)
@@ -289,7 +293,7 @@ function beantworten(antwortIstKI) {
         falsch.value++
         aktuelleSerie.value = 0
 
-        if (modus === 'uebung') {
+        if (modus === 'uebung' || modus === 'ueberleben') {
             falscheKarten.value.push({
                 id: karte.id,
                 kategorie: karte.kategorie,
@@ -302,7 +306,7 @@ function beantworten(antwortIstKI) {
 
     speichereAntwort(supabase, karte.id, warRichtig)
 
-    if (modus === 'score' && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
+    if ((modus === 'score' || modus === 'ueberleben') && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
         const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / ESKALATION_ALLE_X_RICHTIGE), 5)
         const restKarten = karten.value.slice(aktuellerIndex.value + 1)
         const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
@@ -342,10 +346,10 @@ async function beendeSpiel() {
         besteSerie: besteSerie.value,
         perfekteRunde,
         neueBadges: [],
-        falscheKarten: modus === 'uebung' ? falscheKarten.value : []
+        falscheKarten: (modus === 'uebung' || modus === 'ueberleben') ? falscheKarten.value : []
     }
 
-    if (modus === 'score') {
+    if (modus === 'score' || modus === 'ueberleben') {
         const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
 
         if (userError || !currentUser) {
@@ -356,15 +360,20 @@ async function beendeSpiel() {
 
         const { data: profilData } = await supabase
             .from('profiles')
-            .select('highscore, level_bild, level_video, level_audio, level_musik, gespielte_runden')
+            .select('highscore, ueberlebens_highscore, level_bild, level_video, level_audio, level_musik, gespielte_runden')
             .eq('id', currentUser.id)
             .single()
 
         const updates = {}
 
-        if (profilData && punkte.value > profilData.highscore) {
+        if (modus === 'score' && profilData && punkte.value > profilData.highscore) {
             updates.highscore = punkte.value
             updates.highscore_datum = new Date().toISOString()
+        }
+
+        if (modus === 'ueberleben' && profilData && korrekt.value > (profilData.ueberlebens_highscore ?? 0)) {
+            updates.ueberlebens_highscore = korrekt.value
+            updates.ueberlebens_highscore_datum = new Date().toISOString()
         }
 
         if (profilData) {
@@ -491,7 +500,7 @@ function buttonSwipe(antwortIstKI) {
         </template>
 
         <template v-else-if="bereit">
-            <div class="container_score_count">
+            <div class="container_score_count" v-if="modus !== 'ueberleben'">
                 <div class="container_punkte" v-if="modus === 'score'">
                     <h4> PUNKTE </h4>
                     <p>{{ punkte }}</p>
@@ -506,6 +515,10 @@ function buttonSwipe(antwortIstKI) {
             <div class="container_zeit" v-if="modus === 'score'">
                 <h1 :class="{ zeit_knapp: zeitKnapp }">{{ zeitVerbleibend }}</h1>
                 <h4> SEKUNDEN </h4>
+            </div>
+            <div class="container_zeit" v-else-if="modus === 'ueberleben'">
+                <h1>{{ korrekt }}</h1>
+                <h4> ÜBERLEBT </h4>
             </div>
             <div class="container_zeit" v-else>
                 <h1>{{ aktuellerIndex + 1 }}/{{ karten.length }}</h1>

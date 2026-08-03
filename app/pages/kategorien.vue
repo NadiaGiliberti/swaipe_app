@@ -1,3 +1,6 @@
+<script setup>
+</script>
+
 <template>
     <main class="container_main">
 
@@ -8,6 +11,16 @@
                 <h4> Schlage den Bestwert</h4>
                 <div class="container_buttons_wm">
                     <NuxtLink to="/spiel?modus=score" class="button button_gelb">
+                        START
+                    </NuxtLink>
+                </div>
+            </div>
+
+            <div class="container_ueberlebensmodus">
+                <h2> ÜBERLEBEN</h2>
+                <h4> Wie lange überlebst du?</h4>
+                <div class="container_buttons_wm">
+                    <NuxtLink to="/spiel?modus=ueberleben" class="button button_braun">
                         START
                     </NuxtLink>
                 </div>
@@ -53,6 +66,7 @@
 }
 
 .container_punktemodus,
+.container_ueberlebensmodus,
 .container_ueben {
     display: flex;
     flex-direction: column;
@@ -61,8 +75,14 @@
     width: 100%;
 }
 
+.container_ueberlebensmodus {
+    margin-top: 10%;
+}
+
 .container_ueben {
     margin-top: 15%;
+    margin-bottom: 8rem;
+
 }
 
 .container_buttons_ueben {
@@ -75,6 +95,10 @@
 }
 
 /** BUTTONS KATEGORIEN */
+
+.button_braun {
+    background: var(--braun);
+}
 
 .button_gelb {
     background: var(--gelb);
