@@ -930,6 +930,10 @@ function buttonSwipe(antwortIstKI) {
     padding: 2rem 1.5rem;
     max-width: 320px;
     text-align: center;
+
+    /* Weisser Hintergrund wie bei ModalBase -> Text muss immer braun bleiben,
+       unabhängig vom personalisierten Theme (HELL/Darkmode würde sonst weiß = unsichtbar). */
+    --text-dunkel: var(--braun);
 }
 
 .verlassen_modal_inner p {

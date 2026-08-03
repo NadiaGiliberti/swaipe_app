@@ -250,6 +250,7 @@ async function saveCustomTheme() {
     font-size: 6vw;
     text-align: left;
     margin-top: 0;
+    color: var(--text-dunkel);
 }
 
 .container_themes {

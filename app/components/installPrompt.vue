@@ -53,6 +53,10 @@ onMounted(() => {
     background: var(--background-base);
     border: 1px solid var(--braun);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+
+    /* Weisser Hintergrund wie bei ModalBase -> Text muss immer braun bleiben,
+       unabhängig vom personalisierten Theme (HELL/Darkmode würde sonst weiß = unsichtbar). */
+    --text-dunkel: var(--braun);
 }
 
 .install_banner_icon {

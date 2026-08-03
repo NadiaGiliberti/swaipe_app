@@ -114,7 +114,7 @@ const genauigkeit = computed(() => {
                         <span class="badge_popup_name">{{ badge.name }}</span>
                         <span class="badge_popup_beschreibung">{{ badge.beschreibung }}</span>
                     </div>
-                    <button class="button_klein" @click="ergebnis.neueBadges = []">Weiter</button>
+                    <button class="button_klein" id="badge_weiter_button" @click="ergebnis.neueBadges = []">Weiter</button>
                 </div>
             </div>
         </Transition>
@@ -256,6 +256,10 @@ const genauigkeit = computed(() => {
     padding: 2rem 1.5rem;
     max-width: 320px;
     text-align: center;
+
+    /* Weisser Hintergrund wie bei ModalBase -> Text muss immer braun bleiben,
+       unabhängig vom personalisierten Theme (HELL/Darkmode würde sonst weiß = unsichtbar). */
+    --text-dunkel: var(--braun);
 }
 
 .badge_popup_item {
@@ -263,6 +267,11 @@ const genauigkeit = computed(() => {
     flex-direction: column;
     align-items: center;
     margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+#badge_weiter_button {
+    width: 80%;
 }
 
 .badge_popup_icon {
