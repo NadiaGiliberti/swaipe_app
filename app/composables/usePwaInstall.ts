@@ -39,7 +39,10 @@ export function usePwaInstall() {
         // wird nur genutzt, um den nativen Installations-Dialog auszulösen, falls verfügbar.
         window.addEventListener('beforeinstallprompt', (event: any) => {
             event.preventDefault()
-            deferredPrompt.value = event
+            // markRaw verhindert, dass Vue das native Event in einen Proxy
+            // einwickelt - sonst wirft der Browser bei .prompt() eine
+            // "Illegal invocation", weil er kein echtes BeforeInstallPromptEvent mehr ist.
+            deferredPrompt.value = markRaw(event)
             canInstall.value = true
         })
 
@@ -52,10 +55,15 @@ export function usePwaInstall() {
 
     async function installieren() {
         if (!deferredPrompt.value) return
-        await deferredPrompt.value.prompt()
-        await deferredPrompt.value.userChoice
-        deferredPrompt.value = null
-        canInstall.value = false
+        try {
+            await deferredPrompt.value.prompt()
+            await deferredPrompt.value.userChoice
+        } catch (error) {
+            console.error('PWA-Installation fehlgeschlagen:', error)
+        } finally {
+            deferredPrompt.value = null
+            canInstall.value = false
+        }
     }
 
     // Zeigt den Hinweis bei jedem neuen Seitenaufruf/Login (statt nur einmalig),
