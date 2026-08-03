@@ -16,9 +16,11 @@ Darüber hinaus bietet die App ein Level- und Highscore-System pro Kategorie, ei
 
 - **Nuxt / Vue**
 - **Supabase**
-- **PWA**: 
+- **PWA**
 - **Node.js Projekt im Server aufsetzen und verbinden**
-  
+
+Bis auf die kurzen Vorstellungsrunden im Major kannte ich diese Dinge noch nicht wirklich. 
+
 ## Schwierigkeiten
 
 - Herausfinden, wie Nuxt, Vue und Supabase zusammenspielen, da alle drei Technologien neu waren.
