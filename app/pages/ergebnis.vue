@@ -77,8 +77,8 @@ const genauigkeit = computed(() => {
                     class="freund_vergleich_item"
                     :class="{ freund_vergleich_item_ich: eintrag.istIch }"
                 >
-                    <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="freund_vergleich_avatar"
-                        :class="{ bild_umrandet: eintrag.profilbild_url }">
+                    <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="freund_vergleich_avatar bild_umrandet">
+                    <div v-else class="freund_vergleich_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span class="freund_vergleich_name">
                         {{ eintrag.istIch ? 'DU' : eintrag.username }}
                         <span class="freund_vergleich_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
@@ -162,7 +162,7 @@ const genauigkeit = computed(() => {
 }
 
 .bild_umrandet {
-    border: 2.5px solid #000000;
+    border: 2.5px solid var(--text-dunkel);
 }
 
 .freund_vergleich_name {

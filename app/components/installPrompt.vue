@@ -27,7 +27,7 @@ onMounted(() => {
             </button>
 
             <button class="install_banner_close" @click="verwerfen" aria-label="Schliessen">
-                <img src="/icons/close_icon.svg" alt="">
+                <span class="icon-mask icon-close" role="img" aria-label="Schliessen"></span>
             </button>
         </div>
     </Transition>
@@ -104,7 +104,7 @@ onMounted(() => {
     align-self: flex-start;
 }
 
-.install_banner_close img {
+.install_banner_close .icon-mask {
     width: 14px;
     display: block;
 }

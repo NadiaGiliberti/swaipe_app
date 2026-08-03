@@ -7,7 +7,7 @@ const sichtbar = computed(() => !versteckenAuf.includes(route.path))
 
 <template>
     <button v-if="sichtbar" class="schliessen_button" @click="navigateTo('/')">
-        <img src="/icons/close_icon.svg" alt="Schliessen">
+        <span class="icon-mask icon-close" role="img" aria-label="Schliessen"></span>
     </button>
 </template>
 
@@ -23,7 +23,7 @@ const sichtbar = computed(() => !versteckenAuf.includes(route.path))
     padding: 0;
 }
 
-.schliessen_button img {
+.schliessen_button .icon-mask {
     width: clamp(34px, 5vw, 44px);
     display: block;
 }

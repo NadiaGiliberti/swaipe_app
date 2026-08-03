@@ -37,34 +37,35 @@ async function handleLogout() {
                 <aside class="drawer">
 
                     <button class="button_close" @click="emit('close')">
-                        <img src="/icons/close_icon.svg" alt="Schließen">
+                        <span class="icon-mask icon-close" role="img" aria-label="Schließen"></span>
                     </button>
 
                     <nav class="container_menu">
 
                         <button class="menu_item" @click="goTo('/userProfil')">
-                            <img :src="avatarUrl || '/icons/profil_icon.svg'" :class="{ bild_umrandet: avatarUrl }" class="menu_avatar">
+                            <img v-if="avatarUrl" :src="avatarUrl" class="menu_avatar bild_umrandet">
+                            <div v-else class="menu_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                             <span>DEIN PROFIL</span>
                         </button>
 
                         <button class="menu_item" @click="goTo('/freunde')">
-                            <img src="/icons/freunde_icon.svg">
+                            <span class="icon-mask icon-freunde" role="img" aria-label="Freunde"></span>
                             <span>FREUNDE</span>
                             <span v-if="hatUngesehenes" class="punkt_neu"></span>
                         </button>
 
                         <button class="menu_item" @click="goTo('/einstellungen')">
-                            <img src="/icons/einstellungen_icon.svg">
+                            <span class="icon-mask icon-einstellungen" role="img" aria-label="Einstellungen"></span>
                             <span>EINSTELLUNGEN</span>
                         </button>
 
                         <button class="menu_item" @click="goTo('/hilfe')">
-                            <img src="/icons/hilfe_icon.svg">
+                            <span class="icon-mask icon-hilfe" role="img" aria-label="Hilfe"></span>
                             <span>HILFE</span>
                         </button>
 
                         <button class="menu_item" @click="handleLogout">
-                            <img src="/icons/logout_icon.svg">
+                            <span class="icon-mask icon-logout" role="img" aria-label="Logout"></span>
                             <span>LOGOUT</span>
                         </button>
 
@@ -153,7 +154,7 @@ async function handleLogout() {
     cursor: pointer;
 }
 
-.button_close img {
+.button_close .icon-mask {
     width: clamp(34px, 5vw, 44px);
     display: block;
 }
@@ -180,7 +181,7 @@ async function handleLogout() {
     cursor: pointer;
 }
 
-.menu_item img {
+.menu_item .icon-mask {
     width: 26px;
     display: block;
 }
@@ -193,7 +194,7 @@ async function handleLogout() {
 }
 
 .menu_avatar.bild_umrandet {
-    border: 1.5px solid #000000;
+    border: 1.5px solid var(--text-dunkel);
 }
 
 .punkt_neu {

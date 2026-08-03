@@ -194,11 +194,80 @@
 
 
   .h1_black {
-    color: var(--text-schwarz);
+    color: var(--text-dunkel);
   }
 
   .h3_black {
-    color: var(--text-schwarz);
+    color: var(--text-dunkel);
+  }
+
+  /** ICONS: schwarze SVG-Icons (via <img>) einfärbbar machen.
+      Da Icons per <img src> geladen werden, greift `fill` nicht auf CSS-Variablen.
+      Stattdessen wird die Icon-Silhouette als Maske genutzt und mit background-color
+      (= reaktive Themefarbe) eingefärbt. **/
+  .icon-mask {
+    display: inline-block;
+    aspect-ratio: 1;
+    background-color: var(--text-dunkel);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+  }
+
+  .icon-close {
+    -webkit-mask-image: url('/icons/close_icon.svg');
+    mask-image: url('/icons/close_icon.svg');
+  }
+
+  .icon-check {
+    -webkit-mask-image: url('/icons/check_icon.svg');
+    mask-image: url('/icons/check_icon.svg');
+  }
+
+  .icon-delete {
+    -webkit-mask-image: url('/icons/delete_icon.svg');
+    mask-image: url('/icons/delete_icon.svg');
+  }
+
+  .icon-logout {
+    -webkit-mask-image: url('/icons/logout_icon.svg');
+    mask-image: url('/icons/logout_icon.svg');
+  }
+
+  .icon-hilfe {
+    -webkit-mask-image: url('/icons/hilfe_icon.svg');
+    mask-image: url('/icons/hilfe_icon.svg');
+  }
+
+  .icon-einstellungen {
+    -webkit-mask-image: url('/icons/einstellungen_icon.svg');
+    mask-image: url('/icons/einstellungen_icon.svg');
+  }
+
+  .icon-freunde {
+    -webkit-mask-image: url('/icons/freunde_icon.svg');
+    mask-image: url('/icons/freunde_icon.svg');
+  }
+
+  .icon-edit {
+    -webkit-mask-image: url('/icons/edit_icon.svg');
+    mask-image: url('/icons/edit_icon.svg');
+  }
+
+  /** Platzhalter-Avatar (Standard-Silhouette), theme-reaktiv eingefärbt **/
+  .avatar_placeholder {
+    background-color: var(--text-dunkel);
+    -webkit-mask-image: url('/icons/profil_icon.svg');
+    mask-image: url('/icons/profil_icon.svg');
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
   }
 
   p {
@@ -231,6 +300,7 @@
   span {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 6vw;
+    color: var(--text-dunkel);
   }
 
 

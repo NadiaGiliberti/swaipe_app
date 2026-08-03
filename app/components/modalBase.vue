@@ -19,7 +19,7 @@ const emit = defineEmits(['close'])
         <div v-if="open" class="modal_overlay" @click.self="emit('close')">
             <div class="modal_box">
                 <button class="modal_close" @click="emit('close')">
-                    <img src="/icons/close_icon.svg" alt="Schließen">
+                    <span class="icon-mask icon-close" role="img" aria-label="Schließen"></span>
                 </button>
 
                 <h3>{{ title }}</h3>
@@ -52,6 +52,10 @@ const emit = defineEmits(['close'])
     background: var(--background-base);
     border-radius: 20px;
     padding: 2rem 1.5rem;
+
+    /* Popups haben immer weißen Hintergrund -> Text/Icons müssen immer braun bleiben,
+       unabhängig vom personalisierten Theme (HELL/Darkmode würde sonst weiß = unsichtbar). */
+    --text-dunkel: var(--braun);
 }
 
 .modal_close {
@@ -64,7 +68,7 @@ const emit = defineEmits(['close'])
     cursor: pointer;
 }
 
-.modal_close img {
+.modal_close .icon-mask {
     width: 20px;
     display: block;
 }

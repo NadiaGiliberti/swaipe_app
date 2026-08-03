@@ -62,8 +62,8 @@ function istEigenerUser(id) {
       <div v-if="aktiverTab === 'freunde'" class="container_rangliste">
         <div v-for="(eintrag, index) in sichtbareFreunde" :key="eintrag.id" class="rang_item"
           :class="{ rang_item_ich: eintrag.istIch }">
-          <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
-            :class="{ bild_umrandet: eintrag.profilbild_url }">
+          <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet">
+          <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
           <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
@@ -83,8 +83,8 @@ function istEigenerUser(id) {
 <div v-if="aktiverTab === 'alle'" class="container_rangliste">
     <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
         :class="{ rang_item_ich: eintrag.istIch }">
-        <img :src="eintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
-            :class="{ bild_umrandet: eintrag.profilbild_url }">
+        <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet">
+        <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
         <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
@@ -95,8 +95,8 @@ function istEigenerUser(id) {
     <template v-if="eigenerRang && eigenerEintrag">
         <div class="rang_trenner">...</div>
         <div class="rang_item rang_item_ich">
-            <img :src="eigenerEintrag.profilbild_url || '/icons/profil_icon.svg'" class="rang_avatar"
-                :class="{ bild_umrandet: eigenerEintrag.profilbild_url }">
+            <img v-if="eigenerEintrag.profilbild_url" :src="eigenerEintrag.profilbild_url" class="rang_avatar bild_umrandet">
+            <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
             <span class="rang_name">
                 DU
                 <span class="rang_datum">am {{ formatDatum(eigenerEintrag.highscore_datum) }}</span>
@@ -162,7 +162,7 @@ function istEigenerUser(id) {
 }
 
 .bild_umrandet {
-  border: 1.5px solid #000000;
+  border: 1.5px solid var(--text-dunkel);
 }
 
 .rang_name {

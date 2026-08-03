@@ -139,7 +139,8 @@ async function saveCustomTheme() {
 
         <div class="container_lautstaerke">
             <button class="button_sound_toggle" @click="toggleMute">
-                <img :src="soundIcon" alt="Lautstärke">
+                <span class="icon-mask" role="img" aria-label="Lautstärke"
+                    :style="{ maskImage: `url(${soundIcon})`, webkitMaskImage: `url(${soundIcon})` }"></span>
             </button>
             <input type="range" min="0" max="100" class="slider_lautstaerke" :value="volume"
                 @input="setVolume(Number($event.target.value))">
@@ -225,7 +226,7 @@ async function saveCustomTheme() {
     align-items: center;
 }
 
-.container_lautstaerke img {
+.container_lautstaerke .icon-mask {
     width: 24px;
     display: block;
 }

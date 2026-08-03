@@ -334,15 +334,16 @@ const vFocus = {
         <template v-else-if="profil">
             <div class="container_user">
                 <div class="container_userbild">
-                    <img :src="profil.profilbild_url || '/icons/profil_icon.svg'" id="profilbildUser"
-                        :class="{ bild_umrandet: profil.profilbild_url }"
+                    <img v-if="profil.profilbild_url" :src="profil.profilbild_url" id="profilbildUser"
+                        class="bild_umrandet"
                         :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
+                    <div v-else id="profilbildUser" class="avatar_placeholder" role="img" aria-label="Profilbild"></div>
 
                     <input type="file" ref="fileInput" style="display: none" accept="image/png, image/jpeg, image/webp"
                         @change="handleAvatarUpload">
 
                     <button class="button_edit" :disabled="avatarLoading" @click="handleEditAvatar">
-                        <img src="/icons/edit_icon.svg" id="profilbildUserEdit" alt="Profilbild bearbeiten">
+                        <span class="icon-mask icon-edit" id="profilbildUserEdit" role="img" aria-label="Profilbild bearbeiten"></span>
                     </button>
                 </div>
 
@@ -467,7 +468,7 @@ const vFocus = {
 }
 
 .bild_umrandet {
-    border: 2px solid #000000;
+    border: 2px solid var(--text-dunkel);
 }
 
 .button_edit {
@@ -510,7 +511,7 @@ const vFocus = {
     font-weight: bold;
     text-align: center;
     border: none;
-    border-bottom: 2px solid var(--braun, #000);
+    border-bottom: 2px solid var(--braun, #560000);
     text-transform: uppercase;
     outline: none;
     background: transparent;
@@ -531,6 +532,7 @@ const vFocus = {
 .aktion {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 6vw;
+    color: var(--text-dunkel);
 }
 
 .error_text {

@@ -47,7 +47,8 @@ onMounted(async () => {
 
     <!-- Profil Icon -->
     <button v-if="!menuOpen" class="button_profile" @click="menuOpen = true">
-      <img :src="avatarUrl || '/icons/profil_icon.svg'" :class="{ bild_umrandet: avatarUrl }" alt="Profil">
+      <img v-if="avatarUrl" :src="avatarUrl" class="bild_umrandet" alt="Profil">
+      <div v-else class="avatar_placeholder" role="img" aria-label="Profil"></div>
       <span v-if="hatUngesehenes" class="punkt_neu"></span>
     </button>
 
@@ -92,7 +93,8 @@ onMounted(async () => {
   z-index: 10000;
 }
 
-.button_profile img {
+.button_profile img,
+.button_profile .avatar_placeholder {
   width: clamp(34px, 5vw, 44px);
   height: clamp(34px, 5vw, 44px);
   border-radius: 50%;
@@ -101,7 +103,7 @@ onMounted(async () => {
 }
 
 .bild_umrandet {
-  border: 2px solid #000000;
+  border: 2px solid var(--text-dunkel);
 }
 
 .punkt_neu {

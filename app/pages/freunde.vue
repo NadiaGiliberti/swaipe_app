@@ -103,14 +103,14 @@ async function bestaetigeEntfernen() {
         <template v-else>
             <div class="container_freunde_liste">
                 <div v-for="freund in freunde" :key="freund.freundschaftId" class="freund_item">
-                    <img :src="freund.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
-                        :class="{ bild_umrandet: freund.profilbild_url }">
+                    <img v-if="freund.profilbild_url" :src="freund.profilbild_url" class="freund_avatar bild_umrandet">
+                    <div v-else class="freund_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span class="freund_name_wrapper">
                         {{ freund.username }}
                         <span v-if="freund.istNeu" class="punkt_neu"></span>
                     </span>
                     <button class="button_entfernen" @click="oeffneEntfernenModal(freund)">
-                        <img src="/icons/delete_icon.svg" alt="Entfernen">
+                        <span class="icon-mask icon-delete" role="img" aria-label="Entfernen"></span>
                     </button>
                 </div>
                 <p v-if="freunde.length === 0" class="hinweis_text">Noch keine Freunde hinzugefügt.</p>
@@ -128,8 +128,8 @@ async function bestaetigeEntfernen() {
 
                 <div v-if="sucheErgebnisse.length > 0" class="container_suchergebnisse">
                     <div v-for="user in sucheErgebnisse" :key="user.id" class="freund_item">
-                        <img :src="user.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
-                            :class="{ bild_umrandet: user.profilbild_url }">
+                        <img v-if="user.profilbild_url" :src="user.profilbild_url" class="freund_avatar bild_umrandet">
+                        <div v-else class="freund_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                         <span>{{ user.username }}</span>
 
                         <span v-if="istBereitsFreund(user.id)" class="hinweis_text_klein">Bereits Freunde</span>
@@ -145,17 +145,17 @@ async function bestaetigeEntfernen() {
             <div class="container_anfragen" v-if="eingehendeAnfragen.length > 0">
                 <h3>ANFRAGEN</h3>
                 <div v-for="anfrage in eingehendeAnfragen" :key="anfrage.freundschaftId" class="freund_item">
-                    <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
-                        :class="{ bild_umrandet: anfrage.profilbild_url }">
+                    <img v-if="anfrage.profilbild_url" :src="anfrage.profilbild_url" class="freund_avatar bild_umrandet">
+                    <div v-else class="freund_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span class="freund_name_wrapper">
                         {{ anfrage.username }}
                         <span v-if="anfrage.istNeu" class="punkt_neu"></span>
                     </span>
                     <button class="button_check" @click="handleAkzeptieren(anfrage.freundschaftId)">
-                        <img src="/icons/check_icon.svg" alt="Annehmen">
+                        <span class="icon-mask icon-check" role="img" aria-label="Annehmen"></span>
                     </button>
                     <button class="button_x" @click="handleAblehnen(anfrage.freundschaftId)">
-                        <img src="/icons/close_icon.svg" alt="Ablehnen">
+                        <span class="icon-mask icon-close" role="img" aria-label="Ablehnen"></span>
                     </button>
                 </div>
             </div>
@@ -163,11 +163,11 @@ async function bestaetigeEntfernen() {
             <div class="container_anfragen" v-if="ausgehendeAnfragen.length > 0">
                 <h3>GESENDETE ANFRAGEN</h3>
                 <div v-for="anfrage in ausgehendeAnfragen" :key="anfrage.freundschaftId" class="freund_item">
-                    <img :src="anfrage.profilbild_url || '/icons/profil_icon.svg'" class="freund_avatar"
-                        :class="{ bild_umrandet: anfrage.profilbild_url }">
+                    <img v-if="anfrage.profilbild_url" :src="anfrage.profilbild_url" class="freund_avatar bild_umrandet">
+                    <div v-else class="freund_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span>{{ anfrage.username }}</span>
                     <button class="button_x" @click="handleAnfrageZurueckziehen(anfrage.freundschaftId)">
-                        <img src="/icons/close_icon.svg" alt="Zurückziehen">
+                        <span class="icon-mask icon-close" role="img" aria-label="Zurückziehen"></span>
                     </button>
                 </div>
             </div>
@@ -218,7 +218,7 @@ async function bestaetigeEntfernen() {
 }
 
 .bild_umrandet {
-    border: 2.5px solid #000000;
+    border: 2.5px solid var(--text-dunkel);
 }
 
 .freund_item span {
@@ -249,9 +249,9 @@ async function bestaetigeEntfernen() {
     padding: 0;
 }
 
-.button_entfernen img,
-.button_check img,
-.button_x img {
+.button_entfernen .icon-mask,
+.button_check .icon-mask,
+.button_x .icon-mask {
     width: 20px;
     display: block;
 }
