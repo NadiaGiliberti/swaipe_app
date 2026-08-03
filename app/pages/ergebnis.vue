@@ -7,6 +7,32 @@ const top3Freunde = ref([])
 const ladeFreundeLoading = ref(true)
 const zeigePerfekteRunde = ref(false)
 
+function persistErgebnis() {
+    if (ergebnis.value) {
+        sessionStorage.setItem('swaipe_ergebnis', JSON.stringify(ergebnis.value))
+    }
+}
+
+function nochmal() {
+    if (!ergebnis.value) {
+        navigateTo('/kategorien')
+        return
+    }
+
+    if (ergebnis.value.modus === 'score') {
+        navigateTo('/spiel?modus=score')
+    } else if (ergebnis.value.kategorie) {
+        navigateTo(`/spiel?modus=uebung&kategorie=${ergebnis.value.kategorie}`)
+    } else {
+        navigateTo('/kategorien')
+    }
+}
+
+function schliesseBadgePopup() {
+    ergebnis.value.neueBadges = []
+    persistErgebnis()
+}
+
 onMounted(async () => {
     const gespeichert = sessionStorage.getItem('swaipe_ergebnis')
     if (gespeichert) {
@@ -15,6 +41,8 @@ onMounted(async () => {
 
     if (ergebnis.value?.perfekteRunde) {
         zeigePerfekteRunde.value = true
+        ergebnis.value.perfekteRunde = false
+        persistErgebnis()
         setTimeout(() => {
             zeigePerfekteRunde.value = false
         }, 2500)
@@ -88,7 +116,7 @@ const genauigkeit = computed(() => {
             </div>
 
             <div class="container_buttons">
-                <NuxtLink to="/kategorien" class="button button_nochmal">NOCHMAL</NuxtLink>
+                <button class="button button_nochmal" @click="nochmal">NOCHMAL</button>
                 <NuxtLink to="/kategorien" class="button_klein button_kategorien_highscores">KATEGORIEN</NuxtLink>
                 <NuxtLink to="/highscores" class="button_klein button_kategorien_highscores">HIGHSCORES</NuxtLink>
             </div>
@@ -114,7 +142,7 @@ const genauigkeit = computed(() => {
                         <span class="badge_popup_name">{{ badge.name }}</span>
                         <span class="badge_popup_beschreibung">{{ badge.beschreibung }}</span>
                     </div>
-                    <button class="button_klein" id="badge_weiter_button" @click="ergebnis.neueBadges = []">Weiter</button>
+                    <button class="button_klein" id="badge_weiter_button" @click="schliesseBadgePopup">Weiter</button>
                 </div>
             </div>
         </Transition>
