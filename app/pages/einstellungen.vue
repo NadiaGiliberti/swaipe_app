@@ -17,8 +17,18 @@ const customTextMode = ref('dunkel') // 'dunkel' oder 'hell'
 
 const volumeVorMute = ref(40)
 
+const showMuteHinweisModal = ref(false)
+const MUTE_HINWEIS_KEY = 'swaipe_mute_hinweis_gesehen'
+
 const soundIcon = computed(() => {
     return volume.value === 0 ? '/icons/sound_off_icon.svg' : '/icons/sound_on_icon.svg'
+})
+
+watch(volume, (neu, alt) => {
+    if (neu === 0 && alt > 0 && !sessionStorage.getItem(MUTE_HINWEIS_KEY)) {
+        showMuteHinweisModal.value = true
+        sessionStorage.setItem(MUTE_HINWEIS_KEY, 'true')
+    }
 })
 
 function toggleMute() {
@@ -72,6 +82,10 @@ onMounted(() => {
 function closeThemeModal() {
     showThemeModal.value = false
     themeError.value = ''
+}
+
+function closeMuteHinweisModal() {
+    showMuteHinweisModal.value = false
 }
 
 async function saveTheme(colors, textDunkel, textHell, textSchwarz) {
@@ -203,6 +217,17 @@ async function saveCustomTheme() {
             </div>
 
             <p v-if="themeError" class="error_text">{{ themeError }}</p>
+        </ModalBase>
+
+        <ModalBase :open="showMuteHinweisModal" title="LAUTSTÄRKE" @close="closeMuteHinweisModal">
+            <p class="mute_hinweis_text">
+                Achtung: <br> das Spiel im Score- und Überlebensmodus enthält auch Audio- und Musik Inhalte. Bei ausgeschaltetem Ton kannst du
+                diese Inhalte nicht beurteilen.
+            </p>
+
+            <button class="button" @click="closeMuteHinweisModal">
+                VERSTANDEN
+            </button>
         </ModalBase>
 
     </main>
@@ -341,5 +366,11 @@ async function saveCustomTheme() {
 .toggle_btn_aktiv {
     background: var(--braun);
     color: white;
+}
+
+.mute_hinweis_text {
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+
 }
 </style>
