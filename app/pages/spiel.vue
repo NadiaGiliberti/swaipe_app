@@ -22,6 +22,7 @@ const sofortZuruecksetzen = ref(false)
 
 const userLevels = ref({ BILD: 1, VIDEO: 1, AUDIO: 1, MUSIK: 1 })
 const kategorieStats = ref({})
+const falscheKarten = ref([])
 
 const zeitVerbleibend = ref(60)
 let timerInterval = null
@@ -287,6 +288,16 @@ function beantworten(antwortIstKI) {
     } else {
         falsch.value++
         aktuelleSerie.value = 0
+
+        if (modus === 'uebung') {
+            falscheKarten.value.push({
+                id: karte.id,
+                kategorie: karte.kategorie,
+                herkunft: karte.herkunft,
+                datei_url: karte.datei_url,
+                content_type: karte.content_type
+            })
+        }
     }
 
     speichereAntwort(supabase, karte.id, warRichtig)
@@ -330,7 +341,8 @@ async function beendeSpiel() {
         gesamt: gesamtAntworten,
         besteSerie: besteSerie.value,
         perfekteRunde,
-        neueBadges: []
+        neueBadges: [],
+        falscheKarten: modus === 'uebung' ? falscheKarten.value : []
     }
 
     if (modus === 'score') {

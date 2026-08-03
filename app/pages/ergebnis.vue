@@ -148,6 +148,26 @@ const genauigkeit = computed(() => {
                 <p>Durchschnittliche Trefferquote aller Spieler in dieser Kategorie: {{ communityGenauigkeit }}%</p>
             </div>
 
+            <div v-if="ergebnis.modus === 'uebung' && ergebnis.falscheKarten && ergebnis.falscheKarten.length > 0"
+                class="container_falsche_karten">
+                <h2>DAS WAR FALSCH</h2>
+
+                <div v-for="karte in ergebnis.falscheKarten" :key="karte.id" class="falsche_karte_item">
+                    <div v-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'" class="falsche_karte_media_audio">
+                        <audio :src="karte.datei_url" class="falsche_karte_audio" controls preload="metadata"
+                            controlsList="nodownload noplaybackrate" @contextmenu.prevent></audio>
+                    </div>
+                    <div v-else class="falsche_karte_media">
+                        <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url" class="falsche_karte_bild">
+                        <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url" class="falsche_karte_bild"
+                            controls preload="metadata" playsinline></video>
+                    </div>
+                    <span class="falsche_karte_label" :class="{ falsche_karte_label_ki: karte.herkunft === 'KI' }">
+                        WAR {{ karte.herkunft === 'KI' ? 'KI-GENERIERT' : 'ECHT' }}
+                    </span>
+                </div>
+            </div>
+
             <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
                 <h2>FREUNDE</h2>
 
@@ -235,6 +255,60 @@ const genauigkeit = computed(() => {
     color: var(--text-dunkel);
 }
 
+.container_falsche_karten {
+    width: 85%;
+    margin-top: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.falsche_karte_item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 1.2rem;
+}
+
+.falsche_karte_media {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 3 / 4;
+    border-radius: 16px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.15);
+}
+
+.falsche_karte_bild {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.falsche_karte_media_audio {
+    width: 100%;
+    max-width: 320px;
+}
+
+.falsche_karte_audio {
+    width: 100%;
+    display: block;
+}
+
+.falsche_karte_label {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 0.85rem;
+    color: var(--background-2);
+    margin-top: 0.5rem;
+    letter-spacing: 0.03rem;
+}
+
+.falsche_karte_label_ki {
+    color: var(--background-3);
+}
+
 .freund_vergleich_item {
     display: flex;
     align-items: center;
@@ -247,7 +321,7 @@ const genauigkeit = computed(() => {
     font-size: 0.8rem;
     color: var(--text-dunkel);
     opacity: 0.7;
-    min-width: 0.6rem;
+    min-width: 1.2rem;
 }
 
 .freund_vergleich_item_ich .freund_vergleich_name,
