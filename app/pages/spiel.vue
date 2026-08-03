@@ -631,7 +631,7 @@ function buttonSwipe(antwortIstKI) {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 0.5rem;
+    padding-top: 1rem;
 }
 
 .container_zeit {

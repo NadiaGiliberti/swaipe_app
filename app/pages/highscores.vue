@@ -62,6 +62,7 @@ function istEigenerUser(id) {
       <div v-if="aktiverTab === 'freunde'" class="container_rangliste">
         <div v-for="(eintrag, index) in sichtbareFreunde" :key="eintrag.id" class="rang_item"
           :class="{ rang_item_ich: eintrag.istIch }">
+          <span class="rang_nummer">{{ index + 1 }}.</span>
           <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet">
           <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
           <span class="rang_name">
@@ -83,6 +84,7 @@ function istEigenerUser(id) {
 <div v-if="aktiverTab === 'alle'" class="container_rangliste">
     <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
         :class="{ rang_item_ich: eintrag.istIch }">
+        <span class="rang_nummer">{{ index + 1 }}.</span>
         <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet">
         <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
         <span class="rang_name">
@@ -95,6 +97,7 @@ function istEigenerUser(id) {
     <template v-if="eigenerRang && eigenerEintrag">
         <div class="rang_trenner">...</div>
         <div class="rang_item rang_item_ich">
+            <span class="rang_nummer">{{ eigenerRang }}.</span>
             <img v-if="eigenerEintrag.profilbild_url" :src="eigenerEintrag.profilbild_url" class="rang_avatar bild_umrandet">
             <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
             <span class="rang_name">
@@ -152,6 +155,14 @@ function istEigenerUser(id) {
 .rang_item_ich .rang_name,
 .rang_item_ich .rang_score {
   color: var(--gelb);
+}
+
+.rang_nummer {
+  font-family: 'DotGothic16', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-dunkel);
+  opacity: 0.7;
+  min-width: 1.4rem;
 }
 
 .rang_avatar {

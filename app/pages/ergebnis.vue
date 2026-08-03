@@ -7,6 +7,9 @@ const top3Freunde = ref([])
 const ladeFreundeLoading = ref(true)
 const zeigePerfekteRunde = ref(false)
 
+const perzentilBesser = ref(null)
+const communityGenauigkeit = ref(null)
+
 function persistErgebnis() {
     if (ergebnis.value) {
         sessionStorage.setItem('swaipe_ergebnis', JSON.stringify(ergebnis.value))
@@ -33,6 +36,44 @@ function schliesseBadgePopup() {
     persistErgebnis()
 }
 
+async function ladePerzentil() {
+    if (!ergebnis.value || ergebnis.value.modus !== 'score') return
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('id, highscore')
+        .eq('aktiv', true)
+        .gt('highscore', 0)
+
+    if (!error && data && data.length > 0) {
+        const andere = data.filter(p => p.id !== user.value?.id)
+
+        if (andere.length > 0) {
+            const besser = andere.filter(p => p.highscore > ergebnis.value.punkte).length
+            perzentilBesser.value = Math.round((besser / andere.length) * 100)
+        }
+    }
+}
+
+async function ladeCommunityGenauigkeit() {
+    if (!ergebnis.value || ergebnis.value.modus !== 'uebung' || !ergebnis.value.kategorie) return
+
+    const { data, error } = await supabase
+        .from('spieldaten')
+        .select('counter_richtig, used_counter')
+        .eq('kategorie', ergebnis.value.kategorie)
+        .gte('used_counter', 10)
+
+    if (!error && data && data.length > 0) {
+        const summeRichtig = data.reduce((summe, d) => summe + d.counter_richtig, 0)
+        const summeVersuche = data.reduce((summe, d) => summe + d.used_counter, 0)
+
+        if (summeVersuche > 0) {
+            communityGenauigkeit.value = Math.round((summeRichtig / summeVersuche) * 100)
+        }
+    }
+}
+
 onMounted(async () => {
     const gespeichert = sessionStorage.getItem('swaipe_ergebnis')
     if (gespeichert) {
@@ -52,6 +93,9 @@ onMounted(async () => {
         const ranking = await ladeFreundeRanking(supabase, user.value.id)
         top3Freunde.value = ranking.slice(0, 3)
     }
+
+    await ladePerzentil()
+    await ladeCommunityGenauigkeit()
 
     ladeFreundeLoading.value = false
 })
@@ -96,15 +140,24 @@ const genauigkeit = computed(() => {
                 </div>
             </div>
 
+            <div v-if="ergebnis.modus === 'score' && perzentilBesser !== null" class="container_perzentil">
+                <p>{{ perzentilBesser }}% der Spieler haben einen höheren Highscore erzielt als dieses Ergebnis.</p>
+            </div>
+
+            <div v-else-if="ergebnis.modus === 'uebung' && communityGenauigkeit !== null" class="container_perzentil">
+                <p>Durchschnittliche Trefferquote aller Spieler in dieser Kategorie: {{ communityGenauigkeit }}%</p>
+            </div>
+
             <div v-if="ergebnis.modus === 'score' && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
                 <h2>FREUNDE</h2>
 
                 <div
-                    v-for="eintrag in top3Freunde"
+                    v-for="(eintrag, index) in top3Freunde"
                     :key="eintrag.id"
                     class="freund_vergleich_item"
                     :class="{ freund_vergleich_item_ich: eintrag.istIch }"
                 >
+                    <span class="freund_vergleich_nummer">{{ index + 1 }}.</span>
                     <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="freund_vergleich_avatar bild_umrandet">
                     <div v-else class="freund_vergleich_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span class="freund_vergleich_name">
@@ -170,11 +223,31 @@ const genauigkeit = computed(() => {
     margin-top: 3rem;
 }
 
+.container_perzentil {
+    width: 80%;
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.container_perzentil p {
+    font-family: 'BarlowCondensed', sans-serif;
+    font-size: 4.5vw;
+    color: var(--text-dunkel);
+}
+
 .freund_vergleich_item {
     display: flex;
     align-items: center;
     gap: 0.8rem;
     margin-top: 0.8rem;
+}
+
+.freund_vergleich_nummer {
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-dunkel);
+    opacity: 0.7;
+    min-width: 0.6rem;
 }
 
 .freund_vergleich_item_ich .freund_vergleich_name,
