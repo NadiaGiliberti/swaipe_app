@@ -35,6 +35,12 @@ let startY = 0
 const comboAnzeige = ref('')
 let comboTimeout = null
 
+// ===== AUDIO PLAYER =====
+const audioRef = ref(null)
+const audioIstAktiv = ref(false)
+const audioAktuelleZeit = ref(0)
+const audioGesamtZeit = ref(0)
+
 // ===== VERLASSEN-BESTÄTIGUNG =====
 const spielBeendet = ref(false)
 const zeigeVerlassenModal = ref(false)
@@ -116,6 +122,57 @@ function zeigeComboFalls(serie) {
         }, 1000)
     }
 }
+
+// ===== AUDIO PLAYER FUNKTIONEN =====
+function toggleAudioPlay() {
+    if (!audioRef.value) return
+    if (audioRef.value.paused) {
+        audioRef.value.play()
+    } else {
+        audioRef.value.pause()
+    }
+}
+
+function audioZeitUpdate() {
+    if (audioRef.value) audioAktuelleZeit.value = audioRef.value.currentTime
+}
+
+function audioMetadataGeladen() {
+    if (!audioRef.value) return
+
+    const dauer = audioRef.value.duration
+
+    // Fix für den bekannten Chrome-Bug: VBR-MP3s ohne Xing/Info-Header
+    // melden duration = Infinity, bis der Browser die echte Dauer kennt.
+    // Trick: kurz ans Ende springen zwingt den Browser, sie korrekt zu berechnen.
+    if (dauer === Infinity || isNaN(dauer)) {
+        audioRef.value.currentTime = 1e101
+        audioRef.value.addEventListener('timeupdate', function korrigiereEinmal() {
+            audioRef.value.removeEventListener('timeupdate', korrigiereEinmal)
+            audioGesamtZeit.value = audioRef.value.duration
+            audioRef.value.currentTime = 0
+        }, { once: true })
+    } else {
+        audioGesamtZeit.value = dauer
+    }
+}
+
+function audioSpulen(event) {
+    if (audioRef.value) audioRef.value.currentTime = event.target.value
+}
+
+function formatZeit(sekunden) {
+    if (!sekunden || isNaN(sekunden)) return '0:00'
+    const min = Math.floor(sekunden / 60)
+    const sek = Math.floor(sekunden % 60)
+    return `${min}:${sek.toString().padStart(2, '0')}`
+}
+
+watch(aktuelleKarte, () => {
+    audioAktuelleZeit.value = 0
+    audioGesamtZeit.value = 0
+    audioIstAktiv.value = false
+})
 
 async function ladeUserLevel() {
     if (modus !== 'score') return
@@ -462,7 +519,7 @@ function buttonSwipe(antwortIstKI) {
                     <img v-if="naechsteKarte.kategorie === 'BILD'" :src="naechsteKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="naechsteKarte.kategorie === 'VIDEO'" :src="naechsteKarte.datei_url"
-                        class="karte_video" preload="auto" muted playsinline></video>
+                        class="karte_video" preload="auto" fetchpriority="high" muted playsinline></video>
                     <div v-else class="karte_platzhalter"></div>
                 </div>
 
@@ -474,19 +531,47 @@ function buttonSwipe(antwortIstKI) {
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
-                        class="karte_video" preload="auto" autoplay loop muted playsinline></video>
-                    <audio v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
-                        :src="aktuelleKarte.datei_url" class="karte_audio" preload="auto" autoplay controls loop></audio>
+                        class="karte_video" preload="auto" fetchpriority="high" autoplay loop muted playsinline></video>
+
+                    <div v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
+                        class="audio_player">
+
+                        <audio ref="audioRef" :src="aktuelleKarte.datei_url" preload="auto" autoplay loop
+                            fetchpriority="high"
+                            @play="audioIstAktiv = true" @pause="audioIstAktiv = false"
+                            @timeupdate="audioZeitUpdate" @loadedmetadata="audioMetadataGeladen"></audio>
+
+                        <button class="audio_play_button" @click.stop="toggleAudioPlay"
+                            @mousedown.stop @touchstart.stop>
+                            <svg v-if="!audioIstAktiv" viewBox="0 0 24 24" class="audio_icon">
+                                <path d="M8 5v14l11-7z" fill="currentColor" />
+                            </svg>
+                            <svg v-else viewBox="0 0 24 24" class="audio_icon">
+                                <path d="M6 5h4v14H6zM14 5h4v14h-4z" fill="currentColor" />
+                            </svg>
+                        </button>
+
+                        <div class="audio_progress_bereich" @mousedown.stop @touchstart.stop>
+                            <input type="range" class="audio_progress" min="0" :max="audioGesamtZeit || 0"
+                                :value="audioAktuelleZeit" @input="audioSpulen"
+                                @click.stop @mousedown.stop @touchstart.stop>
+                            <div class="audio_zeit">{{ formatZeit(audioAktuelleZeit) }} / {{ formatZeit(audioGesamtZeit) }}</div>
+                        </div>
+                    </div>
+
                     <p v-else>{{ aktuelleKarte.content_type }} / {{ aktuelleKarte.stil }}</p>
                 </div>
 
                 <div class="vorlade_bereich" aria-hidden="true">
-                    <template v-for="karte in vorausKarten" :key="'vorlade-' + karte.id">
-                        <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url">
-                        <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url" preload="auto" muted
+                    <template v-for="(karte, i) in vorausKarten" :key="'vorlade-' + karte.id">
+                        <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url"
+                            :fetchpriority="i === 0 ? 'auto' : 'low'">
+                        <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url"
+                            :preload="i === 0 ? 'auto' : 'metadata'" fetchpriority="low" muted
                             playsinline></video>
                         <audio v-else-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'"
-                            :src="karte.datei_url" preload="auto"></audio>
+                            :src="karte.datei_url" :preload="i === 0 ? 'auto' : 'metadata'"
+                            fetchpriority="low"></audio>
                     </template>
                 </div>
             </div>
@@ -722,8 +807,43 @@ function buttonSwipe(antwortIstKI) {
     pointer-events: none;
 }
 
-.karte_audio {
+.audio_player {
     width: 90%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.audio_play_button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gelb);
+    padding: 0;
+    display: flex;
+}
+
+.audio_icon {
+    width: 4rem;
+    height: 4rem;
+}
+
+.audio_progress_bereich {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.audio_progress {
+    width: 100%;
+}
+
+.audio_zeit {
+    font-size: 0.9rem;
+    color: var(--gelb);
 }
 
 .container_swipe_buttons {
