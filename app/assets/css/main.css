@@ -18,6 +18,19 @@
     padding: 0;
   }
 
+  /* Verhindert das elastische "Overscroll"/Bounce-Scrollen mobiler Browser
+     (v.a. Safari/Chrome iOS), wenn die Seite eigentlich schon fertig ist -
+     ohne echten Scrollbereich zu blockieren (z.B. absichtliches padding-bottom
+     für fixierte Buttons bleibt unangetastet, da hier nur das Bounce-Verhalten
+     ausserhalb der Seitengrenzen betroffen ist). */
+  html {
+    overscroll-behavior-y: none;
+  }
+
+  body {
+    overscroll-behavior-y: none;
+  }
+
   h1,
   h2,
   h3,
