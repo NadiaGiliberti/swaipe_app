@@ -525,7 +525,6 @@ const vFocus = {
     align-items: flex-start;
     gap: 0.5rem;
     margin-top: 1rem;
-    padding-bottom: 8rem;
     width: 80%;
 }
 
@@ -598,7 +597,7 @@ const vFocus = {
 
     .container_aktionen {
         width: 100%;
-        max-width: 420px;
+        max-width: 620px;
     }
 
     .aktion {
@@ -617,11 +616,17 @@ const vFocus = {
     }
 
     .container_aktionen {
-        max-width: 460px;
+        max-width: 720px;
     }
 
     .aktion {
         font-size: 2rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container_aktionen {
+        max-width: 820px;
     }
 }
 </style>

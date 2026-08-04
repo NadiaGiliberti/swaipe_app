@@ -128,20 +128,54 @@ async function handleLogout() {
 
     .container_menu {
         margin-top: 22vh;
-        gap: 1.6rem;
+        gap: 1.8rem;
+    }
+
+    .menu_item {
+        gap: 1.2rem;
     }
 
     .menu_item .icon-mask,
     .menu_avatar {
-        width: 30px;
-        height: 30px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .menu_item span {
+        font-size: 1.3rem;
     }
 }
 
 @media (min-width: 1024px) {
     .drawer {
-        width: 440px;
+        width: 460px;
         padding: 2rem 3.5rem;
+    }
+
+    .menu_item .icon-mask,
+    .menu_avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .menu_item span {
+        font-size: 1.45rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .drawer {
+        width: 500px;
+    }
+
+    .menu_item .icon-mask,
+    .menu_avatar {
+        width: 42px;
+        height: 42px;
+    }
+
+    .menu_item span {
+        font-size: 1.55rem;
     }
 }
 

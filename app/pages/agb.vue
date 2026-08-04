@@ -36,7 +36,7 @@
     gap: 1.2rem;
     width: 85%;
     margin-top: 2rem;
-    margin-bottom: 6rem;
+    margin-bottom: 2rem;
 }
 
 .rechts_text {
@@ -49,8 +49,8 @@
 
 @media (min-width: 768px) {
     .container_rechtstext {
-        width: 80%;
-        max-width: 650px;
+        width: 85%;
+        max-width: 760px;
         gap: 1.4rem;
     }
 
@@ -62,11 +62,21 @@
 
 @media (min-width: 1024px) {
     .container_rechtstext {
-        max-width: 700px;
+        max-width: 880px;
     }
 
     .rechts_text {
         font-size: 1.15rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container_rechtstext {
+        max-width: 960px;
+    }
+
+    .rechts_text {
+        font-size: 1.2rem;
     }
 }
 </style>

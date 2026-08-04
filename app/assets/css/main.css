@@ -399,6 +399,13 @@
     z-index: 1000;
   }
 
+  /* Der Zurück-Button ist fixed und liegt daher ausserhalb des normalen
+     Layoutflusses - ohne das hier würde Content am Seitenende darunter
+     wegscrollen können und vom Button verdeckt/blockiert werden. */
+  .container_main:has(.container_back_button) {
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  }
+
 
   /** Formular css **/
 
@@ -469,7 +476,7 @@
     }
 
     .container_main {
-      margin-top: 3rem;
+      margin-top: 1.5rem;
     }
 
     .container_buttons,
@@ -477,6 +484,10 @@
     .container_back_button {
       width: 100%;
       max-width: 420px;
+    }
+
+    .container_buttons {
+      margin-top: 2rem;
     }
 
     .container_formularfeld {
@@ -532,7 +543,7 @@
     }
 
     .container_main {
-      margin-top: 4rem;
+      margin-top: 1.75rem;
     }
 
     .container_buttons,

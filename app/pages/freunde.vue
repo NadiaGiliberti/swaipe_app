@@ -329,8 +329,6 @@ async function bestaetigeEntfernen() {
 .container_anfragen {
     width: 85%;
     margin-top: 3rem;
-    padding-bottom: 8rem;
-
 }
 
 .button_abbrechen {
@@ -342,17 +340,22 @@ async function bestaetigeEntfernen() {
     .container_freunde_liste,
     .container_anfragen {
         width: 100%;
-        max-width: 460px;
+        max-width: 520px;
+        gap: 0.6rem;
     }
 
     .container_suche {
         width: 100%;
-        max-width: 460px;
+        max-width: 520px;
     }
 
     .freund_avatar {
-        width: 38px;
-        height: 38px;
+        width: 40px;
+        height: 40px;
+    }
+
+    .freund_item span {
+        font-size: 1.1rem;
     }
 
     .hinweis_text {
@@ -362,13 +365,33 @@ async function bestaetigeEntfernen() {
     .hinweis_text_klein {
         font-size: 0.85rem;
     }
+
+    .suche_feld .formularfeld {
+        height: 3rem;
+        font-size: 1rem;
+    }
+
+    .button_suche {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .button_klein_anfrage {
+        font-size: 0.85rem;
+        padding: 0.4rem 1rem;
+    }
 }
 
 @media (min-width: 1024px) {
     .container_freunde_liste,
     .container_anfragen,
     .container_suche {
-        max-width: 520px;
+        max-width: 600px;
+    }
+
+    .freund_avatar {
+        width: 44px;
+        height: 44px;
     }
 }
 </style>

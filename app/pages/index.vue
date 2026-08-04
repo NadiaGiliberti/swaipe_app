@@ -118,28 +118,27 @@ onMounted(async () => {
 
 @media (min-width: 768px) {
   .container_swaipe {
-    gap: 2.5rem;
-    margin-top: 5rem;
+    margin-top: 1.5rem;
   }
 
   .logo {
-    width: 380px;
+    width: 65vw;
   }
+
 }
 
 @media (min-width: 1024px) {
   .container_swaipe {
-    margin-top: 6rem;
+    margin-top: 1.75rem;
   }
 
   .logo {
-    width: 440px;
+    width: 50vw;
+  }
+
+  .container_buttons {
+    margin-top: 3rem;
   }
 }
 
-@media (min-width: 1440px) {
-  .logo {
-    width: 500px;
-  }
-}
 </style>

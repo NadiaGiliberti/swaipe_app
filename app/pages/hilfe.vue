@@ -63,8 +63,6 @@
     width: 85%;
     margin-top: 1rem;
     margin-bottom: 3rem;
-    padding-bottom: 8rem;
-
 }
 
 .hilfe_abschnitt h2 {
@@ -104,8 +102,8 @@
     }
 
     .container_hilfe {
-        width: 80%;
-        max-width: 650px;
+        width: 85%;
+        max-width: 760px;
         gap: 2.2rem;
     }
 
@@ -120,7 +118,7 @@
 
 @media (min-width: 1024px) {
     .container_hilfe {
-        max-width: 700px;
+        max-width: 880px;
     }
 
     .hilfe_abschnitt h2 {
@@ -129,6 +127,16 @@
 
     .hilfe_text {
         font-size: 1.15rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container_hilfe {
+        max-width: 960px;
+    }
+
+    .hilfe_text {
+        font-size: 1.2rem;
     }
 }
 </style>

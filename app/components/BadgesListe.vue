@@ -207,7 +207,13 @@ function fortschrittProzent(level) {
 
 @media (min-width: 768px) {
     .badges_container {
-        max-width: 460px;
+        max-width: 620px;
+    }
+
+    .fortschritt_liste {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem 2rem;
     }
 
     .fortschritt_label {
@@ -219,22 +225,51 @@ function fortschrittProzent(level) {
     }
 
     .badges_grid {
-        gap: 1.6rem;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.8rem;
     }
 
     .badge_icon {
-        width: 40px;
-        height: 40px;
+        width: 42px;
+        height: 42px;
     }
 
     .badge_name {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
     }
 }
 
 @media (min-width: 1024px) {
     .badges_container {
-        max-width: 520px;
+        max-width: 720px;
+    }
+
+    .fortschritt_liste {
+        gap: 1.6rem 2.5rem;
+    }
+
+    .badges_grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2rem;
+    }
+
+    .badge_icon {
+        width: 46px;
+        height: 46px;
+    }
+
+    .badge_name {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .badges_container {
+        max-width: 820px;
+    }
+
+    .badges_grid {
+        grid-template-columns: repeat(6, 1fr);
     }
 }
 </style>
