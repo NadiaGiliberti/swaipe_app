@@ -23,12 +23,13 @@ Bis auf die kurzen Vorstellungsrunden im Major kannte ich diese Dinge noch nicht
 
 ## Schwierigkeiten
 
-- Herausfinden, wie Nuxt, Vue und Supabase zusammenspielen, da alle drei Technologien neu waren.
-- Umsetzung des individuellen Farb-Themes über CSS-Variablen
+- Zurechtfinden in der "neuen Welt" von Nuxt, Vue und Supabase zusammenspielen.
+- Optimierung der Ladezeiten bei grösseren Spielinhalten (insbesondere Videos). Trotz verschiedener Optimierungsmassnahmen, wie dem Vorladen der nächsten Inhalte, können in einzelnen Situationen weiterhin längere Ladezeiten auftreten.
   
 ## Known Bugs
 
-*(am Schluss ausfüllen wenn noch was auftaucht)*
+- Je nach Netzwerkverbindung und Gerät kann es beim Laden einzelner Videos oder Spielinhalte zu kurzen Wartezeiten kommen.
+- Bei einigen Audiodateien ist das Spulen während des Spiels möglich, bei anderen hingegen nicht. Das Verhalten tritt inkonsistent auf und konnte trotz Analyse bisher nicht eindeutig reproduziert oder behoben werden. 
 
 **Testing-Einschränkung (Apple-Geräte):** Die App wurde primär auf Windows / Android (Samsung) getestet, da keine Apple Geräte in meinem Umfeld. Sowohl das Verhalten im Safari-Browser als auch PWA-spezifisches Verhalten unter iOS konnten dementsprechend nicht verifiziert werden.
 
@@ -36,13 +37,10 @@ Bis auf die kurzen Vorstellungsrunden im Major kannte ich diese Dinge noch nicht
 
 Die Daten werden vollständig in **Supabase** (Postgres) verwaltet. Das Schema besteht aus folgenden zentralen Tabellen:
 
-- **profiles**: Ein Datensatz pro Nutzer:in mit Username, Profilbild, Highscore für den Punkte-Modus (inkl. Datum), Highscore für den Überlebensmodus (inkl. Datum), Anzahl gespielter Runden, individuellem Level pro Kategorie (`level_bild`, `level_video`, `level_audio`, `level_musik`) sowie den gewählten Theme-Farben.
-- **spieldaten**: Die eigentlichen Spielinhalte – Datei-URL, Kategorie (`BILD`/`VIDEO`/`AUDIO`/`MUSIK`), Herkunft (`ECHT`/`KI`), Stil, initiale Schwierigkeit sowie Zähler für Nutzung und richtige Antworten.
-- **spieldaten_live** (View): Erweitert `spieldaten` um eine dynamisch berechnete `schwierigkeit_aktuell`, die sich aus dem bisherigen Antwortverhalten ergibt – dadurch werden häufig richtig erratene KI-Inhalte mit der Zeit automatisch als "leichter" markiert. Für echte Inhalte wird pauschal eine mittlere Schwierigkeit angenommen; nur KI-Inhalte wurden initial manuell nach Schwierigkeit eingestuft, bevor genügend Spielerdaten für die dynamische Berechnung vorlagen.
-- **freundschaften**: Bildet Freundschaftsbeziehungen zwischen zwei `profiles` ab, inkl. Status (`AUSSTEHEND`/`AKZEPTIERT`) für Anfragen.
-- **badges** und **user_badges**: Definition der verfügbaren Achievements sowie die Zuordnung, welche Nutzer:in welches Abzeichen wann erreicht hat.
-- **record_answer** (RPC-Funktion): Serverseitige Funktion, die eine Spielantwort speichert und die Statistik der jeweiligen Karte (`spieldaten`) aktualisiert.
-
+- **profiles**: Enthält die Benutzerdaten wie Username, Profilbild, Highscores (inkl. Datum), Spielstatistiken, Level pro Kategorie sowie die gewählten Theme-Farben.
+- **spieldaten**: Enthält alle Spielinhalte mit Datei-URL, Kategorie, Herkunft (KI oder Echt), Stil, Schwierigkeit sowie Statistiken zur Nutzung und den Spielergebnissen.
+- **freundschaften**: Verwaltet Freundschaftsanfragen und bestehende Freundschaften zwischen Nutzer:innen.
+- **badges** und **user_badges**: Definieren die verfügbaren Achievements und speichern, welche Nutzer:innen diese erreicht haben.
 
 ## Ressourcen
 
