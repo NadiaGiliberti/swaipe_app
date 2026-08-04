@@ -102,5 +102,33 @@
     .hilfe_text_handy {
         display: none;
     }
+
+    .container_hilfe {
+        width: 80%;
+        max-width: 650px;
+        gap: 2.2rem;
+    }
+
+    .hilfe_abschnitt h2 {
+        font-size: 1.8rem;
+    }
+
+    .hilfe_text {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_hilfe {
+        max-width: 700px;
+    }
+
+    .hilfe_abschnitt h2 {
+        font-size: 2rem;
+    }
+
+    .hilfe_text {
+        font-size: 1.15rem;
+    }
 }
 </style>

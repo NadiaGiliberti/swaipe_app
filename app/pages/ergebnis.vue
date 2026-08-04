@@ -553,4 +553,60 @@ const genauigkeit = computed(() => {
 .fade-leave-to {
     opacity: 0;
 }
+
+@media (min-width: 768px) {
+    .container_stats,
+    .container_freunde_vergleich,
+    .container_perzentil {
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .container_falsche_karten {
+        width: 100%;
+        max-width: 480px;
+    }
+
+    .stat_zeile {
+        font-size: 1.4rem;
+    }
+
+    .container_perzentil p {
+        font-size: 1.15rem;
+    }
+
+    .falsche_karte_media,
+    .falsche_karte_media_audio {
+        max-width: 380px;
+    }
+
+    .freund_vergleich_name,
+    .freund_vergleich_score {
+        font-size: 1.35rem;
+    }
+
+    .badge_popup_inner,
+    .verlassen_modal_inner {
+        max-width: 400px;
+        padding: 2.5rem 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_stats,
+    .container_freunde_vergleich,
+    .container_perzentil,
+    .container_falsche_karten {
+        max-width: 560px;
+    }
+
+    .stat_zeile {
+        font-size: 1.5rem;
+    }
+
+    .falsche_karte_media,
+    .falsche_karte_media_audio {
+        max-width: 420px;
+    }
+}
 </style>

@@ -119,4 +119,30 @@
 .button_musik {
     background: var(--braun);
 }
+
+@media (min-width: 768px) {
+    .container_punktemodus,
+    .container_ueberlebensmodus,
+    .container_ueben {
+        max-width: 480px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .container_buttons_ueben {
+        max-width: 420px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_punktemodus,
+    .container_ueberlebensmodus,
+    .container_ueben {
+        max-width: 540px;
+    }
+
+    .container_buttons_ueben {
+        max-width: 460px;
+    }
+}
 </style>

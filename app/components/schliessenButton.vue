@@ -27,4 +27,18 @@ const sichtbar = computed(() => !versteckenAuf.includes(route.path))
     width: clamp(34px, 5vw, 44px);
     display: block;
 }
+
+@media (min-width: 768px) {
+    .schliessen_button {
+        top: 1.5rem;
+        right: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .schliessen_button {
+        top: 2rem;
+        right: 2rem;
+    }
+}
 </style>

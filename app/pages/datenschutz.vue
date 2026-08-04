@@ -46,4 +46,27 @@
     text-align: left;
     line-height: 1.3;
 }
+
+@media (min-width: 768px) {
+    .container_rechtstext {
+        width: 80%;
+        max-width: 650px;
+        gap: 1.4rem;
+    }
+
+    .rechts_text {
+        font-size: 1.1rem;
+        line-height: 1.5;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_rechtstext {
+        max-width: 700px;
+    }
+
+    .rechts_text {
+        font-size: 1.15rem;
+    }
+}
 </style>

@@ -220,4 +220,40 @@ function istEigenerUser(id) {
   font-size: 0.85rem;
   text-align: center;
 }
+
+@media (min-width: 768px) {
+  .container_rangliste {
+    width: 100%;
+    max-width: 480px;
+  }
+
+  .rang_avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .rang_name,
+  .rang_score {
+    font-size: 1.6rem;
+  }
+
+  .rang_datum {
+    font-size: 0.65rem;
+  }
+
+  .tab_button {
+    font-size: 1.1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container_rangliste {
+    max-width: 560px;
+  }
+
+  .rang_name,
+  .rang_score {
+    font-size: 1.7rem;
+  }
+}
 </style>

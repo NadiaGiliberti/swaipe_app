@@ -89,6 +89,16 @@ onUnmounted(() => {
     .loading_overlay {
         background-attachment: fixed;
     }
+
+    .loading_bild {
+        max-width: 240px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .loading_bild {
+        max-width: 260px;
+    }
 }
 
 .loading_overlay::before {

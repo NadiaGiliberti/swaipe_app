@@ -116,5 +116,30 @@ onMounted(async () => {
   border-radius: 50%;
 }
 
-@media (min-width:768px) {}
+@media (min-width: 768px) {
+  .container_swaipe {
+    gap: 2.5rem;
+    margin-top: 5rem;
+  }
+
+  .logo {
+    width: 380px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container_swaipe {
+    margin-top: 6rem;
+  }
+
+  .logo {
+    width: 440px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .logo {
+    width: 500px;
+  }
+}
 </style>

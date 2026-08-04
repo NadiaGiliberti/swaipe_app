@@ -24,4 +24,20 @@
     width:10vw;
 }
 
+@media (min-width: 768px) {
+    .container_navigation {
+        padding: 1rem;
+    }
+
+    .icon_swaipe {
+        width: 4rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .icon_swaipe {
+        width: 4.5rem;
+    }
+}
+
 </style>

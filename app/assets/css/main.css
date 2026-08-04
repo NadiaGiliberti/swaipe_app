@@ -429,3 +429,161 @@
     font-size: 0.8rem;
     outline: none;
   }
+
+  /** ============================================================
+      DESKTOP / GRÖSSERE BILDSCHIRME
+      Breakpoints: 768px (Tablet), 1024px (Desktop), 1440px (Large Desktop)
+      Die vw-basierten Mobile-Werte oben bleiben unverändert; ab hier werden
+      sie mit festen rem-Werten gedeckelt, damit nichts unbegrenzt mitwächst.
+      ============================================================ **/
+
+  @media (min-width: 768px) {
+    h1 {
+      font-size: 3.5rem;
+    }
+
+    h2 {
+      font-size: 2.75rem;
+    }
+
+    h3 {
+      font-size: 2.25rem;
+    }
+
+    h4 {
+      font-size: 1.25rem;
+    }
+
+    p,
+    ul,
+    label {
+      font-size: 1.15rem;
+    }
+
+    span {
+      font-size: 1rem;
+    }
+
+    a {
+      font-size: 1rem;
+    }
+
+    .container_main {
+      margin-top: 3rem;
+    }
+
+    .container_buttons,
+    .container_buttons_wm,
+    .container_back_button {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .container_formularfeld {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .formularfeld {
+      font-size: 1rem;
+      padding: 0.8rem;
+    }
+
+    .button {
+      font-size: 1.4rem;
+      padding: 0.7rem 1rem;
+    }
+
+    .button_klein {
+      font-size: 1.15rem;
+      padding: 0.6rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    h1 {
+      font-size: 4.5rem;
+    }
+
+    h2 {
+      font-size: 3.25rem;
+    }
+
+    h3 {
+      font-size: 2.5rem;
+    }
+
+    h4 {
+      font-size: 1.4rem;
+    }
+
+    p,
+    ul,
+    label {
+      font-size: 1.25rem;
+    }
+
+    span {
+      font-size: 1.1rem;
+    }
+
+    a {
+      font-size: 1.05rem;
+    }
+
+    .container_main {
+      margin-top: 4rem;
+    }
+
+    .container_buttons,
+    .container_buttons_wm,
+    .container_back_button {
+      max-width: 460px;
+    }
+
+    .container_formularfeld {
+      max-width: 460px;
+    }
+  }
+
+  @media (min-width: 1440px) {
+    h1 {
+      font-size: 5.5rem;
+    }
+
+    h2 {
+      font-size: 4rem;
+    }
+
+    h3 {
+      font-size: 3rem;
+    }
+
+    h4 {
+      font-size: 1.5rem;
+    }
+
+    p,
+    ul,
+    label {
+      font-size: 1.35rem;
+    }
+
+    span {
+      font-size: 1.15rem;
+    }
+
+    a {
+      font-size: 1.1rem;
+    }
+
+    .container_buttons,
+    .container_buttons_wm,
+    .container_back_button {
+      max-width: 500px;
+    }
+
+    .container_formularfeld {
+      max-width: 500px;
+    }
+  }

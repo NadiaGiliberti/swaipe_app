@@ -576,4 +576,52 @@ const vFocus = {
     object-fit: cover;
     display: block;
 }
+
+@media (min-width: 768px) {
+    #profilbildUser {
+        width: 140px;
+        height: 140px;
+    }
+
+    .button_edit {
+        top: -8px;
+        right: -8px;
+    }
+
+    #profilbildUserEdit {
+        width: 28px;
+    }
+
+    .input_username {
+        width: 320px;
+    }
+
+    .container_aktionen {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .aktion {
+        font-size: 1.8rem;
+    }
+
+    .avatar_auswahl_grid {
+        gap: 1.4rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    #profilbildUser {
+        width: 160px;
+        height: 160px;
+    }
+
+    .container_aktionen {
+        max-width: 460px;
+    }
+
+    .aktion {
+        font-size: 2rem;
+    }
+}
 </style>

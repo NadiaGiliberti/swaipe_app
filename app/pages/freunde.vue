@@ -337,4 +337,38 @@ async function bestaetigeEntfernen() {
     background: var(--braun);
     opacity: 0.6;
 }
+
+@media (min-width: 768px) {
+    .container_freunde_liste,
+    .container_anfragen {
+        width: 100%;
+        max-width: 460px;
+    }
+
+    .container_suche {
+        width: 100%;
+        max-width: 460px;
+    }
+
+    .freund_avatar {
+        width: 38px;
+        height: 38px;
+    }
+
+    .hinweis_text {
+        font-size: 1rem;
+    }
+
+    .hinweis_text_klein {
+        font-size: 0.85rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_freunde_liste,
+    .container_anfragen,
+    .container_suche {
+        max-width: 520px;
+    }
+}
 </style>

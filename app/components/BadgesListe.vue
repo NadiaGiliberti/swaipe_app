@@ -204,4 +204,37 @@ function fortschrittProzent(level) {
 .badge_name_gesperrt {
     opacity: 0.4;
 }
+
+@media (min-width: 768px) {
+    .badges_container {
+        max-width: 460px;
+    }
+
+    .fortschritt_label {
+        font-size: 0.95rem;
+    }
+
+    .fortschritt_level {
+        font-size: 0.85rem;
+    }
+
+    .badges_grid {
+        gap: 1.6rem;
+    }
+
+    .badge_icon {
+        width: 40px;
+        height: 40px;
+    }
+
+    .badge_name {
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .badges_container {
+        max-width: 520px;
+    }
+}
 </style>

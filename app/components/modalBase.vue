@@ -86,4 +86,11 @@ const emit = defineEmits(['close'])
 .modal_box h3 {
     color: var(--braun);
 }
+
+@media (min-width: 768px) {
+    .modal_box {
+        max-width: 420px;
+        padding: 2.5rem 2rem;
+    }
+}
 </style>

@@ -189,4 +189,35 @@ async function linkErneutSenden() {
   text-align: center;
   margin-top: 1rem;
 }
+
+@media (min-width: 768px) {
+  .button_registrieren {
+    font-size: 1.6rem;
+    margin-top: 2rem;
+  }
+
+  .erfolg_text {
+    font-size: 1.5rem;
+    max-width: 460px;
+  }
+
+  .erfolg_text_klein {
+    font-size: 1rem;
+    max-width: 460px;
+  }
+
+  .error_text {
+    font-size: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .erfolg_text {
+    max-width: 500px;
+  }
+
+  .erfolg_text_klein {
+    max-width: 500px;
+  }
+}
 </style>

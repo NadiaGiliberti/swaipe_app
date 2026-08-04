@@ -936,6 +936,73 @@ function buttonSwipe(antwortIstKI) {
     .swipe_info_pc {
         display: block;
     }
+
+    .container_content {
+        width: min(80vw, 480px);
+        height: 55vh;
+        max-height: 560px;
+    }
+
+    .container_score_count,
+    .container_swipe_header,
+    .container_swipe_buttons,
+    .container_swipe_info,
+    .audio_player {
+        width: min(80vw, 480px);
+    }
+
+    .swipe_header_label {
+        font-size: 1.6rem;
+    }
+
+    .verlassen_modal_inner p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_content {
+        width: 520px;
+        height: 60vh;
+        max-height: 640px;
+    }
+
+    .container_score_count,
+    .container_swipe_header,
+    .container_swipe_buttons,
+    .container_swipe_info,
+    .audio_player {
+        width: 520px;
+    }
+
+    .container_score_count {
+        margin-top: -3rem;
+    }
+
+    .swipe_header_label {
+        font-size: 1.8rem;
+    }
+
+    .button_swipe {
+        font-size: 1.35rem;
+        padding: 1rem;
+    }
+}
+
+@media (min-width: 1440px) {
+    .container_content {
+        width: 600px;
+        height: 62vh;
+        max-height: 720px;
+    }
+
+    .container_score_count,
+    .container_swipe_header,
+    .container_swipe_buttons,
+    .container_swipe_info,
+    .audio_player {
+        width: 600px;
+    }
 }
 
 .verlassen_modal {

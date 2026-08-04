@@ -373,4 +373,31 @@ async function saveCustomTheme() {
     margin-bottom: 2rem;
 
 }
+
+@media (min-width: 768px) {
+    .container_lautstaerke,
+    .container_aktionen {
+        width: 100%;
+        max-width: 420px;
+    }
+
+    .aktion {
+        font-size: 1.8rem;
+    }
+
+    .theme_name {
+        font-size: 1.1rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_lautstaerke,
+    .container_aktionen {
+        max-width: 460px;
+    }
+
+    .aktion {
+        font-size: 2rem;
+    }
+}
 </style>

@@ -115,4 +115,14 @@ async function login() {
   text-align: center;
   margin-top: 1rem;
 }
+
+@media (min-width: 768px) {
+  .button_login {
+    margin-top: 1.5rem;
+  }
+
+  .error_text {
+    font-size: 1rem;
+  }
+}
 </style>

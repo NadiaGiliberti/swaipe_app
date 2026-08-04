@@ -123,4 +123,36 @@ onMounted(() => {
     transform: translateX(-50%) translateY(120%);
     opacity: 0;
 }
+
+@media (min-width: 768px) {
+    .install_banner {
+        max-width: 460px;
+        padding: 1rem 1.2rem;
+        gap: 1rem;
+    }
+
+    .install_banner_icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    .install_banner_titel {
+        font-size: 0.95rem;
+    }
+
+    .install_banner_hinweis {
+        font-size: 0.9rem;
+    }
+
+    .install_banner_button {
+        padding: 0.6rem 1rem;
+        font-size: 0.75rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .install_banner {
+        max-width: 480px;
+    }
+}
 </style>

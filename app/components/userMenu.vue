@@ -113,8 +113,35 @@ async function handleLogout() {
 }
 
 @media (min-width: 768px) {
+    .overlay {
+        background: rgba(0, 0, 0, 0.4);
+    }
+
     .drawer {
         background-attachment: fixed;
+        left: auto;
+        width: 400px;
+        max-width: 85vw;
+        padding: 1.5rem 3rem;
+        box-shadow: -8px 0 30px rgba(0, 0, 0, 0.3);
+    }
+
+    .container_menu {
+        margin-top: 22vh;
+        gap: 1.6rem;
+    }
+
+    .menu_item .icon-mask,
+    .menu_avatar {
+        width: 30px;
+        height: 30px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .drawer {
+        width: 440px;
+        padding: 2rem 3.5rem;
     }
 }
 
