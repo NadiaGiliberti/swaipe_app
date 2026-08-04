@@ -32,7 +32,45 @@ export async function ladeSpielkarten(supabase: any, kategorie: string | null, a
     return gemischt.slice(0, anzahl)
 }
 
-// Baut eine Reihenfolge, die ECHT und KI abwechselnd ausspielt.
+// Wie stark die Position innerhalb der gleichmäßigen Verteilung zufällig
+// verschoben werden darf, relativ zum kleineren der beiden Fortschritts-Schritte.
+// 0 = starr nach Anteil verteilt (z.B. exaktes E,K,E,K bei 50/50), höhere Werte
+// = natürlicher wirkende Streuung. 1 ist ein guter Mittelwert (siehe Tests).
+const VERTEILUNGS_JITTER = 1
+
+// Mischt zwei nach Herkunft getrennte Kartenlisten so zusammen, dass beide
+// Herkünfte gleichmäßig über die gesamte Reihenfolge verteilt sind (proportional
+// zu ihrer jeweiligen Anzahl), statt stur 1:1 abzuwechseln oder eine Gruppe erst
+// komplett auszuspielen. Ein kleiner Zufalls-Jitter sorgt dafür, dass es nicht wie
+// ein starres Muster wirkt, ohne dass eine Gruppe vorzeitig "aufgebraucht" wird
+// (was sonst am Ende zu einer langen Kette der übrig gebliebenen Gruppe führt).
+function interleaveGewichtet(echt: Spielkarte[], ki: Spielkarte[]): Spielkarte[] {
+    const ergebnis: Spielkarte[] = []
+    let ei = 0
+    let kiI = 0
+
+    const echtSchritt = echt.length > 0 ? 1 / echt.length : Infinity
+    const kiSchritt = ki.length > 0 ? 1 / ki.length : Infinity
+    const minSchritt = Math.min(echtSchritt, kiSchritt)
+
+    while (ei < echt.length || kiI < ki.length) {
+        const jitter = (Math.random() - 0.5) * VERTEILUNGS_JITTER * minSchritt
+        const echtFortschritt = ei < echt.length ? (ei + 1) * echtSchritt + jitter : Infinity
+        const kiFortschritt = kiI < ki.length ? (kiI + 1) * kiSchritt - jitter : Infinity
+
+        if (echtFortschritt <= kiFortschritt) {
+            ergebnis.push(echt[ei]!)
+            ei++
+        } else {
+            ergebnis.push(ki[kiI]!)
+            kiI++
+        }
+    }
+
+    return ergebnis
+}
+
+// Baut eine Reihenfolge, die ECHT und KI gemischt ausspielt (nicht starr abwechselnd).
 // minSchwierigkeit kann eine feste Zahl sein, oder eine Funktion pro Karte
 // (für kategoriespezifische Startschwierigkeit).
 export function baueAusgeglicheneReihenfolge(karten: Spielkarte[], minSchwierigkeit: MinSchwierigkeitResolver = 1): Spielkarte[] {
@@ -43,6 +81,8 @@ export function baueAusgeglicheneReihenfolge(karten: Spielkarte[], minSchwierigk
         ki = karten.filter((k: Spielkarte) => k.herkunft === 'KI')
     }
 
+    // KI-Karten bleiben nach Schwierigkeit aufsteigend vorsortiert, damit die
+    // Schwierigkeitsprogression innerhalb der KI-Karten erhalten bleibt.
     const kiSortiert = [...ki].sort((a: Spielkarte, b: Spielkarte) => {
         const diff = (a.schwierigkeit_aktuell ?? 2) - (b.schwierigkeit_aktuell ?? 2)
         if (diff !== 0) return diff
@@ -51,22 +91,7 @@ export function baueAusgeglicheneReihenfolge(karten: Spielkarte[], minSchwierigk
 
     const echtGemischt = [...echt].sort(() => Math.random() - 0.5)
 
-    const ergebnis: Spielkarte[] = []
-    let ei = 0
-    let kiI = 0
-
-    while (ei < echtGemischt.length || kiI < kiSortiert.length) {
-        if (ei < echtGemischt.length) {
-            ergebnis.push(echtGemischt[ei]!)
-            ei++
-        }
-        if (kiI < kiSortiert.length) {
-            ergebnis.push(kiSortiert[kiI]!)
-            kiI++
-        }
-    }
-
-    return ergebnis
+    return interleaveGewichtet(echtGemischt, kiSortiert)
 }
 
 export function baueErschwerteReihenfolge(restKarten: Spielkarte[], minSchwierigkeit: number): Spielkarte[] {
