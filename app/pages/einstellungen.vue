@@ -190,7 +190,7 @@ async function saveCustomTheme() {
             </div>
 
             <div class="container_custom_theme">
-                <span class="theme_name">EIGENE FARBEN</span>
+                <span class="theme_name">EIGENES DESIGN ZUSAMMENSTELLEN</span>
 
                 <div class="container_color_pickers">
                     <input type="color" v-model="customColor1">
@@ -214,7 +214,7 @@ async function saveCustomTheme() {
                 </div>
 
                 <button class="button" :disabled="themeSaving" @click="saveCustomTheme">
-                    {{ themeSaving ? 'SPEICHERT...' : 'EIGENE FARBEN ÜBERNEHMEN' }}
+                    {{ themeSaving ? 'SPEICHERT...' : 'MEIN DESIGN ÜBERNEHMEN' }}
                 </button>
             </div>
 
@@ -337,6 +337,10 @@ async function saveCustomTheme() {
     gap: 1rem;
 }
 
+/* Runde Farbkacheln, die die Farbe wirklich komplett ausfüllen:
+   input[type=color] hat browserintern ein eigenes "Swatch"-Element mit
+   eigenem Padding/Radius - border-radius auf dem input selbst reicht nicht,
+   die tatsächliche Farbfläche muss separat angesprochen werden. */
 .container_color_pickers input[type="color"] {
     width: 48px;
     height: 48px;
@@ -344,6 +348,22 @@ async function saveCustomTheme() {
     border-radius: 50%;
     cursor: pointer;
     padding: 0;
+    overflow: hidden;
+}
+
+.container_color_pickers input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: 50%;
+}
+
+.container_color_pickers input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
+
+.container_color_pickers input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: 50%;
 }
 
 .container_text_toggle {
