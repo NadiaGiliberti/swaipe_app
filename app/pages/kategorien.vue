@@ -120,28 +120,32 @@
 }
 
 @media (min-width: 768px) {
-    .container_punktemodus,
-    .container_ueberlebensmodus,
+
+
     .container_ueben {
-        max-width: 480px;
-        margin-left: auto;
-        margin-right: auto;
+        margin-top: 12%;
     }
 
-    .container_buttons_ueben {
-        max-width: 420px;
-    }
 }
 
 @media (min-width: 1024px) {
-    .container_punktemodus,
-    .container_ueberlebensmodus,
+
+    .container_ueberlebensmodus {
+        margin-top: 5%;
+    }
+
     .container_ueben {
-        max-width: 540px;
+        margin-top: 7%;
     }
 
     .container_buttons_ueben {
-        max-width: 460px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 80%;
+        flex-wrap: wrap;
+        gap: 5%;
     }
+
 }
 </style>
