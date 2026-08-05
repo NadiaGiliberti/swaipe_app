@@ -500,7 +500,7 @@ function buttonSwipe(antwortIstKI) {
 </script>
 
 <template>
-    <main class="container_main">
+    <main class="container_main container_main_spiel">
 
         <template v-if="ladeFehler">
             <p>{{ ladeFehler }}</p>
@@ -931,6 +931,15 @@ function buttonSwipe(antwortIstKI) {
     display: none;
 }
 
+/* ============================================================
+   DESKTOP: Alles soll ohne Scrollen in den Viewport passen.
+   container_main_spiel bekommt eine feste Höhe (100vh, margin-top
+   überschrieben auf 0), die Kachel (container_content) bekommt flex:1
+   statt einer festen vh-Höhe - dadurch schrumpft/wächst sie automatisch
+   auf genau den Platz, der nach Abzug von Score-Anzeige, Headern, Buttons
+   und Info-Text übrig bleibt. min-height:0 ist nötig, da Flex-Kinder sonst
+   nie kleiner als ihr Inhalt werden (Flexbox-Standardverhalten).
+   ============================================================ */
 @media (min-width: 768px) {
     .container_swipe_buttons {
         display: flex;
@@ -944,10 +953,22 @@ function buttonSwipe(antwortIstKI) {
         display: block;
     }
 
+    .container_main_spiel {
+        height: 100vh;
+        margin-top: 0;
+        justify-content: center;
+        padding: 1rem 0;
+        gap: 0.2rem;
+    }
+
     .container_content {
-        width: min(80vw, 480px);
-        height: 55vh;
-        max-height: 560px;
+        flex: 1 1 auto;
+        min-height: 0;
+        width: min(75vw, 440px);
+        height: auto;
+        max-height: none;
+        margin: 0;
+        flex-shrink: 1;
     }
 
     .container_score_count,
@@ -955,7 +976,21 @@ function buttonSwipe(antwortIstKI) {
     .container_swipe_buttons,
     .container_swipe_info,
     .audio_player {
-        width: min(80vw, 480px);
+        width: min(75vw, 440px);
+        flex-shrink: 0;
+    }
+
+    .container_score_count {
+        margin-top: 0;
+    }
+
+    .container_zeit {
+        margin-top: 0.4rem;
+        flex-shrink: 0;
+    }
+
+    .container_swipe_header {
+        flex-shrink: 0;
     }
 
     .swipe_header_label {
@@ -969,9 +1004,7 @@ function buttonSwipe(antwortIstKI) {
 
 @media (min-width: 1024px) {
     .container_content {
-        width: 520px;
-        height: 60vh;
-        max-height: 640px;
+        width: 480px;
     }
 
     .container_score_count,
@@ -979,11 +1012,7 @@ function buttonSwipe(antwortIstKI) {
     .container_swipe_buttons,
     .container_swipe_info,
     .audio_player {
-        width: 520px;
-    }
-
-    .container_score_count {
-        margin-top: -3rem;
+        width: 480px;
     }
 
     .swipe_header_label {
@@ -998,9 +1027,7 @@ function buttonSwipe(antwortIstKI) {
 
 @media (min-width: 1440px) {
     .container_content {
-        width: 600px;
-        height: 62vh;
-        max-height: 720px;
+        width: 560px;
     }
 
     .container_score_count,
@@ -1008,7 +1035,7 @@ function buttonSwipe(antwortIstKI) {
     .container_swipe_buttons,
     .container_swipe_info,
     .audio_player {
-        width: 600px;
+        width: 560px;
     }
 }
 
