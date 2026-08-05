@@ -280,6 +280,14 @@ async function saveCustomTheme() {
     color: var(--text-dunkel);
 }
 
+/* Hover nur auf Geräten mit echtem Maus-Hover - sonst bleibt der Zustand auf
+   Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen". */
+@media (hover: hover) and (pointer: fine) {
+    .aktion:hover {
+        color: var(--gelb);
+    }
+}
+
 .container_themes {
     display: flex;
     flex-direction: column;

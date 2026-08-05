@@ -487,6 +487,12 @@ const vFocus = {
     display: block;
 }
 
+@media (hover: hover) and (pointer: fine) {
+    .button_edit:hover .icon-mask {
+        background-color: var(--gelb);
+    }
+}
+
 .container_username_edit {
     margin-top: 2vh;
     min-height: 40px;
@@ -532,6 +538,14 @@ const vFocus = {
     font-family: 'BarlowCondensed', sans-serif;
     font-size: 6vw;
     color: var(--text-dunkel);
+}
+
+/* Hover nur auf Geräten mit echtem Maus-Hover - sonst bleibt der Zustand auf
+   Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen". */
+@media (hover: hover) and (pointer: fine) {
+    .aktion:hover {
+        color: var(--gelb);
+    }
 }
 
 .error_text {

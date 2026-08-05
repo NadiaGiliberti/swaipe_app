@@ -28,6 +28,12 @@ const sichtbar = computed(() => !versteckenAuf.includes(route.path))
     display: block;
 }
 
+@media (hover: hover) and (pointer: fine) {
+    .schliessen_button:hover .icon-mask {
+        background-color: var(--gelb);
+    }
+}
+
 @media (min-width: 768px) {
     .schliessen_button {
         top: 1.5rem;

@@ -239,6 +239,12 @@ html.theme-darkmode .drawer {
     display: block;
 }
 
+@media (hover: hover) and (pointer: fine) {
+    .button_close:hover .icon-mask {
+        background-color: var(--gelb);
+    }
+}
+
 /* ===== MENU ===== */
 
 .container_menu {
@@ -282,6 +288,22 @@ html.theme-darkmode .drawer {
     height: 10px;
     background: var(--gelb);
     border-radius: 50%;
+}
+
+/* Hover nur auf Geräten mit echtem Maus-Hover - sonst bleibt der Zustand auf
+   Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen", siehe main.css. */
+@media (hover: hover) and (pointer: fine) {
+    .menu_item:hover span {
+        color: var(--gelb);
+    }
+
+    .menu_item:hover .icon-mask {
+        background-color: var(--gelb);
+    }
+
+    .menu_item:hover .menu_avatar.avatar_placeholder {
+        background-color: var(--gelb);
+    }
 }
 
 /* ===== TRANSITION SYSTEM (Vue) ===== */
