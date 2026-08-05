@@ -95,6 +95,9 @@ export default defineNuxtConfig({
 
   app: {
     head: {
+      htmlAttrs: {
+        lang: 'de',
+      },
       title: 'SWAIPE',
       viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
       link: [

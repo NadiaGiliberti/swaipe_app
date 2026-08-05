@@ -546,7 +546,7 @@ function buttonSwipe(antwortIstKI) {
                     opacity: hintergrundOpacity
                 }">
                     <img v-if="naechsteKarte.kategorie === 'BILD'" :src="naechsteKarte.datei_url" class="karte_bild"
-                        draggable="false">
+                        draggable="false" alt="">
                     <video v-else-if="naechsteKarte.kategorie === 'VIDEO'" :src="naechsteKarte.datei_url"
                         class="karte_video" preload="auto" fetchpriority="high" muted playsinline></video>
                     <div v-else class="karte_platzhalter"></div>
@@ -558,7 +558,7 @@ function buttonSwipe(antwortIstKI) {
                 }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag" @touchstart="startDrag"
                     @touchmove="onDrag" @touchend="endDrag">
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
-                        draggable="false">
+                        draggable="false" alt="">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
                         class="karte_video" :class="{ karte_video_bereit: videoBereit }"
                         preload="auto" fetchpriority="high" autoplay loop muted playsinline
@@ -596,7 +596,7 @@ function buttonSwipe(antwortIstKI) {
                 <div class="vorlade_bereich" aria-hidden="true">
                     <template v-for="(karte, i) in vorausKarten" :key="'vorlade-' + karte.id">
                         <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url"
-                            :fetchpriority="i === 0 ? 'auto' : 'low'">
+                            :fetchpriority="i === 0 ? 'auto' : 'low'" alt="">
                         <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url"
                             :preload="i === 0 ? 'auto' : 'metadata'" fetchpriority="low" muted
                             playsinline></video>

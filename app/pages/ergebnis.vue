@@ -234,7 +234,7 @@ const genauigkeit = computed(() => {
                             controlsList="nodownload noplaybackrate" @contextmenu.prevent></audio>
                     </div>
                     <div v-else class="falsche_karte_media">
-                        <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url" class="falsche_karte_bild">
+                        <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url" class="falsche_karte_bild" alt="">
                         <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url" class="falsche_karte_bild"
                             controls preload="metadata" playsinline></video>
                     </div>
@@ -254,7 +254,7 @@ const genauigkeit = computed(() => {
                     :class="{ freund_vergleich_item_ich: eintrag.istIch }"
                 >
                     <span class="freund_vergleich_nummer">{{ index + 1 }}.</span>
-                    <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="freund_vergleich_avatar bild_umrandet">
+                    <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="freund_vergleich_avatar bild_umrandet" alt="Profil">
                     <div v-else class="freund_vergleich_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span class="freund_vergleich_name">
                         {{ eintrag.istIch ? 'DU' : eintrag.username }}

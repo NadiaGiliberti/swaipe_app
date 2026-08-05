@@ -53,7 +53,7 @@ onMounted(async () => {
     </button>
 
     <div class="container_swaipe">
-      <img src="/logo_swaipe.svg" class="logo">
+      <img src="/logo_swaipe.svg" class="logo" alt="SWAIPE Logo">
 
       <h4>
         Real oder KI?
