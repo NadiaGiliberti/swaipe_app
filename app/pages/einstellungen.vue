@@ -154,7 +154,7 @@ async function saveCustomTheme() {
         <div class="container_lautstaerke">
             <button class="button_sound_toggle" @click="toggleMute">
                 <span class="icon-mask" role="img" aria-label="Lautstärke"
-                    :style="{ maskImage: `url(${soundIcon})`, webkitMaskImage: `url(${soundIcon})` }"></span>
+                    :style="{ maskImage: `url(${soundIcon})`, '-webkit-mask-image': `url(${soundIcon})` }"></span>
             </button>
             <input type="range" min="0" max="100" class="slider_lautstaerke" :value="volume"
                 @input="setVolume(Number($event.target.value))">

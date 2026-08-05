@@ -44,7 +44,7 @@ async function handleLogout() {
 
                         <button class="menu_item" @click="goTo('/userProfil')">
                             <img v-if="avatarUrl" :src="avatarUrl" class="menu_avatar bild_umrandet" alt="Profil">
-                            <div v-else class="menu_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
+                            <span v-else class="menu_avatar avatar_placeholder" role="img" aria-label="Profil"></span>
                             <span>DEIN PROFIL</span>
                         </button>
 
