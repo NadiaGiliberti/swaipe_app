@@ -100,6 +100,7 @@ async function saveTheme(colors, textDunkel, textHell, textSchwarz) {
             theme_background_1: colors[0],
             theme_background_2: colors[1],
             theme_background_3: colors[2],
+            theme_background_4: colors[3] ?? null,
             theme_text_dunkel: textDunkel,
             theme_text_hell: textHell,
             theme_text_schwarz: textSchwarz
@@ -119,6 +120,7 @@ async function saveTheme(colors, textDunkel, textHell, textSchwarz) {
     profil.value.theme_background_1 = colors[0]
     profil.value.theme_background_2 = colors[1]
     profil.value.theme_background_3 = colors[2]
+    profil.value.theme_background_4 = colors[3] ?? null
     profil.value.theme_text_dunkel = textDunkel
     profil.value.theme_text_hell = textHell
     profil.value.theme_text_schwarz = textSchwarz

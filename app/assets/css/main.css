@@ -101,6 +101,26 @@ body {
   width: 100%;
 }
 
+/* Darkmode: eigener 4-Farben-Verlauf statt des Standard-3-Farben-Verlaufs
+   oben. Wird nur aktiv, wenn applyTheme() eine 4. Farbe erhält (siehe
+   useTheme.ts) und dafür die Klasse "theme-darkmode" am <html>-Element
+   setzt. Default- und eigene 3-Farben-Themes sind davon unberührt, da diese
+   Klasse dort nie gesetzt wird. Zwei separate, weiche Blob-Cluster (ein
+   grosser oben-mittig, ein kleinerer unten-links) statt eines einzelnen
+   konzentrischen Kreises - dadurch der organischere, "wolkigere" Look statt
+   perfekter Ringe. Basis-Fallback ist bewusst var(--background-3) statt
+   var(--background-base) (weiss) - sonst würde zwischen den Blobs weiss
+   durchschimmern. */
+html.theme-darkmode body {
+  background:
+    radial-gradient(circle at 60% 30%, var(--background-2) 0%, transparent 40%),
+    radial-gradient(circle at 55% 28%, var(--background-1) 0%, transparent 50%),
+    radial-gradient(circle at 65% 45%, var(--background-4) 0%, transparent 40%),
+    radial-gradient(circle at 5% 95%, var(--background-2) 0%, transparent 25%),
+    radial-gradient(circle at 15% 85%, var(--background-1) 0%, transparent 40%),
+    var(--background-3);
+}
+
 /* Fixed-Attachment ist auf mobilen Browsern sehr teuer (erzwingt Repaint bei jedem Scroll) - nur auf Desktop aktivieren */
 @media (min-width: 768px) {
   body {
@@ -153,6 +173,7 @@ body {
   --background-1: #f898c1;
   --background-2: #5aeaa2;
   --background-3: #920e36;
+  --background-4: #0d0d1a;
   --braun: #560000;
   --gelb: #ffda00;
   --button-hover: #000d6b;

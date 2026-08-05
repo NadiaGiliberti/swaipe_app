@@ -112,9 +112,28 @@ async function handleLogout() {
         var(--background-base);
 }
 
+/* Darkmode: derselbe 4-Farben-Verlauf wie in main.css für den body, hier
+   zusätzlich für die Drawer hinterlegt, da sie ihren Hintergrund komplett
+   eigenständig definiert (erbt nicht von body). Greift automatisch, sobald
+   applyTheme() die "theme-darkmode"-Klasse am <html>-Element setzt - genau
+   wie beim body. Positionen sind 1:1 von main.css übernommen; da die Drawer
+   ein schmaleres Seitenverhältnis als der volle Screen hat, ggf. hier separat
+   nachjustieren statt zwingend synchron zu main.css zu halten. */
+html.theme-darkmode .drawer {
+    background:
+        radial-gradient(circle at 60% 40%, var(--background-2) 0%, transparent 40%),
+        radial-gradient(circle at 55% 28%, var(--background-1) 0%, transparent 55%),
+        radial-gradient(circle at 65% 45%, var(--background-4) 0%, transparent 50%),
+        radial-gradient(circle at 10% 90%, var(--background-2) 0%, transparent 35%),
+        radial-gradient(circle at 15% 85%, var(--background-1) 0%, transparent 50%),
+        var(--background-3);
+}
+
 @media (min-width: 768px) {
     .overlay {
-        background: rgba(0, 0, 0, 0.4);
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: grayscale(0.6);
+        -webkit-backdrop-filter: grayscale(0.6);
     }
 
     .drawer {
