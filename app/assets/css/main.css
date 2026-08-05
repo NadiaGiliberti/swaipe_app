@@ -109,41 +109,13 @@
   }
 
   .container_body {
-    height: 100dvh;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     overflow: hidden;
 
-  }
-
-  /* Der einzige scrollbare Bereich der App - siehe Kommentar in layouts/default.vue.
-     min-height:0 ist hier zwingend nötig: ohne das würde dieses Flex-Kind sich
-     per Default auf seine volle Inhaltshöhe aufblasen (Flexbox-Standardverhalten
-     min-height:auto) statt sich auf den verbleibenden Platz zu begrenzen - dann
-     würde overflow-y:auto nie greifen. */
-  .scroll_area {
-    width: 100%;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* Teleport-Ziel für buttonZurueck.vue (siehe layouts/default.vue). Braucht
-     width:100%, sonst schrumpft die Zeile (wegen align-items:center am
-     Elternelement) auf ihren Inhalt zusammen, und width:55% am Button darin
-     würde sich auf diese bereits geschrumpfte Breite beziehen statt auf die
-     volle Bildschirmbreite. */
-  #back_button_slot {
-    width: 100%;
-    flex: 0 0 auto;
-    display: flex;
-    justify-content: center;
   }
 
   /* Vorgerenderte Noise-Textur statt live berechnetem SVG-feTurbulence-Filter (auf Mobilgeräten sehr rechenintensiv) */
@@ -224,7 +196,7 @@
     font-weight: 600;
   }
 
-  h4, .h4{
+  h4 {
     color: var(--text-dunkel);
     font-family: 'DotGothic16', sans-serif;
     letter-spacing: 0.05rem;
@@ -417,18 +389,21 @@
     margin: 0.5rem auto 0;
   }
 
-  /* Kein position:fixed mehr: der Button ist jetzt ein normales Flex-Kind von
-     .container_body, direkt unter (also technisch ausserhalb von) .scroll_area -
-     siehe layouts/default.vue. Bleibt optisch exakt gleich am unteren Rand
-     "kleben" (da .scroll_area den gesamten übrigen Platz einnimmt), aber der
-     reservierte Platz ergibt sich jetzt automatisch aus der echten Button-Höhe
-     statt aus einem geschätzten Wert. */
   .container_back_button {
-    width: 55%;
-    flex: 0 0 auto;
+    position: fixed;
+    bottom: calc(1rem + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    padding-bottom: calc(1rem + env(safe-area-inset-bottom));
+    width: 55%;
     z-index: 1000;
+  }
+
+  /* Der Zurück-Button ist fixed und liegt daher ausserhalb des normalen
+     Layoutflusses - ohne das hier würde Content am Seitenende darunter
+     wegscrollen können und vom Button verdeckt/blockiert werden. */
+  .container_main:has(.container_back_button) {
+    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
   }
 
 
