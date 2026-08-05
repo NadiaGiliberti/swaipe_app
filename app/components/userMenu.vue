@@ -132,8 +132,8 @@ html.theme-darkmode .drawer {
 @media (min-width: 768px) {
     .overlay {
         background: rgba(0, 0, 0, 0.35);
-        backdrop-filter: grayscale(0.6);
-        -webkit-backdrop-filter: grayscale(0.6);
+        backdrop-filter: grayscale(0.3);
+        -webkit-backdrop-filter: grayscale(0.3);
     }
 
     .drawer {
