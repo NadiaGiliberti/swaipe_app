@@ -1,10 +1,4 @@
-<template>
-  <div class="container_back_button">
-    <button class="button button_zurueck" @click="goBack">
-      ZURÜCK
-    </button>
-  </div>
-</template>
+
 
 <script setup>
 const router = useRouter()
@@ -14,6 +8,13 @@ function goBack() {
 }
 </script>
 
+<template>
+  <div class="container_back_button">
+    <button class="button button_zurueck" @click="goBack">
+      ZURÜCK
+    </button>
+  </div>
+</template>
 
 <style>
 .button_zurueck {
