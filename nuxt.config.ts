@@ -8,6 +8,16 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Unveränderliche statische Assets (Fonts, Icons, Loading-Frames, Texturen)
+  // langfristig cachen - werden nicht überschrieben, neue Versionen bekommen
+  // neue Dateinamen. Spart wiederholte Downloads bei erneuten Besuchen.
+  routeRules: {
+    '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/icons/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/loading/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/textures/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+  },
+
   modules: ['@nuxtjs/supabase', '@vite-pwa/nuxt'],
   supabase: {
     redirect: false,
@@ -105,6 +115,23 @@ export default defineNuxtConfig({
           rel: 'icon',
           type: 'image/svg+xml',
           href: '/icon_swaipe.svg',
+        },
+        // Überschriften-Fonts werden auf praktisch jeder Seite sofort sichtbar
+        // gebraucht (h1-h3 BarlowCondensed, h4 DotGothic16) - per Preload früher
+        // anfordern statt erst nach dem Parsen des CSS.
+        {
+          rel: 'preload',
+          as: 'font',
+          type: 'font/woff2',
+          href: '/fonts/BarlowCondensed-Medium.woff2',
+          crossorigin: 'anonymous',
+        },
+        {
+          rel: 'preload',
+          as: 'font',
+          type: 'font/woff2',
+          href: '/fonts/DotGothic16-Regular.woff2',
+          crossorigin: 'anonymous',
         },
       ],
       meta: [

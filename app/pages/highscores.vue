@@ -63,7 +63,7 @@ function istEigenerUser(id) {
         <div v-for="(eintrag, index) in sichtbareFreunde" :key="eintrag.id" class="rang_item"
           :class="{ rang_item_ich: eintrag.istIch }">
           <span class="rang_nummer">{{ index + 1 }}.</span>
-          <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil">
+          <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
           <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
           <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
@@ -85,7 +85,7 @@ function istEigenerUser(id) {
     <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
         :class="{ rang_item_ich: eintrag.istIch }">
         <span class="rang_nummer">{{ index + 1 }}.</span>
-        <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil">
+        <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
         <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
         <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
@@ -98,7 +98,7 @@ function istEigenerUser(id) {
         <div class="rang_trenner">...</div>
         <div class="rang_item rang_item_ich">
             <span class="rang_nummer">{{ eigenerRang }}.</span>
-            <img v-if="eigenerEintrag.profilbild_url" :src="eigenerEintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil">
+            <img v-if="eigenerEintrag.profilbild_url" :src="eigenerEintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
             <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
             <span class="rang_name">
                 DU

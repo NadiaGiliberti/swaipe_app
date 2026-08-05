@@ -4,12 +4,6 @@ const supabase = useSupabaseClient()
 const hatUngesehenes = ref(false)
 const avatarUrl = ref('')
 
-const { data: spiele, error } = await supabase
-  .from('spieldaten_live')
-  .select('*')
-
-console.log('Fehler:', error)
-
 onMounted(async () => {
   const anzahl = await zaehleUngeseheneFreundschaftsereignisse(supabase)
   hatUngesehenes.value = anzahl > 0

@@ -10,7 +10,7 @@ onMounted(() => {
 <template>
     <Transition name="install-banner">
         <div v-if="zeigeBanner" class="install_banner">
-            <img src="/icon_swaipe.svg" class="install_banner_icon" alt="SWAIPE">
+            <img src="/icon_swaipe.svg" class="install_banner_icon" alt="SWAIPE" width="94" height="113">
 
             <div class="install_banner_text">
                 <p class="install_banner_titel">SWAIPE als App installieren</p>
