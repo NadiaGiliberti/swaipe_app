@@ -1,600 +1,600 @@
-  @import './fonts.css';
+@import './fonts.css';
 
-  /** RESET: Das Layout ist auf box-sizing:border-box und margin-freie Elemente
-      ausgelegt (das kam bisher stillschweigend von Tailwinds Preflight mit) **/
+/** RESET: Das Layout ist auf box-sizing:border-box und margin-freie Elemente
+    ausgelegt (das kam bisher stillschweigend von Tailwinds Preflight mit) **/
 
-  *,
-  *::before,
-  *::after {
-    box-sizing: border-box;
-    border-width: 0;
-    border-style: solid;
-    border-color: currentColor;
-  }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-width: 0;
+  border-style: solid;
+  border-color: currentColor;
+}
 
-  html,
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Verhindert das elastische "Overscroll"/Bounce-Scrollen mobiler Browser
+   (v.a. Safari/Chrome iOS), wenn die Seite eigentlich schon fertig ist -
+   ohne echten Scrollbereich zu blockieren (z.B. absichtliches padding-bottom
+   für fixierte Buttons bleibt unangetastet, da hier nur das Bounce-Verhalten
+   ausserhalb der Seitengrenzen betroffen ist). */
+html {
+  overscroll-behavior-y: none;
+}
+
+body {
+  overscroll-behavior-y: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+figure,
+dl,
+dd,
+hr {
+  margin: 0;
+}
+
+ol,
+ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/** ALLGEMEIN: Touch-Verhalten (iOS zeigt sonst einen grauen Tap-Flash bzw. "hängenbleibende" Hover-Farbe) **/
+
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/** ALLES zum Hintergrund **/
+
+body {
+  background:
+    radial-gradient(circle at 22% 18%, var(--background-1) 0%, transparent 70%),
+    radial-gradient(circle at 80% 65%, var(--background-2) 0%, transparent 80%),
+    radial-gradient(circle at 86% 12%, var(--background-3) 0%, transparent 70%),
+    radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
+    var(--background-base);
+
+  background-color: var(--background-base);
+  width: 100%;
+}
+
+/* Fixed-Attachment ist auf mobilen Browsern sehr teuer (erzwingt Repaint bei jedem Scroll) - nur auf Desktop aktivieren */
+@media (min-width: 768px) {
   body {
-    margin: 0;
-    padding: 0;
+    background-attachment: fixed;
   }
+}
 
-  /* Verhindert das elastische "Overscroll"/Bounce-Scrollen mobiler Browser
-     (v.a. Safari/Chrome iOS), wenn die Seite eigentlich schon fertig ist -
-     ohne echten Scrollbereich zu blockieren (z.B. absichtliches padding-bottom
-     für fixierte Buttons bleibt unangetastet, da hier nur das Bounce-Verhalten
-     ausserhalb der Seitengrenzen betroffen ist). */
-  html {
-    overscroll-behavior-y: none;
+.container_body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+
+}
+
+/* Vorgerenderte Noise-Textur statt live berechnetem SVG-feTurbulence-Filter (auf Mobilgeräten sehr rechenintensiv) */
+.container_body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: url('/textures/noise-main.webp');
+  background-repeat: repeat;
+  mix-blend-mode: multiply;
+}
+
+.container_body::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-image: url('/textures/noise-overlay.webp');
+  background-repeat: repeat;
+  mix-blend-mode: overlay;
+}
+
+
+/** ALLGEMEINES Farben und schriften**/
+
+:root {
+  --background-base: #ffffff;
+  --background-1: #f898c1;
+  --background-2: #5aeaa2;
+  --background-3: #920e36;
+  --braun: #560000;
+  --gelb: #ffda00;
+  --button-hover: #000d6b;
+
+  /* NEU: Textfarben, die je nach Theme kippen */
+  --text-dunkel: #560000;
+  --text-schwarz: #000000;
+  --text-hell: #ffffff;
+}
+
+.container_main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin-top: 2rem;
+}
+
+
+h1 {
+  color: var(--text-dunkel);
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 15vw;
+  font-weight: 400;
+  text-align: center;
+}
+
+h2 {
+  color: var(--text-dunkel);
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 12vw;
+  font-weight: 600;
+  text-align: center;
+}
+
+h3 {
+  color: var(--text-dunkel);
+  font-family: 'BarlowCondensed', sans-serif;
+  text-align: center;
+  font-size: 10vw;
+  font-weight: 600;
+}
+
+h4, .h4 {
+  color: var(--text-dunkel);
+  font-family: 'DotGothic16', sans-serif;
+  letter-spacing: 0.05rem;
+  text-align: center;
+  font-size: 4vw;
+  font-weight: 400;
+}
+
+
+.h1_black {
+  color: var(--text-dunkel);
+}
+
+.h3_black {
+  color: var(--text-dunkel);
+}
+
+/** ICONS: schwarze SVG-Icons (via <img>) einfärbbar machen.
+    Da Icons per <img src> geladen werden, greift `fill` nicht auf CSS-Variablen.
+    Stattdessen wird die Icon-Silhouette als Maske genutzt und mit background-color
+    (= reaktive Themefarbe) eingefärbt. **/
+.icon-mask {
+  display: inline-block;
+  aspect-ratio: 1;
+  background-color: var(--text-dunkel);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.icon-close {
+  -webkit-mask-image: url('/icons/close_icon.svg');
+  mask-image: url('/icons/close_icon.svg');
+}
+
+.icon-check {
+  -webkit-mask-image: url('/icons/check_icon.svg');
+  mask-image: url('/icons/check_icon.svg');
+}
+
+.icon-delete {
+  -webkit-mask-image: url('/icons/delete_icon.svg');
+  mask-image: url('/icons/delete_icon.svg');
+}
+
+.icon-logout {
+  -webkit-mask-image: url('/icons/logout_icon.svg');
+  mask-image: url('/icons/logout_icon.svg');
+}
+
+.icon-hilfe {
+  -webkit-mask-image: url('/icons/hilfe_icon.svg');
+  mask-image: url('/icons/hilfe_icon.svg');
+}
+
+.icon-einstellungen {
+  -webkit-mask-image: url('/icons/einstellungen_icon.svg');
+  mask-image: url('/icons/einstellungen_icon.svg');
+}
+
+.icon-freunde {
+  -webkit-mask-image: url('/icons/freunde_icon.svg');
+  mask-image: url('/icons/freunde_icon.svg');
+}
+
+.icon-edit {
+  -webkit-mask-image: url('/icons/edit_icon.svg');
+  mask-image: url('/icons/edit_icon.svg');
+}
+
+/** Platzhalter-Avatar (Standard-Silhouette), theme-reaktiv eingefärbt **/
+.avatar_placeholder {
+  background-color: var(--text-dunkel);
+  -webkit-mask-image: url('/icons/profil_icon.svg');
+  mask-image: url('/icons/profil_icon.svg');
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+p {
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 7vw;
+  color: var(--text-dunkel);
+}
+
+
+ul {
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 7vw;
+  color: var(--text-dunkel);
+}
+
+a {
+  font-family: 'DotGothic16', sans-serif;
+  letter-spacing: 0.05rem;
+  font-size: 4vw;
+  margin-top: 1rem;
+}
+
+label {
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 7vw;
+  color: var(--text-dunkel);
+}
+
+
+span {
+  font-family: 'BarlowCondensed', sans-serif;
+  font-size: 6vw;
+  color: var(--text-dunkel);
+}
+
+
+/** Allgemeines BUTTONS **/
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 30px;
+  font-family: 'DotGothic16', sans-serif;
+  letter-spacing: 0.1rem;
+  font-size: 1.7rem;
+  color: white;
+  background: var(--braun);
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  transition: all 200ms;
+  width: 100%;
+}
+
+.button_klein {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 30px;
+  font-family: 'DotGothic16', sans-serif;
+  letter-spacing: 0.1rem;
+  font-size: 1.3rem;
+  color: white;
+  background: var(--braun);
+  font-weight: 400;
+  text-align: center;
+  text-decoration: none;
+  transition: all 200ms;
+  flex: 0 0 calc(45% - 1rem);
+}
+
+/* Nur auf Geräten mit echtem Maus-Hover anwenden - sonst bleibt der Hover-Zustand
+   auf Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen" */
+@media (hover: hover) and (pointer: fine) {
+
+  .button:hover,
+  .button_klein:hover {
+    background: var(--button-hover);
   }
+}
 
-  body {
-    overscroll-behavior-y: none;
-  }
+.button:active,
+.button_klein:active {
+  transform: scale(0.95);
+}
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6,
-  p,
-  blockquote,
-  figure,
-  dl,
-  dd,
-  hr {
-    margin: 0;
-  }
+.container_buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 55%;
+  margin-top: 6rem;
+  padding-bottom: 2rem;
 
-  ol,
-  ul {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
+}
 
-  button,
-  input,
-  textarea,
-  select {
-    font: inherit;
-    color: inherit;
-    margin: 0;
-    padding: 0;
-  }
+/** container mit weniger margin (im Text) **/
+.container_buttons_wm {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  width: 55%;
+  margin: 0.5rem auto 0;
+}
 
-  button {
-    cursor: pointer;
-    background: none;
-  }
+.container_back_button {
+  position: fixed;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  width: 55%;
+  z-index: 1000;
+}
 
-  img,
-  svg,
-  video,
-  canvas {
-    display: block;
-    max-width: 100%;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: inherit;
-  }
-
-  /** ALLGEMEIN: Touch-Verhalten (iOS zeigt sonst einen grauen Tap-Flash bzw. "hängenbleibende" Hover-Farbe) **/
-
-  html {
-    -webkit-tap-highlight-color: transparent;
-  }
-
-  /** ALLES zum Hintergrund **/
-
-  body {
-    background:
-      radial-gradient(circle at 22% 18%, var(--background-1) 0%, transparent 70%),
-      radial-gradient(circle at 80% 65%, var(--background-2) 0%, transparent 80%),
-      radial-gradient(circle at 86% 12%, var(--background-3) 0%, transparent 70%),
-      radial-gradient(circle at 10% 95%, var(--background-3) 0%, transparent 70%),
-      var(--background-base);
-
-    background-color: var(--background-base);
-    width: 100%;
-  }
-
-  /* Fixed-Attachment ist auf mobilen Browsern sehr teuer (erzwingt Repaint bei jedem Scroll) - nur auf Desktop aktivieren */
-  @media (min-width: 768px) {
-    body {
-      background-attachment: fixed;
-    }
-  }
-
-  .container_body {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    position: relative;
-    overflow: hidden;
-
-  }
-
-  /* Vorgerenderte Noise-Textur statt live berechnetem SVG-feTurbulence-Filter (auf Mobilgeräten sehr rechenintensiv) */
-  .container_body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-image: url('/textures/noise-main.webp');
-    background-repeat: repeat;
-    mix-blend-mode: multiply;
-  }
-
-  .container_body::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-image: url('/textures/noise-overlay.webp');
-    background-repeat: repeat;
-    mix-blend-mode: overlay;
-  }
+/* Der Zurück-Button ist fixed und liegt daher ausserhalb des normalen
+   Layoutflusses - ohne das hier würde Content am Seitenende darunter
+   wegscrollen können und vom Button verdeckt/blockiert werden. */
+.container_main:has(.container_back_button) {
+  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+}
 
 
-  /** ALLGEMEINES Farben und schriften**/
-
-  :root {
-    --background-base: #ffffff;
-    --background-1: #f898c1;
-    --background-2: #5aeaa2;
-    --background-3: #920e36;
-    --braun: #560000;
-    --gelb: #ffda00;
-    --button-hover: #000d6b;
-
-    /* NEU: Textfarben, die je nach Theme kippen */
-    --text-dunkel: #560000;
-    --text-schwarz: #000000;
-    --text-hell: #ffffff;
-  }
-
-  .container_main {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-top: 2rem;
-  }
+/** Formular css **/
 
 
+.container_form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.container_formularfeld {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 80%;
+  margin: 1rem auto 0;
+}
+
+.formularfeld {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 10px;
+  background: var(--gelb);
+  font-family: 'DotGothic16', sans-serif;
+  letter-spacing: 0.05rem;
+  font-size: 0.8rem;
+  outline: none;
+}
+
+/** ============================================================
+    DESKTOP / GRÖSSERE BILDSCHIRME
+    Breakpoints: 768px (Tablet), 1024px (Desktop), 1440px (Large Desktop)
+    Die vw-basierten Mobile-Werte oben bleiben unverändert; ab hier werden
+    sie mit festen rem-Werten gedeckelt, damit nichts unbegrenzt mitwächst.
+    ============================================================ **/
+
+@media (min-width: 768px) {
   h1 {
-    color: var(--text-dunkel);
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 15vw;
-    font-weight: 400;
-    text-align: center;
+    font-size: 3.5rem;
   }
 
   h2 {
-    color: var(--text-dunkel);
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 12vw;
-    font-weight: 600;
-    text-align: center;
+    font-size: 2.75rem;
   }
 
   h3 {
-    color: var(--text-dunkel);
-    font-family: 'BarlowCondensed', sans-serif;
-    text-align: center;
-    font-size: 10vw;
-    font-weight: 600;
+    font-size: 2.25rem;
   }
 
   h4, .h4 {
-    color: var(--text-dunkel);
-    font-family: 'DotGothic16', sans-serif;
-    letter-spacing: 0.05rem;
-    text-align: center;
-    font-size: 4vw;
-    font-weight: 400;
+    font-size: 1.25rem;
   }
 
-
-  .h1_black {
-    color: var(--text-dunkel);
+  p,
+  ul,
+  label {
+    font-size: 1.15rem;
   }
 
-  .h3_black {
-    color: var(--text-dunkel);
-  }
-
-  /** ICONS: schwarze SVG-Icons (via <img>) einfärbbar machen.
-      Da Icons per <img src> geladen werden, greift `fill` nicht auf CSS-Variablen.
-      Stattdessen wird die Icon-Silhouette als Maske genutzt und mit background-color
-      (= reaktive Themefarbe) eingefärbt. **/
-  .icon-mask {
-    display: inline-block;
-    aspect-ratio: 1;
-    background-color: var(--text-dunkel);
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-  }
-
-  .icon-close {
-    -webkit-mask-image: url('/icons/close_icon.svg');
-    mask-image: url('/icons/close_icon.svg');
-  }
-
-  .icon-check {
-    -webkit-mask-image: url('/icons/check_icon.svg');
-    mask-image: url('/icons/check_icon.svg');
-  }
-
-  .icon-delete {
-    -webkit-mask-image: url('/icons/delete_icon.svg');
-    mask-image: url('/icons/delete_icon.svg');
-  }
-
-  .icon-logout {
-    -webkit-mask-image: url('/icons/logout_icon.svg');
-    mask-image: url('/icons/logout_icon.svg');
-  }
-
-  .icon-hilfe {
-    -webkit-mask-image: url('/icons/hilfe_icon.svg');
-    mask-image: url('/icons/hilfe_icon.svg');
-  }
-
-  .icon-einstellungen {
-    -webkit-mask-image: url('/icons/einstellungen_icon.svg');
-    mask-image: url('/icons/einstellungen_icon.svg');
-  }
-
-  .icon-freunde {
-    -webkit-mask-image: url('/icons/freunde_icon.svg');
-    mask-image: url('/icons/freunde_icon.svg');
-  }
-
-  .icon-edit {
-    -webkit-mask-image: url('/icons/edit_icon.svg');
-    mask-image: url('/icons/edit_icon.svg');
-  }
-
-  /** Platzhalter-Avatar (Standard-Silhouette), theme-reaktiv eingefärbt **/
-  .avatar_placeholder {
-    background-color: var(--text-dunkel);
-    -webkit-mask-image: url('/icons/profil_icon.svg');
-    mask-image: url('/icons/profil_icon.svg');
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
-  }
-
-  p {
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 7vw;
-    color: var(--text-dunkel);
-  }
-
-
-  ul {
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 7vw;
-    color: var(--text-dunkel);
+  span {
+    font-size: 1rem;
   }
 
   a {
-    font-family: 'DotGothic16', sans-serif;
-    letter-spacing: 0.05rem;
-    font-size: 4vw;
-    margin-top: 1rem;
+    font-size: 1rem;
   }
 
-  label {
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 7vw;
-    color: var(--text-dunkel);
+  .container_main {
+    margin-top: 1.5rem;
   }
 
-
-  span {
-    font-family: 'BarlowCondensed', sans-serif;
-    font-size: 6vw;
-    color: var(--text-dunkel);
-  }
-
-
-  /** Allgemeines BUTTONS **/
-
-  .button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    border-radius: 30px;
-    font-family: 'DotGothic16', sans-serif;
-    letter-spacing: 0.1rem;
-    font-size: 1.7rem;
-    color: white;
-    background: var(--braun);
-    font-weight: 400;
-    text-align: center;
-    text-decoration: none;
-    transition: all 200ms;
+  .container_buttons,
+  .container_buttons_wm,
+  .container_back_button {
     width: 100%;
-  }
-
-  .button_klein {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.5rem;
-    border-radius: 30px;
-    font-family: 'DotGothic16', sans-serif;
-    letter-spacing: 0.1rem;
-    font-size: 1.3rem;
-    color: white;
-    background: var(--braun);
-    font-weight: 400;
-    text-align: center;
-    text-decoration: none;
-    transition: all 200ms;
-    flex: 0 0 calc(45% - 1rem);
-  }
-
-  /* Nur auf Geräten mit echtem Maus-Hover anwenden - sonst bleibt der Hover-Zustand
-     auf Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen" */
-  @media (hover: hover) and (pointer: fine) {
-
-    .button:hover,
-    .button_klein:hover {
-      background: var(--button-hover);
-    }
-  }
-
-  .button:active,
-  .button_klein:active {
-    transform: scale(0.95);
+    max-width: 420px;
   }
 
   .container_buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    width: 55%;
-    margin-top: 6rem;
-    padding-bottom: 2rem;
-
-  }
-
-  /** container mit weniger margin (im Text) **/
-  .container_buttons_wm {
-    display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
-    width: 55%;
-    margin: 0.5rem auto 0;
-  }
-
-  .container_back_button {
-    position: fixed;
-    bottom: calc(1rem + env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    width: 55%;
-    z-index: 1000;
-  }
-
-  /* Der Zurück-Button ist fixed und liegt daher ausserhalb des normalen
-     Layoutflusses - ohne das hier würde Content am Seitenende darunter
-     wegscrollen können und vom Button verdeckt/blockiert werden. */
-  .container_main:has(.container_back_button) {
-    padding-bottom: calc(7rem + env(safe-area-inset-bottom));
-  }
-
-
-  /** Formular css **/
-
-
-  .container_form {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
+    margin-top: 2rem;
   }
 
   .container_formularfeld {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 80%;
-    margin-top: 1rem;
+    width: 100%;
+    max-width: 420px;
   }
 
   .formularfeld {
-    width: 100%;
+    font-size: 1rem;
+    padding: 0.8rem;
+  }
+
+  .button {
+    font-size: 1.4rem;
+    padding: 0.7rem 1rem;
+  }
+
+  .button_klein {
+    font-size: 1.15rem;
     padding: 0.6rem;
-    border-radius: 10px;
-    background: var(--gelb);
-    font-family: 'DotGothic16', sans-serif;
-    letter-spacing: 0.05rem;
-    font-size: 0.8rem;
-    outline: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  h1 {
+    font-size: 4.5rem;
   }
 
-  /** ============================================================
-      DESKTOP / GRÖSSERE BILDSCHIRME
-      Breakpoints: 768px (Tablet), 1024px (Desktop), 1440px (Large Desktop)
-      Die vw-basierten Mobile-Werte oben bleiben unverändert; ab hier werden
-      sie mit festen rem-Werten gedeckelt, damit nichts unbegrenzt mitwächst.
-      ============================================================ **/
-
-  @media (min-width: 768px) {
-    h1 {
-      font-size: 3.5rem;
-    }
-
-    h2 {
-      font-size: 2.75rem;
-    }
-
-    h3 {
-      font-size: 2.25rem;
-    }
-
-    h4 {
-      font-size: 1.25rem;
-    }
-
-    p,
-    ul,
-    label {
-      font-size: 1.15rem;
-    }
-
-    span {
-      font-size: 1rem;
-    }
-
-    a {
-      font-size: 1rem;
-    }
-
-    .container_main {
-      margin-top: 1.5rem;
-    }
-
-    .container_buttons,
-    .container_buttons_wm,
-    .container_back_button {
-      width: 100%;
-      max-width: 420px;
-    }
-
-    .container_buttons {
-      margin-top: 2rem;
-    }
-
-    .container_formularfeld {
-      width: 100%;
-      max-width: 420px;
-    }
-
-    .formularfeld {
-      font-size: 1rem;
-      padding: 0.8rem;
-    }
-
-    .button {
-      font-size: 1.4rem;
-      padding: 0.7rem 1rem;
-    }
-
-    .button_klein {
-      font-size: 1.15rem;
-      padding: 0.6rem;
-    }
+  h2 {
+    font-size: 3.25rem;
   }
 
-  @media (min-width: 1024px) {
-    h1 {
-      font-size: 4.5rem;
-    }
-
-    h2 {
-      font-size: 3.25rem;
-    }
-
-    h3 {
-      font-size: 2.5rem;
-    }
-
-    h4 {
-      font-size: 1.4rem;
-    }
-
-    p,
-    ul,
-    label {
-      font-size: 1.25rem;
-    }
-
-    span {
-      font-size: 1.1rem;
-    }
-
-    a {
-      font-size: 1.05rem;
-    }
-
-    .container_main {
-      margin-top: 1.75rem;
-    }
-
-    .container_buttons,
-    .container_buttons_wm,
-    .container_back_button {
-      max-width: 460px;
-    }
-
-    .container_formularfeld {
-      max-width: 460px;
-    }
+  h3 {
+    font-size: 2.5rem;
   }
 
-  @media (min-width: 1440px) {
-    h1 {
-      font-size: 5.5rem;
-    }
-
-    h2 {
-      font-size: 4rem;
-    }
-
-    h3 {
-      font-size: 3rem;
-    }
-
-    h4 {
-      font-size: 1.5rem;
-    }
-
-    p,
-    ul,
-    label {
-      font-size: 1.35rem;
-    }
-
-    span {
-      font-size: 1.15rem;
-    }
-
-    a {
-      font-size: 1.1rem;
-    }
-
-    .container_buttons,
-    .container_buttons_wm,
-    .container_back_button {
-      max-width: 500px;
-    }
-
-    .container_formularfeld {
-      max-width: 500px;
-    }
+  h4, .h4 {
+    font-size: 1.4rem;
   }
+
+  p,
+  ul,
+  label {
+    font-size: 1.25rem;
+  }
+
+  span {
+    font-size: 1.1rem;
+  }
+
+  a {
+    font-size: 1.05rem;
+  }
+
+  .container_main {
+    margin-top: 1.75rem;
+  }
+
+  .container_buttons,
+  .container_buttons_wm,
+  .container_back_button {
+    max-width: 460px;
+  }
+
+  .container_formularfeld {
+    max-width: 460px;
+  }
+}
+
+@media (min-width: 1440px) {
+  h1 {
+    font-size: 5.5rem;
+  }
+
+  h2 {
+    font-size: 4rem;
+  }
+
+  h3 {
+    font-size: 3rem;
+  }
+
+  h4, .h4{
+    font-size: 1.5rem;
+  }
+
+  p,
+  ul,
+  label {
+    font-size: 1.35rem;
+  }
+
+  span {
+    font-size: 1.15rem;
+  }
+
+  a {
+    font-size: 1.1rem;
+  }
+
+  .container_buttons,
+  .container_buttons_wm,
+  .container_back_button {
+    max-width: 500px;
+  }
+
+  .container_formularfeld {
+    max-width: 500px;
+  }
+}

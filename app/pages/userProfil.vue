@@ -388,7 +388,7 @@ const vFocus = {
             </div>
 
             <div class="container_buttons_wm">
-                <button class="button" @click="waehleEigenesBild">
+                <button class="button_klein" @click="waehleEigenesBild">
                     EIGENES BILD
                 </button>
             </div>
@@ -404,7 +404,7 @@ const vFocus = {
             <p v-if="actionSuccess" class="success_text">{{ actionSuccess }}</p>
 
             <div class="container_buttons_wm">
-                <button class="button" :disabled="actionLoading" @click="handleEmailChange">
+                <button class="button_klein" :disabled="actionLoading" @click="handleEmailChange">
                     {{ actionLoading ? 'LÄDT...' : 'SPEICHERN' }}
                 </button>
             </div>
@@ -421,7 +421,7 @@ const vFocus = {
             <p v-if="actionSuccess" class="success_text">{{ actionSuccess }}</p>
 
             <div class="container_buttons_wm">
-                <button class="button" :disabled="actionLoading" @click="handlePasswordChange">
+                <button class="button_klein" :disabled="actionLoading" @click="handlePasswordChange">
                     {{ actionLoading ? 'LÄDT...' : 'SPEICHERN' }}
                 </button>
             </div>
@@ -436,9 +436,9 @@ const vFocus = {
 
             <p v-if="actionError" class="error_text">{{ actionError }}</p>
 
-            <div class="container_buttons_wm">
+            <div class="container_buttons_wm_breit">
                 <button class="button button_danger" :disabled="actionLoading" @click="handleDeactivateAccount">
-                    {{ actionLoading ? 'DEAKTIVIERT...' : 'JETZT DEAKTIVIEREN' }}
+                    {{ actionLoading ? 'DEAKTIVIERT...' : 'DEAKTIVIEREN' }}
                 </button>
             </div>
         </ModalBase>
@@ -574,6 +574,26 @@ const vFocus = {
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+/* button_klein ist eigentlich für nebeneinander stehende Buttons gedacht
+   (flex-basis ~45% Breite für Reihen-Layouts). In den Modals hier steht er
+   aber einzeln in einer Spalte (.container_buttons_wm) - deshalb hier auf
+   volle Breite dieses Containers gesetzt statt der ungeeigneten flex-basis. */
+.container_buttons_wm .button_klein {
+    width: 100%;
+    flex: none;
+}
+
+/* Eigene, breitere Variante nur für den Deaktivieren-Button im Account-Modal,
+   damit er sich bewusst grösser/prominenter absetzt als die übrigen,
+   kleiner gehaltenen Modal-Buttons. */
+.container_buttons_wm_breit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 80%;
+    margin: 0.5rem auto 0;
 }
 
 @media (min-width: 768px) {

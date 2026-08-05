@@ -179,10 +179,10 @@ async function bestaetigeEntfernen() {
 
         <ModalBase :open="showEntfernenModal" title="FREUND ENTFERNEN" @close="schliesseEntfernenModal">
             <p v-if="zuEntfernenderFreund">
-                Möchtest du {{ zuEntfernenderFreund.username }} wirklich aus deiner Freundesliste entfernen?
+                Möchtest du <span class="username_hervorgehoben">{{ zuEntfernenderFreund.username }}</span> wirklich aus deiner Freundesliste entfernen?
             </p>
 
-            <div class="container_buttons_wm">
+            <div class="container_buttons_wm_breit">
                 <button class="button button_danger" @click="bestaetigeEntfernen">
                     ENTFERNEN
                 </button>
@@ -238,6 +238,12 @@ async function bestaetigeEntfernen() {
     background: var(--gelb);
     border-radius: 50%;
     flex: 0 0 8px;
+}
+
+.username_hervorgehoben {
+    text-transform: uppercase;
+    font-weight: bold;
+    color: var(--gelb);
 }
 
 .button_entfernen,
@@ -334,6 +340,16 @@ async function bestaetigeEntfernen() {
 .button_abbrechen {
     background: var(--braun);
     opacity: 0.6;
+}
+
+/* Breitere Variante für die Entfernen/Abbrechen-Buttons im Modal, damit sie
+   nicht so schmal wie der 55%-Standardcontainer wirken. */
+.container_buttons_wm_breit {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    width: 80%;
+    margin: 0.5rem auto 0;
 }
 
 @media (min-width: 768px) {
