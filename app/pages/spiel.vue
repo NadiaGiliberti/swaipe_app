@@ -7,6 +7,11 @@ const kategorie = route.query.kategorie || null
 const anzahlFragen = modus === 'uebung' ? 10 : 999
 
 const ESKALATION_ALLE_X_RICHTIGE = 15
+// Im Überlebensmodus endet die Runde sofort beim ersten Fehler - die meisten
+// Läufe erreichen nie 15 richtige Antworten in Folge, wodurch die Eskalation
+// oben praktisch nie greifen würde. Deutlich niedrigerer Schwellenwert, damit
+// sich die Schwierigkeit auch innerhalb einer realistischen Streak steigert.
+const ESKALATION_ALLE_X_RICHTIGE_UEBERLEBEN = 4
 const PERFEKTE_RUNDE_BONUS = 500
 
 const karten = ref([])
@@ -306,8 +311,10 @@ function beantworten(antwortIstKI) {
 
     speichereAntwort(supabase, karte.id, warRichtig)
 
-    if ((modus === 'score' || modus === 'ueberleben') && warRichtig && korrekt.value % ESKALATION_ALLE_X_RICHTIGE === 0) {
-        const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / ESKALATION_ALLE_X_RICHTIGE), 5)
+    const eskalationsSchwelle = modus === 'ueberleben' ? ESKALATION_ALLE_X_RICHTIGE_UEBERLEBEN : ESKALATION_ALLE_X_RICHTIGE
+
+    if ((modus === 'score' || modus === 'ueberleben') && warRichtig && korrekt.value % eskalationsSchwelle === 0) {
+        const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / eskalationsSchwelle), 5)
         const restKarten = karten.value.slice(aktuellerIndex.value + 1)
         const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
         karten.value = [
@@ -430,7 +437,7 @@ async function beendeSpiel() {
     }
 
     sessionStorage.setItem('swaipe_ergebnis', JSON.stringify(ergebnis))
-    await navigateTo('/ergebnis')
+    await navigateTo('/ergebnis', { replace: true })
 }
 
 // ===== SWIPE / DRAG =====

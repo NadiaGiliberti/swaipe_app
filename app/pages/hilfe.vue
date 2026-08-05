@@ -44,6 +44,12 @@
                     und deinen Highscore oder den deiner Freunde zu schlagen.
                 </p>
                 <p class="hilfe_text">
+                    Im Überlebensmodus gibt es kein Zeitlimit, dafür endet die Runde sofort bei der ersten
+                    falschen Antwort. Inhalte aus allen Kategorien werden zufällig gemischt und die Schwierigkeit
+                    steigt laufend an. Schau, wie viele du in Folge richtig erkennen kannst, und miss dich mit
+                    deinem eigenen Bestwert oder dem deiner Freunde.
+                </p>
+                <p class="hilfe_text">
                     Im Üben-Modus kannst du gezielt eine Kategorie wählen und ohne Zeitdruck trainieren.
                 </p>
             </section>
