@@ -196,7 +196,7 @@
     font-weight: 600;
   }
 
-  h4 {
+  h4, .h4 {
     color: var(--text-dunkel);
     font-family: 'DotGothic16', sans-serif;
     letter-spacing: 0.05rem;

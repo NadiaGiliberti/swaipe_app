@@ -527,13 +527,11 @@ function buttonSwipe(antwortIstKI) {
             <div class="container_swipe_header">
                 <div class="swipe_header_seite" :style="{ opacity: echtHeaderOpacity }">
                     <span class="swipe_header_label">ECHT</span>
-                    <img src="/icons/pfeil_links_icon.svg" alt="Nach links" class="swipe_header_pfeil" width="108"
-                        height="74">
+                    <img src="/icons/pfeil_links_icon.svg" alt="Nach links" class="swipe_header_pfeil">
                 </div>
                 <div class="swipe_header_seite" :style="{ opacity: kiHeaderOpacity }">
                     <span class="swipe_header_label">KI</span>
-                    <img src="/icons/pfeil_rechts_icon.svg" alt="Nach rechts" class="swipe_header_pfeil" width="108"
-                        height="74">
+                    <img src="/icons/pfeil_rechts_icon.svg" alt="Nach rechts" class="swipe_header_pfeil" >
                 </div>
             </div>
 

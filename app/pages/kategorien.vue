@@ -8,7 +8,7 @@
 
             <div class="container_punktemodus">
                 <h2> PUNKTE MODUS</h2>
-                <h3> Schlage den Bestwert</h3>
+                <h3 class="h4"> Schlage den Bestwert</h3>
                 <div class="container_buttons_wm">
                     <NuxtLink to="/spiel?modus=score" class="button button_gelb">
                         START
@@ -17,8 +17,8 @@
             </div>
 
             <div class="container_ueberlebensmodus">
-                <h2> ÜBERLEBEN</h2>
-                <h3> Wie lange überlebst du?</h3>
+                <h3> ÜBERLEBEN</h3>
+                <h4> Wie lange überlebst du?</h4>
                 <div class="container_buttons_wm">
                     <NuxtLink to="/spiel?modus=ueberleben" class="button button_braun">
                         START
@@ -51,7 +51,6 @@
 
         </div>
 
-        <buttonZurueck />
 
     </main>
 </template>
