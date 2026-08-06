@@ -39,7 +39,10 @@ export default defineNuxtConfig({
       background_color: '#ffffff',
     },
     pwaAssets: {
-      image: 'public/icon_swaipe.svg',
+      // Als App-Icon (Homescreen) dient bewusst der letzte Frame der
+      // Ladeanimation statt des Standard-Logos - so wirkt der Übergang vom
+      // Icon zum Ladebildschirm stimmiger.
+      image: 'public/icon_app.png',
       preset: {
         transparent: {
           sizes: [64, 192, 512],
@@ -49,8 +52,10 @@ export default defineNuxtConfig({
         // Maskable-Icons immer auf eine Kreis-/Squircle-Sicherheitszone. Der
         // Schlüssel muss trotzdem vorhanden sein, sonst crasht der Assets-
         // Generator. Das "transparent"-Preset oben liefert stattdessen das
-        // App-Icon unbeschnitten (nur 5% Rand) mit transparentem statt
-        // weissem Hintergrund - so wie gewünscht.
+        // App-Icon unbeschnitten. icon_app.png hat (wie der Ladebildschirm)
+        // bereits einen weissen Hintergrund, es wird also nichts transparent
+        // gestanzt - der Name des Presets bezieht sich nur darauf, dass keine
+        // Maskable-Beschneidung angewendet wird.
         maskable: {
           sizes: [],
         },
