@@ -997,113 +997,6 @@ function buttonSwipe(antwortIstKI) {
     display: none;
 }
 
-/* ============================================================
-   DESKTOP: Alles soll ohne Scrollen in den Viewport passen.
-   container_main_spiel bekommt eine feste Höhe (100vh, margin-top
-   überschrieben auf 0), die Kachel (container_content) bekommt flex:1
-   statt einer festen vh-Höhe - dadurch schrumpft/wächst sie automatisch
-   auf genau den Platz, der nach Abzug von Score-Anzeige, Headern, Buttons
-   und Info-Text übrig bleibt. min-height:0 ist nötig, da Flex-Kinder sonst
-   nie kleiner als ihr Inhalt werden (Flexbox-Standardverhalten).
-   ============================================================ */
-@media (min-width: 768px) {
-    .container_swipe_buttons {
-        display: flex;
-    }
-
-    .swipe_info_handy {
-        display: none;
-    }
-
-    .swipe_info_pc {
-        display: block;
-    }
-
-    .container_main_spiel {
-        height: 100vh;
-        margin-top: 0;
-        justify-content: center;
-        padding: 1rem 0;
-        gap: 0.2rem;
-    }
-
-    .container_content {
-        flex: 1 1 auto;
-        min-height: 0;
-        width: min(75vw, 440px);
-        height: auto;
-        max-height: none;
-        margin: 0;
-        flex-shrink: 1;
-    }
-
-    .container_score_count,
-    .container_swipe_header,
-    .container_swipe_buttons,
-    .container_swipe_info,
-    .audio_player {
-        width: min(75vw, 440px);
-        flex-shrink: 0;
-    }
-
-    .container_score_count {
-        margin-top: 0;
-    }
-
-    .container_zeit {
-        margin-top: 0.4rem;
-        flex-shrink: 0;
-    }
-
-    .container_swipe_header {
-        flex-shrink: 0;
-    }
-
-    .swipe_header_label {
-        font-size: 1.6rem;
-    }
-
-    .verlassen_modal_inner p {
-        font-size: 1.1rem;
-    }
-}
-
-@media (min-width: 1024px) {
-    .container_content {
-        width: 480px;
-    }
-
-    .container_score_count,
-    .container_swipe_header,
-    .container_swipe_buttons,
-    .container_swipe_info,
-    .audio_player {
-        width: 480px;
-    }
-
-    .swipe_header_label {
-        font-size: 1.8rem;
-    }
-
-    .button_swipe {
-        font-size: 1.35rem;
-        padding: 1rem;
-    }
-}
-
-@media (min-width: 1440px) {
-    .container_content {
-        width: 560px;
-    }
-
-    .container_score_count,
-    .container_swipe_header,
-    .container_swipe_buttons,
-    .container_swipe_info,
-    .audio_player {
-        width: 560px;
-    }
-}
 
 .verlassen_modal {
     position: fixed;
@@ -1157,4 +1050,83 @@ function buttonSwipe(antwortIstKI) {
 .fade-leave-to {
     opacity: 0;
 }
+
+/* ============================================================
+   DESKTOP: Alles soll ohne Scrollen in den Viewport passen.
+   container_main_spiel bekommt eine feste Höhe (100vh, margin-top
+   überschrieben auf 0), die Kachel (container_content) bekommt flex:1
+   statt einer festen vh-Höhe - dadurch schrumpft/wächst sie automatisch
+   auf genau den Platz, der nach Abzug von Score-Anzeige, Headern, Buttons
+   und Info-Text übrig bleibt. min-height:0 ist nötig, da Flex-Kinder sonst
+   nie kleiner als ihr Inhalt werden (Flexbox-Standardverhalten).
+   ============================================================ */
+@media (min-width: 768px) {
+    .container_swipe_buttons {
+        display: flex;
+    }
+
+    .swipe_info_handy {
+        display: none;
+    }
+
+    .swipe_info_pc {
+        display: block;
+    }
+
+    .container_main_spiel {
+        height: 100vh;
+        margin-top: 0;
+        justify-content: center;
+        padding: 0;
+    }
+
+    .container_content {
+        flex: 1 1 auto;
+        min-height: 0;
+        width: min(75vw, 440px);
+        height: auto;
+        max-height: none;
+        margin: 0;
+        flex-shrink: 1;
+    }
+
+    .container_score_count,
+    .container_swipe_header,
+    .container_swipe_buttons,
+    .container_swipe_info,
+    .audio_player {
+        width: min(75vw, 440px);
+        flex-shrink: 0;        
+    }
+
+    .container_zeit {
+        margin-top: 0.2rem;
+        flex-shrink: 0;
+    }
+
+    .container_swipe_info {
+        padding-bottom: 5rem;
+    }
+
+    .verlassen_modal_inner p {
+        font-size: 1.5rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .container_content {
+        width: 480px;
+    }
+
+    .container_score_count,
+    .container_swipe_header,
+    .container_swipe_buttons,
+    .container_swipe_info,
+    .audio_player {
+        width: 480px;
+    }
+    
+}
+
+
 </style>
