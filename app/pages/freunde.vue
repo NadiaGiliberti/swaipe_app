@@ -333,6 +333,9 @@ async function bestaetigeEntfernen() {
 }
 
 .container_anfragen {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
     width: 85%;
     margin-top: 3rem;
 }
