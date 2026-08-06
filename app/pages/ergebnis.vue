@@ -209,7 +209,8 @@ const genauigkeit = computed(() => {
 
                 <div class="stat_zeile">
                     <span>BESTSERIE</span>
-                    <span>{{ ergebnis.modus === 'ueberleben' ? (eigenerUeberlebensHighscore ?? '-') : ergebnis.besteSerie }}</span>
+                    <span>{{ ergebnis.modus === 'ueberleben' ? (eigenerUeberlebensHighscore ?? '-') :
+                        ergebnis.besteSerie }}</span>
                 </div>
 
                 <template v-if="ergebnis.modus !== 'ueberleben'">
@@ -228,7 +229,8 @@ const genauigkeit = computed(() => {
                 </template>
             </div>
 
-            <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && perzentilBesser !== null" class="container_perzentil">
+            <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && perzentilBesser !== null"
+                class="container_perzentil">
                 <p>{{ perzentilBesser }}% der Spieler haben einen höheren Highscore erzielt als dieses Ergebnis.</p>
             </div>
 
@@ -241,9 +243,11 @@ const genauigkeit = computed(() => {
                 <h2>DAS WAR FALSCH</h2>
 
                 <div v-for="karte in ergebnis.falscheKarten" :key="karte.id" class="falsche_karte_item">
-                    <div v-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'" class="falsche_karte_media_audio">
+                    <div v-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'"
+                        class="falsche_karte_media_audio">
                         <audio :src="karte.datei_url" class="falsche_karte_audio" controls preload="metadata"
-                            controlsList="nodownload noplaybackrate" @contextmenu.prevent @play="pausiereAndereMedien"></audio>
+                            controlsList="nodownload noplaybackrate" @contextmenu.prevent
+                            @play="pausiereAndereMedien"></audio>
                     </div>
                     <div v-else class="falsche_karte_media">
                         <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url" class="falsche_karte_bild" alt="">
@@ -256,17 +260,15 @@ const genauigkeit = computed(() => {
                 </div>
             </div>
 
-            <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && !ladeFreundeLoading && top3Freunde.length > 0" class="container_freunde_vergleich">
+            <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && !ladeFreundeLoading && top3Freunde.length > 0"
+                class="container_freunde_vergleich">
                 <h2>FREUNDE</h2>
 
-                <div
-                    v-for="(eintrag, index) in top3Freunde"
-                    :key="eintrag.id"
-                    class="freund_vergleich_item"
-                    :class="{ freund_vergleich_item_ich: eintrag.istIch }"
-                >
+                <div v-for="(eintrag, index) in top3Freunde" :key="eintrag.id" class="freund_vergleich_item"
+                    :class="{ freund_vergleich_item_ich: eintrag.istIch }">
                     <span class="freund_vergleich_nummer">{{ index + 1 }}.</span>
-                    <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="freund_vergleich_avatar bild_umrandet" alt="Profil" loading="lazy">
+                    <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url"
+                        class="freund_vergleich_avatar bild_umrandet" alt="Profil" loading="lazy">
                     <div v-else class="freund_vergleich_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
                     <span class="freund_vergleich_name">
                         {{ eintrag.istIch ? 'DU' : eintrag.username }}
@@ -279,7 +281,9 @@ const genauigkeit = computed(() => {
             <div class="container_buttons">
                 <button class="button button_nochmal" @click="nochmal">NOCHMAL</button>
                 <NuxtLink to="/kategorien" class="button_klein button_kategorien_highscores">KATEGORIEN</NuxtLink>
-                <NuxtLink v-if="ergebnis.modus !== 'ueberleben'" to="/highscores" class="button_klein button_kategorien_highscores">HIGHSCORES</NuxtLink>
+                <NuxtLink v-if="ergebnis.modus !== 'ueberleben'" to="/highscores"
+                    class="button_klein button_kategorien_highscores">
+                    HIGHSCORES</NuxtLink>
             </div>
         </template>
 
@@ -290,7 +294,7 @@ const genauigkeit = computed(() => {
 
         <Transition name="toast">
             <div v-if="zeigePerfekteRunde" class="perfekte_runde_toast">
-                PERFEKTE RUNDE! +500
+                PERFEKTE RUNDE! +1500
             </div>
         </Transition>
 
@@ -493,10 +497,12 @@ const genauigkeit = computed(() => {
         transform: translateX(-50%) translateY(-10px) scale(0.8);
         opacity: 0;
     }
+
     60% {
         transform: translateX(-50%) translateY(0) scale(1.05);
         opacity: 1;
     }
+
     100% {
         transform: translateX(-50%) translateY(0) scale(1);
         opacity: 1;
@@ -567,6 +573,7 @@ const genauigkeit = computed(() => {
 }
 
 @media (min-width: 768px) {
+
     .container_stats,
     .container_freunde_vergleich,
     .container_perzentil {
@@ -592,6 +599,10 @@ const genauigkeit = computed(() => {
         max-width: 380px;
     }
 
+    .container_freunde_vergleich {
+        margin-bottom: 3rem;
+    }
+
     .freund_vergleich_name,
     .freund_vergleich_score {
         font-size: 1.35rem;
@@ -605,6 +616,7 @@ const genauigkeit = computed(() => {
 }
 
 @media (min-width: 1024px) {
+
     .container_stats,
     .container_freunde_vergleich,
     .container_perzentil,
