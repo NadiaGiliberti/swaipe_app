@@ -129,7 +129,16 @@ html.theme-darkmode body {
 }
 
 .container_body {
+  /* 100vh bezieht sich auf mobilen Browsern auf die Viewport-Höhe OHNE
+     Adressleiste (also mehr als tatsächlich sichtbar ist), solange die
+     Leiste eingeblendet ist - dadurch entsteht ein paar Pixel echter
+     Scrollbereich, obwohl der Inhalt sichtbar fertig ist. In der
+     installierten PWA (standalone, keine Adressleiste) gibt es diese
+     Differenz nicht, daher trat es dort nie auf. 100dvh folgt der
+     tatsächlich sichtbaren Höhe live mit; 100vh bleibt als Fallback für
+     Browser ohne dvh-Unterstützung stehen. */
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
