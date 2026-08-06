@@ -123,8 +123,11 @@ html.theme-darkmode .loading_overlay {
 
     background-image: url('/textures/noise-main.webp');
     background-repeat: repeat;
+    background-size: 400px 400px;
+    image-rendering: pixelated;
 
     mix-blend-mode: multiply;
+    filter: contrast(1.6);
 }
 
 .loading_overlay::after {
@@ -135,8 +138,11 @@ html.theme-darkmode .loading_overlay {
 
     background-image: url('/textures/noise-overlay.webp');
     background-repeat: repeat;
+    background-size: 300px 300px;
+    image-rendering: pixelated;
 
     mix-blend-mode: overlay;
+    filter: contrast(1.35);
 }
 
 .loading_overlay_ausblenden {
