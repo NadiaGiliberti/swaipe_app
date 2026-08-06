@@ -39,6 +39,18 @@ function schliesseBadgePopup() {
     persistErgebnis()
 }
 
+// Sobald ein Medium in der "Das war falsch"-Liste abgespielt wird, werden
+// alle anderen dort pausiert - verhindert, dass mehrere Audios/Videos
+// gleichzeitig laufen.
+function pausiereAndereMedien(event) {
+    const alle = document.querySelectorAll('.falsche_karte_media_audio audio, .falsche_karte_media video')
+    alle.forEach(el => {
+        if (el !== event.target) {
+            el.pause()
+        }
+    })
+}
+
 async function ladeFreundeVergleich() {
     if (!ergebnis.value) return
 
@@ -231,12 +243,12 @@ const genauigkeit = computed(() => {
                 <div v-for="karte in ergebnis.falscheKarten" :key="karte.id" class="falsche_karte_item">
                     <div v-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'" class="falsche_karte_media_audio">
                         <audio :src="karte.datei_url" class="falsche_karte_audio" controls preload="metadata"
-                            controlsList="nodownload noplaybackrate" @contextmenu.prevent></audio>
+                            controlsList="nodownload noplaybackrate" @contextmenu.prevent @play="pausiereAndereMedien"></audio>
                     </div>
                     <div v-else class="falsche_karte_media">
                         <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url" class="falsche_karte_bild" alt="">
                         <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url" class="falsche_karte_bild"
-                            controls preload="metadata" playsinline></video>
+                            controls preload="metadata" playsinline @play="pausiereAndereMedien"></video>
                     </div>
                     <span class="falsche_karte_label" :class="{ falsche_karte_label_ki: karte.herkunft === 'KI' }">
                         WAR {{ karte.herkunft === 'KI' ? 'KI-GENERIERT' : 'ECHT' }}
