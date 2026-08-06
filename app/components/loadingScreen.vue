@@ -85,6 +85,20 @@ onUnmounted(() => {
     opacity: 1;
 }
 
+/* Darkmode: derselbe 4-Farben-Verlauf wie in main.css für den body, hier
+   zusätzlich für den Ladebildschirm hinterlegt, da er seinen Hintergrund
+   komplett eigenständig definiert (erbt nicht von body). Greift automatisch,
+   sobald applyTheme() die "theme-darkmode"-Klasse am <html>-Element setzt. */
+html.theme-darkmode .loading_overlay {
+    background:
+        radial-gradient(circle at 60% 30%, var(--background-2) 0%, transparent 40%),
+        radial-gradient(circle at 55% 28%, var(--background-1) 0%, transparent 50%),
+        radial-gradient(circle at 65% 45%, var(--background-4) 0%, transparent 40%),
+        radial-gradient(circle at 5% 95%, var(--background-2) 0%, transparent 25%),
+        radial-gradient(circle at 15% 85%, var(--background-1) 0%, transparent 40%),
+        var(--background-3);
+}
+
 @media (min-width: 768px) {
     .loading_overlay {
         background-attachment: fixed;

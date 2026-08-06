@@ -190,6 +190,7 @@ html.theme-darkmode body {
   align-items: center;
   width: 100%;
   margin-top: 2rem;
+  flex: 1 0 auto;
 }
 
 
@@ -410,21 +411,18 @@ span {
   margin: 0.5rem auto 0;
 }
 
+/* Kein position:fixed mehr - der Button ist ein normales Flow-Element.
+   margin-top:auto in Kombination mit container_main's flex:1 0 auto sorgt
+   dafür, dass er trotzdem am unteren Bildschirmrand "klebt", solange der
+   Content kurz ist (klassisches Sticky-Footer-Muster) - bei längerem Content
+   wird er ganz normal nach unten geschoben und erst durch Scrollen sichtbar,
+   statt wie vorher dauerhaft im Vordergrund zu schweben. */
 .container_back_button {
-  position: fixed;
-  bottom: calc(1rem + env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
   display: flex;
   width: 55%;
-  z-index: 1000;
-}
-
-/* Der Zurück-Button ist fixed und liegt daher ausserhalb des normalen
-   Layoutflusses - ohne das hier würde Content am Seitenende darunter
-   wegscrollen können und vom Button verdeckt/blockiert werden. */
-.container_main:has(.container_back_button) {
-  padding-bottom: calc(7rem + env(safe-area-inset-bottom));
+  margin-top: auto;
+  padding-top: 4rem;
+  margin-bottom: calc(1rem + env(safe-area-inset-bottom));
 }
 
 
