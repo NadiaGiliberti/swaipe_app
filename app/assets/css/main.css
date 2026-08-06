@@ -162,6 +162,12 @@ html.theme-darkmode body {
   image-rendering: pixelated;
   mix-blend-mode: multiply;
   filter: contrast(0.1);
+  /* Eigene Compositing-Ebene: verhindert einen minimalen Repaint-Glitch in
+     iOS/macOS Safari, wenn sich .container_body's 100dvh-Höhe beim Scrollen
+     durch das Ein-/Ausblenden der Adressleiste live ändert (Chrome ist davon
+     nicht betroffen). Rein performance-seitiger Hinweis an den Browser,
+     verändert Aussehen/Verhalten nirgends. */
+  will-change: transform;
 }
 
 .container_body::after {
@@ -177,6 +183,7 @@ html.theme-darkmode body {
   background-size: 150px 150px;
   image-rendering: pixelated;
   mix-blend-mode: overlay;
+  will-change: transform;
   filter: contrast(1.9);
 }
 
