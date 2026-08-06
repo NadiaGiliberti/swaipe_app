@@ -231,7 +231,7 @@ const genauigkeit = computed(() => {
 
             <div v-if="(ergebnis.modus === 'score' || ergebnis.modus === 'ueberleben') && perzentilBesser !== null"
                 class="container_perzentil">
-                <p>{{ perzentilBesser }}% der Spieler haben einen höheren Highscore erzielt als dieses Ergebnis.</p>
+                <p>{{ perzentilBesser }}% der Spieler haben einen höheren Highscore als du.</p>
             </div>
 
             <div v-else-if="ergebnis.modus === 'uebung' && communityGenauigkeit !== null" class="container_perzentil">

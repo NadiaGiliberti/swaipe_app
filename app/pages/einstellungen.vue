@@ -223,7 +223,8 @@ async function saveCustomTheme() {
 
         <ModalBase :open="showMuteHinweisModal" title="LAUTSTÄRKE" @close="closeMuteHinweisModal">
             <p class="mute_hinweis_text">
-                Achtung: <br> das Spiel im Score- und Überlebensmodus enthält auch Audio- und Musik Inhalte. Bei ausgeschaltetem Ton kannst du
+                Achtung: <br> das Spiel im Score- und Überlebensmodus enthält auch Audio- und Musik Inhalte. Bei
+                ausgeschaltetem Ton kannst du
                 diese Inhalte nicht beurteilen.
             </p>
 
@@ -405,6 +406,7 @@ async function saveCustomTheme() {
 }
 
 @media (min-width: 768px) {
+
     .container_lautstaerke,
     .container_aktionen {
         width: 100%;
@@ -421,6 +423,7 @@ async function saveCustomTheme() {
 }
 
 @media (min-width: 1024px) {
+
     .container_lautstaerke,
     .container_aktionen {
         max-width: 460px;

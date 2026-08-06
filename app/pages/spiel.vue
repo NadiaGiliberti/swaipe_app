@@ -636,7 +636,7 @@ function buttonSwipe(antwortIstKI) {
                 </div>
                 <div class="swipe_header_seite" :style="{ opacity: kiHeaderOpacity }">
                     <span class="swipe_header_label">KI</span>
-                    <img src="/icons/pfeil_rechts_icon.svg" alt="Nach rechts" class="swipe_header_pfeil" >
+                    <img src="/icons/pfeil_rechts_icon.svg" alt="Nach rechts" class="swipe_header_pfeil">
                 </div>
             </div>
 
@@ -660,25 +660,23 @@ function buttonSwipe(antwortIstKI) {
                 <div v-if="aktuelleKarte" class="karte" :key="aktuelleKarte.id" :style="{
                     transform: `translate(${kartenPosition.x}px, ${kartenPosition.y}px) rotate(${kartenPosition.rotation}deg)`,
                     transition: (wirdGezogen || sofortZuruecksetzen) ? 'none' : 'transform 0.3s ease'
-                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag" @touchstart="startDrag"
-                    @touchmove="onDrag" @touchend="endDrag">
+                }" @mousedown="startDrag" @mousemove="onDrag" @mouseup="endDrag" @mouseleave="endDrag"
+                    @touchstart="startDrag" @touchmove="onDrag" @touchend="endDrag">
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false" alt="">
                     <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url" ref="videoRef"
-                        class="karte_video" :class="{ karte_video_bereit: videoBereit }"
-                        preload="auto" fetchpriority="high" autoplay loop muted playsinline
-                        @loadeddata="videoBereit = true"></video>
+                        class="karte_video" :class="{ karte_video_bereit: videoBereit }" preload="auto"
+                        fetchpriority="high" autoplay loop muted playsinline @loadeddata="videoBereit = true"></video>
 
                     <div v-else-if="aktuelleKarte.kategorie === 'AUDIO' || aktuelleKarte.kategorie === 'MUSIK'"
                         class="audio_player">
 
                         <audio ref="audioRef" :src="aktuelleKarte.datei_url" preload="auto" autoplay loop
-                            fetchpriority="high"
-                            @play="audioIstAktiv = true" @pause="audioIstAktiv = false"
+                            fetchpriority="high" @play="audioIstAktiv = true" @pause="audioIstAktiv = false"
                             @timeupdate="audioZeitUpdate" @loadedmetadata="audioMetadataGeladen"></audio>
 
-                        <button class="audio_play_button" @click.stop="toggleAudioPlay"
-                            @mousedown.stop @touchstart.stop>
+                        <button class="audio_play_button" @click.stop="toggleAudioPlay" @mousedown.stop
+                            @touchstart.stop>
                             <svg v-if="!audioIstAktiv" viewBox="0 0 24 24" class="audio_icon">
                                 <path d="M8 5v14l11-7z" fill="currentColor" />
                             </svg>
@@ -689,9 +687,10 @@ function buttonSwipe(antwortIstKI) {
 
                         <div class="audio_progress_bereich" @mousedown.stop @touchstart.stop>
                             <input type="range" class="audio_progress" min="0" :max="audioGesamtZeit || 0"
-                                :value="audioAktuelleZeit" @input="audioSpulen"
-                                @click.stop @mousedown.stop @touchstart.stop>
-                            <div class="audio_zeit">{{ formatZeit(audioAktuelleZeit) }} / {{ formatZeit(audioGesamtZeit) }}</div>
+                                :value="audioAktuelleZeit" @input="audioSpulen" @click.stop @mousedown.stop
+                                @touchstart.stop>
+                            <div class="audio_zeit">{{ formatZeit(audioAktuelleZeit) }} / {{ formatZeit(audioGesamtZeit)
+                                }}</div>
                         </div>
                     </div>
 
@@ -703,11 +702,9 @@ function buttonSwipe(antwortIstKI) {
                         <img v-if="karte.kategorie === 'BILD'" :src="karte.datei_url"
                             :fetchpriority="i === 0 ? 'auto' : 'low'" alt="">
                         <video v-else-if="karte.kategorie === 'VIDEO'" :src="karte.datei_url"
-                            :preload="i === 0 ? 'auto' : 'metadata'" fetchpriority="low" muted
-                            playsinline></video>
+                            :preload="i === 0 ? 'auto' : 'metadata'" fetchpriority="low" muted playsinline></video>
                         <audio v-else-if="karte.kategorie === 'AUDIO' || karte.kategorie === 'MUSIK'"
-                            :src="karte.datei_url" :preload="i === 0 ? 'auto' : 'metadata'"
-                            fetchpriority="low"></audio>
+                            :src="karte.datei_url" :preload="i === 0 ? 'auto' : 'metadata'" fetchpriority="low"></audio>
                     </template>
                 </div>
             </div>
@@ -738,7 +735,8 @@ function buttonSwipe(antwortIstKI) {
                     <h3>Spiel verlassen?</h3>
                     <p>Dein Fortschritt in dieser Runde geht verloren, wenn du jetzt gehst.</p>
                     <div class="verlassen_modal_buttons">
-                        <button class="button_klein verlassen_btn_weiter" @click="abbrechenVerlassen">WEITERSPIELEN</button>
+                        <button class="button_klein verlassen_btn_weiter"
+                            @click="abbrechenVerlassen">WEITERSPIELEN</button>
                         <button class="button_klein verlassen_btn_raus" @click="bestaetigeVerlassen">VERLASSEN</button>
                     </div>
                 </div>
@@ -1132,7 +1130,7 @@ function buttonSwipe(antwortIstKI) {
     .container_swipe_info,
     .audio_player {
         width: min(75vw, 440px);
-        flex-shrink: 0;        
+        flex-shrink: 0;
     }
 
     .container_zeit {
@@ -1161,8 +1159,6 @@ function buttonSwipe(antwortIstKI) {
     .audio_player {
         width: 480px;
     }
-    
+
 }
-
-
 </style>

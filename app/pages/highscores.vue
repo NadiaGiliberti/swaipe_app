@@ -63,7 +63,8 @@ function istEigenerUser(id) {
         <div v-for="(eintrag, index) in sichtbareFreunde" :key="eintrag.id" class="rang_item"
           :class="{ rang_item_ich: eintrag.istIch }">
           <span class="rang_nummer">{{ index + 1 }}.</span>
-          <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
+          <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet"
+            alt="Profil" loading="lazy">
           <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
           <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
@@ -81,33 +82,35 @@ function istEigenerUser(id) {
       </div>
 
       <!-- ALLE -->
-<div v-if="aktiverTab === 'alle'" class="container_rangliste">
-    <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
-        :class="{ rang_item_ich: eintrag.istIch }">
-        <span class="rang_nummer">{{ index + 1 }}.</span>
-        <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
-        <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
-        <span class="rang_name">
+      <div v-if="aktiverTab === 'alle'" class="container_rangliste">
+        <div v-for="(eintrag, index) in topAlleListe" :key="eintrag.id" class="rang_item"
+          :class="{ rang_item_ich: eintrag.istIch }">
+          <span class="rang_nummer">{{ index + 1 }}.</span>
+          <img v-if="eintrag.profilbild_url" :src="eintrag.profilbild_url" class="rang_avatar bild_umrandet"
+            alt="Profil" loading="lazy">
+          <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
+          <span class="rang_name">
             {{ eintrag.istIch ? 'DU' : eintrag.username }}
             <span class="rang_datum">am {{ formatDatum(eintrag.highscore_datum) }}</span>
-        </span>
-        <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
-    </div>
+          </span>
+          <span class="rang_score">{{ (eintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
+        </div>
 
-    <template v-if="eigenerRang && eigenerEintrag">
-        <div class="rang_trenner">...</div>
-        <div class="rang_item rang_item_ich">
+        <template v-if="eigenerRang && eigenerEintrag">
+          <div class="rang_trenner">...</div>
+          <div class="rang_item rang_item_ich">
             <span class="rang_nummer">{{ eigenerRang }}.</span>
-            <img v-if="eigenerEintrag.profilbild_url" :src="eigenerEintrag.profilbild_url" class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
+            <img v-if="eigenerEintrag.profilbild_url" :src="eigenerEintrag.profilbild_url"
+              class="rang_avatar bild_umrandet" alt="Profil" loading="lazy">
             <div v-else class="rang_avatar avatar_placeholder" role="img" aria-label="Profil"></div>
             <span class="rang_name">
-                DU
-                <span class="rang_datum">am {{ formatDatum(eigenerEintrag.highscore_datum) }}</span>
+              DU
+              <span class="rang_datum">am {{ formatDatum(eigenerEintrag.highscore_datum) }}</span>
             </span>
             <span class="rang_score">{{ (eigenerEintrag.highscore ?? 0).toLocaleString('de-CH') }}</span>
-        </div>
-    </template>
-</div>
+          </div>
+        </template>
+      </div>
     </template>
 
     <buttonZurueck />

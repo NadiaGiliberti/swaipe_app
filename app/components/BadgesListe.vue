@@ -56,10 +56,8 @@ function fortschrittProzent(level) {
                 </div>
 
                 <div class="fortschritt_balken_hintergrund">
-                    <div
-                        class="fortschritt_balken_fuellung"
-                        :style="{ width: fortschrittProzent(levels[kat]) + '%' }"
-                    ></div>
+                    <div class="fortschritt_balken_fuellung" :style="{ width: fortschrittProzent(levels[kat]) + '%' }">
+                    </div>
                 </div>
             </div>
         </div>
@@ -69,17 +67,10 @@ function fortschrittProzent(level) {
         <p v-if="loading">Lädt...</p>
 
         <div v-else class="badges_grid">
-            <div
-                v-for="badge in badges"
-                :key="badge.id"
-                class="badge_item"
-                :title="badge.beschreibung"
-            >
-                <div
-                    class="badge_icon"
+            <div v-for="badge in badges" :key="badge.id" class="badge_item" :title="badge.beschreibung">
+                <div class="badge_icon"
                     :class="{ badge_icon_erreicht: badge.erreicht, badge_icon_gesperrt: !badge.erreicht }"
-                    :style="{ '-webkit-mask-image': `url(${badge.icon})`, maskImage: `url(${badge.icon})` }"
-                ></div>
+                    :style="{ '-webkit-mask-image': `url(${badge.icon})`, maskImage: `url(${badge.icon})` }"></div>
                 <span class="badge_name" :class="{ badge_name_gesperrt: !badge.erreicht }">{{ badge.name }}</span>
             </div>
         </div>
@@ -97,7 +88,7 @@ function fortschrittProzent(level) {
     width: 80%;
     margin: 0 auto;
     margin-top: 6rem;
-    padding-bottom:3rem;
+    padding-bottom: 3rem;
 }
 
 .badges_trennlinie {

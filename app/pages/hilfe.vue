@@ -32,7 +32,8 @@ const istErstmalig = computed(() => route.query.erstmalig === 'true')
             <section class="hilfe_abschnitt">
                 <h2>DEFINITION ECHT UND KI</h2>
                 <p class="hilfe_text">
-                    Unter dem Begriff "Echt" werden alle Inhalte verstanden, die echte festgehaltene Dinge oder von Menschen
+                    Unter dem Begriff "Echt" werden alle Inhalte verstanden, die echte festgehaltene Dinge oder von
+                    Menschen
                     echt erstellte Inhalte sind, sei es Kunst, Zeichnungen, Fotografien, Videos, Musik oder Texte.
                 </p>
                 <p class="hilfe_text">

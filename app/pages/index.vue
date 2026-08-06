@@ -102,6 +102,7 @@ onMounted(async () => {
 }
 
 @media (hover: hover) and (pointer: fine) {
+
   .button_profile:hover img,
   .button_profile:hover .avatar_placeholder {
     transform: scale(1.05);
@@ -150,5 +151,4 @@ onMounted(async () => {
     margin-top: 3rem;
   }
 }
-
 </style>

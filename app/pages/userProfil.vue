@@ -243,6 +243,19 @@ function cancelEditingUsername() {
     usernameError.value = ''
 }
 
+// Supabase Auth liefert Fehlermeldungen nur auf Englisch. Bekannte, häufig
+// auftretende Meldungen werden hier ins Deutsche übersetzt; alles andere
+// wird unverändert durchgereicht (besser eine englische Meldung zeigen als
+// gar keine).
+const AUTH_FEHLER_UEBERSETZUNGEN = {
+    'New password should be different from the old password.': 'Das neue Passwort muss sich vom aktuellen unterscheiden.',
+    'Password should be at least 6 characters.': 'Das Passwort muss mindestens 6 Zeichen lang sein.'
+}
+
+function uebersetzeAuthFehler(message) {
+    return AUTH_FEHLER_UEBERSETZUNGEN[message] || message
+}
+
 function resetActionState() {
     actionError.value = ''
     actionSuccess.value = ''
@@ -267,14 +280,23 @@ function closeDeleteModal() {
 
 async function handleEmailChange() {
     resetActionState()
+
+    const eingegebeneEmail = newEmail.value.trim()
+    const emailMuster = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    if (!eingegebeneEmail || !emailMuster.test(eingegebeneEmail)) {
+        actionError.value = 'Bitte eine gültige E-Mail-Adresse eingeben.'
+        return
+    }
+
     actionLoading.value = true
 
-    const { error } = await supabase.auth.updateUser({ email: newEmail.value })
+    const { error } = await supabase.auth.updateUser({ email: eingegebeneEmail })
 
     actionLoading.value = false
 
     if (error) {
-        actionError.value = error.message
+        actionError.value = uebersetzeAuthFehler(error.message)
         return
     }
 
@@ -290,7 +312,7 @@ async function handlePasswordChange() {
     actionLoading.value = false
 
     if (error) {
-        errorMsg.value = error.message
+        actionError.value = uebersetzeAuthFehler(error.message)
         return
     }
 
@@ -335,15 +357,15 @@ const vFocus = {
             <div class="container_user">
                 <div class="container_userbild">
                     <img v-if="profil.profilbild_url" :src="profil.profilbild_url" id="profilbildUser"
-                        class="bild_umrandet"
-                        :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
+                        class="bild_umrandet" :style="{ opacity: avatarLoading ? 0.5 : 1 }" alt="Profilbild">
                     <div v-else id="profilbildUser" class="avatar_placeholder" role="img" aria-label="Profilbild"></div>
 
                     <input type="file" ref="fileInput" style="display: none" accept="image/png, image/jpeg, image/webp"
                         @change="handleAvatarUpload">
 
                     <button class="button_edit" :disabled="avatarLoading" @click="handleEditAvatar">
-                        <span class="icon-mask icon-edit" id="profilbildUserEdit" role="img" aria-label="Profilbild bearbeiten"></span>
+                        <span class="icon-mask icon-edit" id="profilbildUserEdit" role="img"
+                            aria-label="Profilbild bearbeiten"></span>
                     </button>
                 </div>
 
@@ -377,12 +399,8 @@ const vFocus = {
 
         <ModalBase :open="showAvatarModal" title="PROFILBILD WÄHLEN" @close="closeAvatarModal">
             <div class="avatar_auswahl_grid">
-                <button
-                    v-for="(avatar, index) in vorgabeAvatare"
-                    :key="index"
-                    class="avatar_auswahl_item"
-                    @click="waehleVorgabeAvatar(avatar)"
-                >
+                <button v-for="(avatar, index) in vorgabeAvatare" :key="index" class="avatar_auswahl_item"
+                    @click="waehleVorgabeAvatar(avatar)">
                     <img :src="avatar" alt="Vorgabe-Avatar">
                 </button>
             </div>

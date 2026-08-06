@@ -55,12 +55,12 @@ async function registrieren() {
   if (error) {
     console.error('Registrierungsfehler:', error)
     if (error.message.includes('rate limit')) {
-        errorMsg.value = 'Zu viele Versuche in kurzer Zeit. Bitte warte einen Moment und versuche es erneut.'
+      errorMsg.value = 'Zu viele Versuche in kurzer Zeit. Bitte warte einen Moment und versuche es erneut.'
     } else {
-        errorMsg.value = 'Bei der Registrierung ist ein Fehler aufgetreten. Bitte versuche es erneut.'
+      errorMsg.value = 'Bei der Registrierung ist ein Fehler aufgetreten. Bitte versuche es erneut.'
     }
     return
-}
+  }
 
   if (data.user && data.user.identities && data.user.identities.length === 0) {
     errorMsg.value = 'Diese E-Mail-Adresse ist bereits registriert. Bitte logge dich ein oder nutze eine andere E-Mail.'
