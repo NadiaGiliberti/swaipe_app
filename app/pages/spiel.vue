@@ -63,6 +63,7 @@ const audioRef = ref(null)
 const audioIstAktiv = ref(false)
 const audioAktuelleZeit = ref(0)
 const audioGesamtZeit = ref(0)
+const { volume, loadVolume } = useVolume()
 
 // ===== VIDEO FADE-IN (gegen schwarzes Flackern beim Kartenwechsel) =====
 const videoBereit = ref(false)
@@ -72,8 +73,23 @@ const spielBeendet = ref(false)
 const zeigeVerlassenModal = ref(false)
 let ausstehendeResolve = null
 
+function starteTimer() {
+    timerInterval = setInterval(() => {
+        zeitVerbleibend.value--
+        if (zeitVerbleibend.value <= 0) {
+            clearInterval(timerInterval)
+            beendeSpiel()
+        }
+    }, 1000)
+}
+
 onBeforeRouteLeave(() => {
     if (spielBeendet.value || !bereit.value) return true
+
+    if (timerInterval) {
+        clearInterval(timerInterval)
+        timerInterval = null
+    }
 
     return new Promise((resolve) => {
         ausstehendeResolve = resolve
@@ -95,6 +111,10 @@ function abbrechenVerlassen() {
     if (ausstehendeResolve) {
         ausstehendeResolve(false)
         ausstehendeResolve = null
+    }
+
+    if (modus === 'score' && !spielBeendet.value) {
+        starteTimer()
     }
 }
 
@@ -185,6 +205,8 @@ function audioZeitUpdate() {
 function audioMetadataGeladen() {
     if (!audioRef.value) return
 
+    audioRef.value.volume = Math.min(1, Math.max(0, volume.value / 100))
+
     const dauer = audioRef.value.duration
 
     // Fix für den bekannten Chrome-Bug: VBR-MP3s ohne Xing/Info-Header
@@ -201,6 +223,14 @@ function audioMetadataGeladen() {
         audioGesamtZeit.value = dauer
     }
 }
+
+// Falls sich die Lautstärke während des Spiels ändert (z.B. über den Mute-
+// Button in einem anderen Tab), wird die laufende Wiedergabe live angepasst.
+watch(volume, (neu) => {
+    if (audioRef.value) {
+        audioRef.value.volume = Math.min(1, Math.max(0, neu / 100))
+    }
+})
 
 function audioSpulen(event) {
     if (audioRef.value) audioRef.value.currentTime = event.target.value
@@ -262,13 +292,7 @@ async function initSpiel() {
     bereit.value = true
 
     if (modus === 'score') {
-        timerInterval = setInterval(() => {
-            zeitVerbleibend.value--
-            if (zeitVerbleibend.value <= 0) {
-                clearInterval(timerInterval)
-                beendeSpiel()
-            }
-        }, 1000)
+        starteTimer()
     }
 }
 
@@ -305,6 +329,7 @@ function handleKeydown(event) {
 }
 
 onMounted(() => {
+    loadVolume()
     initSpiel()
     window.addEventListener('keydown', handleKeydown)
 })
@@ -866,7 +891,7 @@ function buttonSwipe(antwortIstKI) {
     touch-action: none;
     position: relative;
     z-index: 1;
-    background: rgb(24, 24, 24);
+    background: rgb(0, 0, 0);
     border-radius: 30px;
     overflow: hidden;
 }
