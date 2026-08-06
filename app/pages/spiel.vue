@@ -7,10 +7,7 @@ const kategorie = route.query.kategorie || null
 const anzahlFragen = modus === 'uebung' ? 10 : 999
 
 const ESKALATION_ALLE_X_RICHTIGE = 15
-// Im Überlebensmodus endet die Runde sofort beim ersten Fehler - die meisten
-// Läufe erreichen nie 15 richtige Antworten in Folge, wodurch die Eskalation
-// oben praktisch nie greifen würde. Deutlich niedrigerer Schwellenwert, damit
-// sich die Schwierigkeit auch innerhalb einer realistischen Streak steigert.
+// Im Überlebensmodus endet die Runde sofort beim ersten Fehler, daher tieferer Schwellenwert als im Score-Modus
 const ESKALATION_ALLE_X_RICHTIGE_UEBERLEBEN = 4
 const PERFEKTE_RUNDE_BONUS = 1500
 
@@ -917,12 +914,6 @@ function buttonSwipe(antwortIstKI) {
     border-radius: 30px;
 }
 
-/* border-radius bewusst NICHT hier, sondern nur auf dem .karte-Wrapper oben
-   (overflow:hidden dort rundet bereits alles ab). Kombination aus
-   object-fit:cover + border-radius auf demselben Element ist ein bekannter
-   Rendering-Bug in mehreren Browsern (v.a. bei GPU-beschleunigten Videos):
-   das Medium wird dann teils unskaliert/mit Rändern dargestellt statt
-   sauber zugeschnitten - das war der Grund für das Crop-Problem. */
 .karte_bild {
     width: 100%;
     height: 100%;
@@ -1085,15 +1076,7 @@ function buttonSwipe(antwortIstKI) {
     opacity: 0;
 }
 
-/* ============================================================
-   DESKTOP: Alles soll ohne Scrollen in den Viewport passen.
-   container_main_spiel bekommt eine feste Höhe (100vh, margin-top
-   überschrieben auf 0), die Kachel (container_content) bekommt flex:1
-   statt einer festen vh-Höhe - dadurch schrumpft/wächst sie automatisch
-   auf genau den Platz, der nach Abzug von Score-Anzeige, Headern, Buttons
-   und Info-Text übrig bleibt. min-height:0 ist nötig, da Flex-Kinder sonst
-   nie kleiner als ihr Inhalt werden (Flexbox-Standardverhalten).
-   ============================================================ */
+/* Responsive für Desktop: */
 @media (min-width: 768px) {
     .container_swipe_buttons {
         display: flex;

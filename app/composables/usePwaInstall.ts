@@ -1,4 +1,4 @@
-// app/composables/usePwaInstall.ts
+
 const DISMISS_KEY = 'swaipe_install_dismissed'
 
 export function usePwaInstall() {

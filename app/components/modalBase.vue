@@ -1,4 +1,3 @@
-<!-- components/ModalBase.vue -->
 <script setup>
 defineProps({
     open: {
@@ -53,8 +52,7 @@ const emit = defineEmits(['close'])
     border-radius: 20px;
     padding: 2rem 1.5rem;
 
-    /* Popups haben immer weißen Hintergrund -> Text/Icons müssen immer braun bleiben,
-       unabhängig vom personalisierten Theme (HELL/Darkmode würde sonst weiß = unsichtbar). */
+    /* Popups haben immer weißen Hintergrund -> schrift und icons bleiben immer braun */
     --text-dunkel: var(--braun);
 }
 

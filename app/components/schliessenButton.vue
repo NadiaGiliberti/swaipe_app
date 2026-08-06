@@ -1,4 +1,3 @@
-<!-- app/components/SchliessenButton.vue -->
 <script setup>
 const route = useRoute()
 const versteckenAuf = ['/', '/login', '/registrieren']

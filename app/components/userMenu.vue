@@ -79,6 +79,7 @@ async function handleLogout() {
 </template>
 
 <style scoped>
+
 /* ===== OVERLAY ===== */
 
 .overlay {
@@ -297,7 +298,7 @@ html.theme-darkmode .drawer {
 }
 
 /* Hover nur auf Geräten mit echtem Maus-Hover - sonst bleibt der Zustand auf
-   Touch-Geräten (v.a. iOS Safari) nach dem Antippen "hängen", siehe main.css. */
+   Touch-Geräten */
 @media (hover: hover) and (pointer: fine) {
     .menu_item:hover span {
         color: var(--gelb);
@@ -312,7 +313,7 @@ html.theme-darkmode .drawer {
     }
 }
 
-/* ===== TRANSITION SYSTEM (Vue) ===== */
+/* ===== TRANSITION Drawer===== */
 
 .drawer-enter-from {
     transform: translateX(100%);

@@ -1,4 +1,4 @@
-// app/composables/useAvatar.ts
+
 export function speichereAvatarCookie(url: string) {
     const cookie = useCookie('swaipe_avatar', { maxAge: 60 * 60 * 24 * 365 })
     cookie.value = url

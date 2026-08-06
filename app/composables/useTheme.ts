@@ -1,4 +1,4 @@
-// app/composables/useTheme.ts
+
 export const presetThemes = [
     { name: 'SWAIPE', colors: ['#f898c1', '#5aeaa2', '#920e36'], textDunkel: '#560000', textSchwarz: '#000000', textHell: '#ffffff' },
     { name: 'DARKMODE', colors: ['#2b2d6e', '#e88bb3', '#0d0d1a', '#e8a86b'], textDunkel: '#ffffff', textSchwarz: '#ffffff', textHell: '#000000' },

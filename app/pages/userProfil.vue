@@ -289,6 +289,13 @@ async function handleEmailChange() {
         return
     }
 
+    const { data: { user: currentUser } } = await supabase.auth.getUser()
+
+    if (currentUser?.email && eingegebeneEmail.toLowerCase() === currentUser.email.toLowerCase()) {
+        actionError.value = 'Das ist bereits deine aktuelle E-Mail-Adresse.'
+        return
+    }
+
     actionLoading.value = true
 
     const { error } = await supabase.auth.updateUser({ email: eingegebeneEmail })

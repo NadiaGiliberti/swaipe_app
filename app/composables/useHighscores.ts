@@ -1,4 +1,4 @@
-// app/composables/useHighscores.ts
+
 export function formatDatum(iso: string | null) {
     if (!iso) return ''
     const d = new Date(iso)

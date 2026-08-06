@@ -1,4 +1,4 @@
-// app/composables/useFreunde.ts
+
 export async function sucheUser(supabase: any, username: string) {
     const { data: { user: currentUser } } = await supabase.auth.getUser()
 

@@ -34,8 +34,7 @@ export async function ladeSpielkarten(supabase: any, kategorie: string | null, a
 
 // Wie stark die Position innerhalb der gleichmäßigen Verteilung zufällig
 // verschoben werden darf, relativ zum kleineren der beiden Fortschritts-Schritte.
-// 0 = starr nach Anteil verteilt (z.B. exaktes E,K,E,K bei 50/50), höhere Werte
-// = natürlicher wirkende Streuung. 1 ist ein guter Mittelwert (siehe Tests).
+//  1 = natpürliche mittlere gute Streuung
 const VERTEILUNGS_JITTER = 1
 
 // Mischt zwei nach Herkunft getrennte Kartenlisten so zusammen, dass beide
