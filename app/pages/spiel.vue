@@ -866,7 +866,7 @@ function buttonSwipe(antwortIstKI) {
     touch-action: none;
     position: relative;
     z-index: 1;
-    background: rgb(0, 0, 0);
+    background: rgb(24, 24, 24);
     border-radius: 30px;
     overflow: hidden;
 }
@@ -887,11 +887,16 @@ function buttonSwipe(antwortIstKI) {
     border-radius: 30px;
 }
 
+/* border-radius bewusst NICHT hier, sondern nur auf dem .karte-Wrapper oben
+   (overflow:hidden dort rundet bereits alles ab). Kombination aus
+   object-fit:cover + border-radius auf demselben Element ist ein bekannter
+   Rendering-Bug in mehreren Browsern (v.a. bei GPU-beschleunigten Videos):
+   das Medium wird dann teils unskaliert/mit Rändern dargestellt statt
+   sauber zugeschnitten - das war der Grund für das Crop-Problem. */
 .karte_bild {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 30px;
+    object-fit: contain;
     pointer-events: none;
 }
 
@@ -907,8 +912,7 @@ function buttonSwipe(antwortIstKI) {
 .karte_video {
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    border-radius: 30px;
+    object-fit: contain;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.2s ease;
