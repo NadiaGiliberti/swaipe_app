@@ -67,6 +67,7 @@ const { volume, loadVolume } = useVolume()
 
 // ===== VIDEO FADE-IN (gegen schwarzes Flackern beim Kartenwechsel) =====
 const videoBereit = ref(false)
+const videoRef = ref(null)
 
 // ===== VERLASSEN-BESTÄTIGUNG =====
 const spielBeendet = ref(false)
@@ -90,6 +91,9 @@ onBeforeRouteLeave(() => {
         clearInterval(timerInterval)
         timerInterval = null
     }
+
+    audioRef.value?.pause()
+    videoRef.value?.pause()
 
     return new Promise((resolve) => {
         ausstehendeResolve = resolve
@@ -116,6 +120,9 @@ function abbrechenVerlassen() {
     if (modus === 'score' && !spielBeendet.value) {
         starteTimer()
     }
+
+    audioRef.value?.play()
+    videoRef.value?.play()
 }
 
 const aktuelleKarte = computed(() => karten.value[aktuellerIndex.value])
@@ -657,7 +664,7 @@ function buttonSwipe(antwortIstKI) {
                     @touchmove="onDrag" @touchend="endDrag">
                     <img v-if="aktuelleKarte.kategorie === 'BILD'" :src="aktuelleKarte.datei_url" class="karte_bild"
                         draggable="false" alt="">
-                    <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url"
+                    <video v-else-if="aktuelleKarte.kategorie === 'VIDEO'" :src="aktuelleKarte.datei_url" ref="videoRef"
                         class="karte_video" :class="{ karte_video_bereit: videoBereit }"
                         preload="auto" fetchpriority="high" autoplay loop muted playsinline
                         @loadeddata="videoBereit = true"></video>
