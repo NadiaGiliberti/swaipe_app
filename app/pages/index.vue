@@ -25,7 +25,7 @@ onMounted(async () => {
           .update({ hilfe_gesehen: true })
           .eq('id', currentUser.id)
 
-        await navigateTo('/hilfe')
+        await navigateTo('/hilfe?erstmalig=true')
       }
     }
   }
@@ -94,10 +94,26 @@ onMounted(async () => {
   border-radius: 50%;
   object-fit: cover;
   display: block;
+  transition: transform 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
 }
 
 .bild_umrandet {
   border: 2px solid var(--text-dunkel);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .button_profile:hover img,
+  .button_profile:hover .avatar_placeholder {
+    transform: scale(1.05);
+  }
+
+  .button_profile:hover .bild_umrandet {
+    border-color: var(--gelb);
+  }
+
+  .button_profile:hover .avatar_placeholder {
+    background-color: var(--gelb);
+  }
 }
 
 .punkt_neu {

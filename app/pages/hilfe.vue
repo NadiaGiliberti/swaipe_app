@@ -1,3 +1,8 @@
+<script setup>
+const route = useRoute()
+const istErstmalig = computed(() => route.query.erstmalig === 'true')
+</script>
+
 <template>
     <main class="container_main">
 
@@ -56,7 +61,7 @@
 
         </div>
 
-        <buttonZurueck />
+        <buttonZurueck :label="istErstmalig ? 'OK' : 'ZURÜCK'" />
 
     </main>
 </template>
