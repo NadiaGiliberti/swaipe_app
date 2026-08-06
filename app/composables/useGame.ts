@@ -120,16 +120,19 @@ export function levelZuStartSchwierigkeit(level: number): number {
 
 // Level-Multiplikator: höheres Level = mehr Punkte pro richtiger Antwort
 export function levelMultiplikator(level: number): number {
-    return 1 + (level - 1) * 0.05
+    return 1 + (level - 1) * 0.08
 }
 
-// Schwierigkeits-Multiplikator: schwerere Karten geben mehr Punkte
+// Schwierigkeits-Multiplikator: schwerere Karten geben mehr Punkte.
+// Steigung erhöht (0.15 -> 0.25 -> 0.3), damit sich echtes Hinschauen bei
+// schwierigen Inhalten spürbar mehr lohnt als schnelles Durchklicken leichter
+// Inhalte.
 export function schwierigkeitMultiplikator(schwierigkeit: number): number {
-    return 0.7 + ((schwierigkeit ?? 2) - 1) * 0.15
+    return 0.7 + ((schwierigkeit ?? 2) - 1) * 0.3
 }
 
 export function berechneKartenPunkte(schwierigkeit: number, userLevel: number): number {
-    const basis = 100
+    const basis = 150
     return Math.round(basis * schwierigkeitMultiplikator(schwierigkeit) * levelMultiplikator(userLevel))
 }
 

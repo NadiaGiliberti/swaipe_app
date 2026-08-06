@@ -28,10 +28,10 @@ Bis auf die kurzen Vorstellungsrunden im Major kannte ich diese Dinge noch nicht
   
 ## Known Bugs
 
-- Je nach Netzwerkverbindung und Gerät kann es beim Laden einzelner Videos oder Spielinhalte zu kurzen Wartezeiten kommen.
-- Bei einigen Audiodateien ist das Spulen während des Spiels möglich, bei anderen hingegen nicht. Das Verhalten tritt inkonsistent auf und konnte trotz Analyse bisher nicht eindeutig reproduziert oder behoben werden. 
+- Je nach Netzwerkverbindung und Gerät kann es beim Laden der App und bei einzelnen Spielinhalten zu eher längeren Wartezeiten kommen.
+- Bei einigen Audiodateien ist das Spulen während des Spiels möglich, bei anderen hingegen nicht. Das konnte nicht behoben werden, da ich den Fehler irgendwie nicht gefunden habe. 
 
-**Testing-Einschränkung (Apple-Geräte):** Die App wurde primär auf Windows / Android (Samsung) getestet, da keine Apple Geräte in meinem Umfeld. Sowohl das Verhalten im Safari-Browser als auch PWA-spezifisches Verhalten unter iOS konnten dementsprechend nicht verifiziert werden.
+**Testing-Einschränkung (Apple-Geräte):** Die App wurde primär auf Windows / Android (Samsung) getestet, da ich keine Apple Geräte in meinem Umfeld habe. Sowohl das Verhalten im Safari-Browser als auch PWA-spezifisches Verhalten unter iOS konnten dementsprechend leider nicht final geprüft werden.
 
 ## Datenstruktur
 
@@ -60,6 +60,10 @@ Beide Schriften sind lokal als `.woff`/`.woff2`/`.eot` unter `public/fonts` eing
 ### Spieldaten
 
 Die im Spiel verwendeten Inhalte stammen aus verschiedenen Open-Source-Quellen wie Unsplash, Pixabay, Pexels, Mixkit, Suno, ElevenLabs.
+
+Da die KI-Inhalte initial nach Schwierigkeit (1–5) eingestuft werden mussten, bevor genügend Spielerdaten für die dynamische Berechnung vorlagen, habe ich mir dafür ein kleines internes Tool gebaut. Es zeigt nacheinander alle KI-Inhalte einer Kategorie mit Fortschrittsanzeige (z. B. „1/365"), lässt sich per Tastatur (Zifferntasten 1–5 zum Bewerten, Pfeiltasten zum Blättern) durchgehen. So ging das ganze etwas einfacher als wenn ich jede Spieldatei manuell hinterlegt hätte. Nach der Bewertung der Spieldaten wurde die Subpage wieder entfernt.
+
+![Internes Tool zur Bewertung der KI-Inhalte nach Schwierigkeit](./docs/screenshots/bewertungstool.png)
 
 ## Projekt-Setup
 

@@ -12,7 +12,13 @@ const ESKALATION_ALLE_X_RICHTIGE = 15
 // oben praktisch nie greifen würde. Deutlich niedrigerer Schwellenwert, damit
 // sich die Schwierigkeit auch innerhalb einer realistischen Streak steigert.
 const ESKALATION_ALLE_X_RICHTIGE_UEBERLEBEN = 4
-const PERFEKTE_RUNDE_BONUS = 500
+const PERFEKTE_RUNDE_BONUS = 1500
+
+// Erkennung von Farming-Mustern (immer gleiche Richtung oder stures Abwechseln
+// ohne echtes Hinschauen): Fenstergrösse der zuletzt GEWÄHLTEN Richtungen
+// (nicht ob richtig/falsch), die auf ein verdächtiges Muster geprüft wird.
+const FARM_ERKENNUNGS_FENSTER = 20
+const FARM_PUNKTEABZUG = 20
 
 const karten = ref([])
 const aktuellerIndex = ref(0)
@@ -28,6 +34,17 @@ const sofortZuruecksetzen = ref(false)
 const userLevels = ref({ BILD: 1, VIDEO: 1, AUDIO: 1, MUSIK: 1 })
 const kategorieStats = ref({})
 const falscheKarten = ref([])
+
+// Für dynamisches Kartennachladen: merkt sich die aktuelle Eskalationsstufe,
+// damit neu nachgeladene Karten dieselbe Mindestschwierigkeit bekommen wie
+// die bereits laufende Runde - sonst würde die Schwierigkeit beim Nachladen
+// zurückspringen.
+const aktuelleMinSchwierigkeit = ref(1)
+let ladeMehrLaeuft = false
+
+// Richtungen, die der Spieler zuletzt GEWÄHLT hat (true = KI, false = ECHT) -
+// unabhängig davon, ob die Antwort richtig war. Dient nur der Muster-Erkennung.
+const antwortRichtungen = ref([])
 
 const zeitVerbleibend = ref(60)
 let timerInterval = null
@@ -136,6 +153,21 @@ function zeigeComboFalls(serie) {
     }
 }
 
+// Erkennt, ob die letzten FARM_ERKENNUNGS_FENSTER gewählten Richtungen entweder
+// alle identisch sind (immer nur ECHT oder immer nur KI) oder strikt
+// alternieren (ECHT,KI,ECHT,KI,...) - beides Muster, die ohne echtes
+// Hinschauen auf den Inhalt entstehen.
+function istVerdaechtigesMuster(richtungen) {
+    if (richtungen.length < FARM_ERKENNUNGS_FENSTER) return false
+    const letzte = richtungen.slice(-FARM_ERKENNUNGS_FENSTER)
+
+    const alleGleich = letzte.every(r => r === letzte[0])
+    if (alleGleich) return true
+
+    const striktAlternierend = letzte.every((r, i) => i === 0 || r !== letzte[i - 1])
+    return striktAlternierend
+}
+
 // ===== AUDIO PLAYER FUNKTIONEN =====
 function toggleAudioPlay() {
     if (!audioRef.value) return
@@ -240,6 +272,28 @@ async function initSpiel() {
     }
 }
 
+// Lädt automatisch mehr Karten nach, sobald der Vorrat knapp wird - behebt den
+// Bug, dass Score-/Überlebensrunden vorzeitig endeten, sobald der anfängliche
+// Kartenpool aufgebraucht war (unabhängig von der eigentlich massgeblichen
+// 60-Sekunden-Grenze im Score-Modus). Läuft im Hintergrund (fire-and-forget),
+// blockiert also nicht die Swipe-Animation.
+async function ladeMehrKartenFallsNoetig() {
+    if (modus !== 'score' && modus !== 'ueberleben') return
+    if (ladeMehrLaeuft) return
+    if (karten.value.length - aktuellerIndex.value > 15) return
+
+    ladeMehrLaeuft = true
+
+    const geladen = await ladeSpielkarten(supabase, kategorie, 100)
+
+    if (geladen.length > 0) {
+        const neueKarten = baueErschwerteReihenfolge(geladen, aktuelleMinSchwierigkeit.value)
+        karten.value = [...karten.value, ...neueKarten]
+    }
+
+    ladeMehrLaeuft = false
+}
+
 function handleKeydown(event) {
     if (!bereit.value || !aktuelleKarte.value) return
 
@@ -277,6 +331,12 @@ function beantworten(antwortIstKI) {
     const karte = aktuelleKarte.value
     const warRichtig = (karte.herkunft === 'KI') === antwortIstKI
 
+    antwortRichtungen.value.push(antwortIstKI)
+    if (antwortRichtungen.value.length > FARM_ERKENNUNGS_FENSTER) {
+        antwortRichtungen.value.shift()
+    }
+    const wirdAlsFarmingErkannt = (modus === 'score' || modus === 'ueberleben') && istVerdaechtigesMuster(antwortRichtungen.value)
+
     if (modus === 'score' || modus === 'ueberleben') {
         trackeKategorieStat(karte.kategorie, warRichtig)
     }
@@ -289,10 +349,14 @@ function beantworten(antwortIstKI) {
         }
 
         if (modus === 'score' || modus === 'ueberleben') {
-            const kartenLevel = userLevels.value[karte.kategorie] ?? 1
-            const kartenPunkte = berechneKartenPunkte(karte.schwierigkeit_aktuell, kartenLevel)
-            punkte.value += kartenPunkte + (aktuelleSerie.value * 10)
-            zeigeComboFalls(aktuelleSerie.value)
+            if (wirdAlsFarmingErkannt) {
+                punkte.value = Math.max(0, punkte.value - FARM_PUNKTEABZUG)
+            } else {
+                const kartenLevel = userLevels.value[karte.kategorie] ?? 1
+                const kartenPunkte = berechneKartenPunkte(karte.schwierigkeit_aktuell, kartenLevel)
+                punkte.value += kartenPunkte + (aktuelleSerie.value * 20)
+                zeigeComboFalls(aktuelleSerie.value)
+            }
         }
     } else {
         falsch.value++
@@ -315,6 +379,7 @@ function beantworten(antwortIstKI) {
 
     if ((modus === 'score' || modus === 'ueberleben') && warRichtig && korrekt.value % eskalationsSchwelle === 0) {
         const minSchwierigkeit = Math.min(1 + Math.floor(korrekt.value / eskalationsSchwelle), 5)
+        aktuelleMinSchwierigkeit.value = minSchwierigkeit
         const restKarten = karten.value.slice(aktuellerIndex.value + 1)
         const neueRestKarten = baueErschwerteReihenfolge(restKarten, minSchwierigkeit)
         karten.value = [
@@ -324,6 +389,7 @@ function beantworten(antwortIstKI) {
     }
 
     aktuellerIndex.value++
+    ladeMehrKartenFallsNoetig()
 
     if (fertig.value) {
         beendeSpiel()
@@ -385,7 +451,7 @@ async function beendeSpiel() {
 
         if (profilData) {
             for (const [kat, stats] of Object.entries(kategorieStats.value)) {
-                if (stats.gesamt < 3) continue
+                if (stats.gesamt < 6) continue
 
                 const spalte = KATEGORIE_LEVEL_SPALTE[kat]
                 if (!spalte) continue
